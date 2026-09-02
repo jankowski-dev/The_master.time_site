@@ -25,22 +25,26 @@
     return { width: window.innerWidth, height: window.innerHeight };
   }
 
-  function scaleStage(stage, w, h) {
+  function scaleStage(stage, w, h, stretch) {
     var vp = getViewport();
-    var s = Math.min(vp.width / w, vp.height / h);
+    var sx = vp.width / w;
+    var sy = vp.height / h;
+    if (!stretch) {
+      sx = sy = Math.min(sx, sy);
+    }
     var cx = (vp.offsetLeft || 0) + vp.width / 2;
     var cy = (vp.offsetTop || 0) + vp.height / 2;
     stage.style.left = cx + 'px';
     stage.style.top = cy + 'px';
-    stage.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
+    stage.style.transform = 'translate(-50%, -50%) scale(' + sx + ', ' + sy + ')';
   }
 
   function applyMode() {
     var mobile = isMobileMode();
     stageDesktop.classList.toggle('active', !mobile);
     stageMobile.classList.toggle('active', mobile);
-    scaleStage(stageDesktop, 1920, 1001);
-    scaleStage(stageMobile, 402, 874);
+    scaleStage(stageDesktop, 1920, 1001, false);
+    scaleStage(stageMobile, 402, 874, true);
     document.body.style.background = mobile ? '#ffffff' : '#161312';
   }
   window.addEventListener('resize', applyMode);
