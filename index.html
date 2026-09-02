@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pracue — услуги мастера на час в Гродно</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- Шапка -->
+  <header class="header">
+    <button class="hamburger" type="button" aria-label="Меню">
+      <img src="assets/icons/hamburger.svg" alt="">
+    </button>
+    <div class="logo">
+      <img src="assets/icons/logo.svg" class="logo-icon" alt="">
+      <span class="logo-text">Pracue</span>
+    </div>
+    <div class="phone">
+      <img src="assets/icons/phone.svg" class="phone-icon" alt="">
+      <span class="phone-code">8 025</span>
+      <span class="phone-number">707-67-93</span>
+    </div>
+  </header>
+
+  <!-- Тёмный блок слева (в макете назван Right-Block) -->
+  <aside class="dark-block">
+    <div class="social">
+      <span class="social-title">Присоединяйтесь к нам</span>
+      <div class="social-icons">
+        <img src="assets/icons/social-2.svg" alt="">
+        <img src="assets/icons/social-3.svg" alt="">
+        <img src="assets/icons/social-1.svg" alt="">
+      </div>
+    </div>
+
+    <div class="welcome">
+      <h1 class="hero">
+        <span class="hero-line">услуги</span>
+        <span class="hero-line hero-accent">мастера на час</span>
+        <span class="hero-line">в гродно</span>
+      </h1>
+      <p class="intro">Профессиональная укладка плитки - залог красивого и долговечного пола в вашем доме. Доверьте этот важный этап ремонта нашим специалистам.</p>
+      <p class="copyright">Янковский В.В.  УНП 56723984   2025-2026</p>
+    </div>
+
+    <div class="dark-menu">
+      <button class="btn-viber" type="button">
+        <img src="assets/icons/viber.svg" alt="">Чат в Viber
+      </button>
+      <button class="btn-instagram" type="button">
+        <img src="assets/icons/instagram.svg" alt="">Instagram
+      </button>
+    </div>
+  </aside>
+
+  <!-- Экраны -->
+  <main class="screens">
+
+    <!-- Главная: выбор услуги -->
+    <section class="screen active" id="screen-main">
+      <h2 class="title">Услуги</h2>
+      <p class="subtitle">Выберите подходящую категорию услуг</p>
+      <div class="services" id="services">
+        <div class="service-item" data-service="Сантехнические">
+          <img class="service-icon" src="assets/icons/service-plumbing.svg" alt="">
+          <span class="service-name">Сантехнические</span>
+          <img class="service-check" src="assets/icons/check.svg" alt="">
+        </div>
+        <div class="service-item" data-service="Электромонтажные">
+          <img class="service-icon" src="assets/icons/service-electric.svg" alt="">
+          <span class="service-name">Электромонтажные</span>
+          <img class="service-check" src="assets/icons/check.svg" alt="">
+        </div>
+        <div class="service-item" data-service="Ремонт и отделка">
+          <img class="service-icon" src="assets/icons/service-plumbing.svg" alt="">
+          <span class="service-name">Ремонт и отделка</span>
+          <img class="service-check" src="assets/icons/check.svg" alt="">
+        </div>
+        <div class="service-item" data-service="Мебельные">
+          <img class="service-icon" src="assets/icons/service-furniture.svg" alt="">
+          <span class="service-name">Мебельные</span>
+          <img class="service-check" src="assets/icons/check.svg" alt="">
+        </div>
+        <div class="service-item" data-service="Погрузочные">
+          <img class="service-icon" src="assets/icons/service-loading.svg" alt="">
+          <span class="service-name">Погрузочные</span>
+          <img class="service-check" src="assets/icons/check.svg" alt="">
+        </div>
+        <div class="service-item" data-service="Бытовая техника">
+          <img class="service-icon" src="assets/icons/service-appliances.svg" alt="">
+          <span class="service-name">Бытовая техника</span>
+          <img class="service-check" src="assets/icons/check.svg" alt="">
+        </div>
+        <div class="service-item" data-service="Прочие услуги">
+          <img class="service-icon" src="assets/icons/service-misc.svg" alt="">
+          <span class="service-name">Прочие услуги</span>
+          <img class="service-check" src="assets/icons/check.svg" alt="">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-back" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
+        <button class="btn btn-primary" id="next-main" data-nav="options" type="button" disabled><img src="assets/icons/arrow-next.svg" alt="">Далее</button>
+        <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
+      </div>
+    </section>
+
+    <!-- Опции -->
+    <section class="screen" id="screen-options">
+      <h2 class="title">Опции</h2>
+      <p class="subtitle">Выберите подходящую опцию</p>
+      <div class="options">
+        <div class="option-row" data-opt="urgent">
+          <img class="opt-icon" src="assets/icons/opt-urgent.svg" alt="">
+          <div class="opt-text">
+            <strong>Срочный вызов</strong>
+            <span>Приеду в течении 2 часов</span>
+          </div>
+          <div class="toggle"></div>
+        </div>
+        <div class="option-row" data-opt="outOfTown">
+          <img class="opt-icon" src="assets/icons/opt-outtown.svg" alt="">
+          <div class="opt-text">
+            <strong>За городом</strong>
+            <span>20 км и более от г. Гродно</span>
+          </div>
+          <div class="toggle"></div>
+        </div>
+        <div class="option-row" data-opt="materials">
+          <img class="opt-icon" src="assets/icons/opt-materials.svg" alt="">
+          <div class="opt-text">
+            <strong>Закупка материалов</strong>
+            <span>Съезжу сам за материалами</span>
+          </div>
+          <div class="toggle"></div>
+        </div>
+      </div>
+      <div class="add-file" id="add-file">
+        <img class="upload-icon" src="assets/icons/upload.svg" alt="">
+        <div class="add-file-body">
+          <strong id="add-file-title">Добавить фото</strong>
+          <span id="add-file-sub">Форматы JPG, PNG, GIF</span>
+        </div>
+        <div class="progress" id="upload-progress"><div class="progress-fill"></div></div>
+        <input type="file" id="file-input" multiple accept="image/*" hidden>
+      </div>
+      <div class="actions">
+        <button class="btn btn-back" data-nav="main" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
+        <button class="btn btn-primary" data-nav="form" type="button"><img src="assets/icons/arrow-next.svg" alt="">Далее</button>
+        <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
+      </div>
+    </section>
+
+    <!-- Форма -->
+    <section class="screen" id="screen-form">
+      <h2 class="title">Форма</h2>
+      <p class="subtitle">Выберите подходящую опцию</p>
+      <div class="form">
+        <input class="field field-name" id="input-name" type="text" placeholder="Как к вам обращаться?">
+        <input class="field field-phone" id="input-phone" type="tel" placeholder="+375337075793">
+        <textarea class="field field-desc" id="input-desc" placeholder="Можете описать проблему более детально..."></textarea>
+      </div>
+      <div class="summary">
+        <div class="summary-row"><span>Услуги</span><b id="sum-service">Мебельные</b></div>
+        <div class="summary-row"><span>Срочный вызов</span><b id="sum-urgent">Нет</b></div>
+        <div class="summary-row"><span>За городом</span><b id="sum-outtown">Нет</b></div>
+        <div class="summary-row"><span>Закупка материалов</span><b id="sum-materials">Нет</b></div>
+      </div>
+      <div class="add-file-summary">
+        <span>Файлы</span>
+        <b id="sum-files">Нет файлов</b>
+      </div>
+      <div class="actions">
+        <button class="btn btn-back" data-nav="options" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
+        <button class="btn btn-primary" data-nav="success" type="button"><img src="assets/icons/arrow-next.svg" alt="">Подтвердить</button>
+        <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
+      </div>
+    </section>
+
+    <!-- Успех -->
+    <section class="screen" id="screen-success">
+      <h2 class="title">Форма</h2>
+      <p class="subtitle">Выберите подходящую опцию</p>
+      <div class="message">
+        <img class="message-icon" src="assets/icons/success.svg" alt="">
+        <div class="message-text">
+          <strong>Заявка принята</strong>
+          <p>Мастер свяжеться с вами в ближашее время для уточнения деталей и адреса</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-back" data-nav="form" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
+        <button class="btn btn-primary" data-nav="main" data-reset="true" type="button"><img src="assets/icons/arrow-next.svg" alt="">На главную</button>
+        <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Лоадер -->
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
