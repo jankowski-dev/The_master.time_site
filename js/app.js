@@ -19,10 +19,19 @@
   /* ===== Переключение и масштабирование ===== */
   function isMobileMode() { return window.innerWidth < BREAKPOINT; }
 
-  function scaleStage(stage, w, h, fillWidth) {
-    var s = fillWidth
-      ? window.innerWidth / w
-      : Math.min(window.innerWidth / w, window.innerHeight / h);
+  function getViewport() {
+    var vv = window.visualViewport;
+    if (vv && vv.width) return vv;
+    return { width: window.innerWidth, height: window.innerHeight };
+  }
+
+  function scaleStage(stage, w, h) {
+    var vp = getViewport();
+    var s = Math.min(vp.width / w, vp.height / h);
+    var cx = (vp.offsetLeft || 0) + vp.width / 2;
+    var cy = (vp.offsetTop || 0) + vp.height / 2;
+    stage.style.left = cx + 'px';
+    stage.style.top = cy + 'px';
     stage.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
   }
 
@@ -30,11 +39,15 @@
     var mobile = isMobileMode();
     stageDesktop.classList.toggle('active', !mobile);
     stageMobile.classList.toggle('active', mobile);
-    scaleStage(stageDesktop, 1920, 1001, false);
-    scaleStage(stageMobile, 402, 874, true);
+    scaleStage(stageDesktop, 1920, 1001);
+    scaleStage(stageMobile, 402, 874);
     document.body.style.background = mobile ? '#ffffff' : '#161312';
   }
   window.addEventListener('resize', applyMode);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', applyMode);
+    window.visualViewport.addEventListener('scroll', applyMode);
+  }
 
   /* ===== Навигация через лоадер ===== */
   var navigating = false;
