@@ -25,18 +25,20 @@
     return { width: window.innerWidth, height: window.innerHeight };
   }
 
-  function scaleStage(stage, w, h, stretch) {
+  function scaleStage(stage, w, h, isMobile) {
     var vp = getViewport();
-    var sx = vp.width / w;
-    var sy = vp.height / h;
-    if (!stretch) {
-      sx = sy = Math.min(sx, sy);
+    var scale;
+    if (isMobile) {
+      scale = vp.width / w;
+      stage.style.height = (vp.height / scale) + 'px';
+    } else {
+      scale = Math.min(vp.width / w, vp.height / h);
     }
     var cx = (vp.offsetLeft || 0) + vp.width / 2;
     var cy = (vp.offsetTop || 0) + vp.height / 2;
     stage.style.left = cx + 'px';
     stage.style.top = cy + 'px';
-    stage.style.transform = 'translate(-50%, -50%) scale(' + sx + ', ' + sy + ')';
+    stage.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
   }
 
   function applyMode() {
