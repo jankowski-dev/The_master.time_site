@@ -1,8 +1,11 @@
 (function () {
   'use strict';
 
-  var stage = document.getElementById('stage');
-  var loader = document.getElementById('loader');
+  var stageDesktop = document.getElementById('stage-desktop');
+  var stageMobile = document.getElementById('stage-mobile');
+  var loaderDesktop = document.getElementById('loader');
+  var loaderMobile = document.getElementById('m-loader');
+  var splash = document.getElementById('m-splash');
 
   var state = {
     service: null,
@@ -11,68 +14,117 @@
     uploadStatus: 'empty'
   };
 
-  /* ===== Масштабирование под окно (без скролла) ===== */
-  function scale() {
-    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1001);
+  var BREAKPOINT = 768;
+
+  /* ===== Переключение и масштабирование ===== */
+  function isMobileMode() { return window.innerWidth < BREAKPOINT; }
+
+  function scaleStage(stage, w, h) {
+    var s = Math.min(window.innerWidth / w, window.innerHeight / h);
     stage.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
   }
-  window.addEventListener('resize', scale);
-  scale();
+
+  function applyMode() {
+    var mobile = isMobileMode();
+    stageDesktop.classList.toggle('active', !mobile);
+    stageMobile.classList.toggle('active', mobile);
+    scaleStage(stageDesktop, 1920, 1001);
+    scaleStage(stageMobile, 402, 874);
+  }
+  window.addEventListener('resize', applyMode);
 
   /* ===== Навигация через лоадер ===== */
-  var screens = document.querySelectorAll('.screen');
   var navigating = false;
 
-  function navigateTo(id) {
+  function switchScreen(stage, prefix, id) {
+    stage.querySelectorAll('.screen, .m-screen').forEach(function (s) { s.classList.remove('active'); });
+    var target = stage.querySelector('#' + prefix + id);
+    if (target) target.classList.add('active');
+  }
+
+  function navigateDesktop(id) {
     if (navigating) return;
     navigating = true;
-    loader.classList.add('active');
+    loaderDesktop.classList.add('active');
     setTimeout(function () {
-      screens.forEach(function (s) { s.classList.remove('active'); });
-      document.getElementById('screen-' + id).classList.add('active');
+      switchScreen(stageDesktop, 'screen-', id);
       if (id === 'form') updateSummary();
-      loader.classList.remove('active');
+      loaderDesktop.classList.remove('active');
       navigating = false;
     }, 600);
   }
 
-  document.querySelectorAll('[data-nav]').forEach(function (btn) {
+  function navigateMobile(id) {
+    if (navigating) return;
+    navigating = true;
+    loaderMobile.classList.add('active');
+    setTimeout(function () {
+      switchScreen(stageMobile, 'm-screen-', id);
+      if (id === 'form') updateSummary();
+      loaderMobile.classList.remove('active');
+      navigating = false;
+    }, 600);
+  }
+
+  stageDesktop.querySelectorAll('[data-nav]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var target = btn.getAttribute('data-nav');
       if (btn.hasAttribute('data-reset')) resetState();
-      navigateTo(target);
+      navigateDesktop(target);
     });
+  });
+
+  stageMobile.querySelectorAll('[data-nav]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = btn.getAttribute('data-nav');
+      if (btn.hasAttribute('data-reset')) resetState();
+      navigateMobile(target);
+    });
+  });
+
+  stageMobile.querySelectorAll('[data-call]').forEach(function (el) {
+    el.addEventListener('click', function () { window.location.href = 'tel:+375257076793'; });
+  });
+
+  stageMobile.querySelectorAll('[data-external]').forEach(function (el) {
+    el.addEventListener('click', function () { /* заглушка: реальные ссылки не заданы */ });
+  });
+
+  stageMobile.querySelectorAll('.m-screen-modal .m-overlay').forEach(function (ov) {
+    ov.addEventListener('click', function () { navigateMobile('main'); });
   });
 
   /* ===== Выбор услуги ===== */
-  var serviceItems = document.querySelectorAll('.service-item');
   var nextMain = document.getElementById('next-main');
+  var mNextServices = document.getElementById('m-next-services');
 
-  serviceItems.forEach(function (item) {
-    item.addEventListener('click', function () {
-      serviceItems.forEach(function (i) { i.classList.remove('active'); });
-      item.classList.add('active');
-      state.service = item.getAttribute('data-service');
-      nextMain.disabled = false;
+  function bindServiceSelection(items, nextBtn) {
+    items.forEach(function (item) {
+      item.addEventListener('click', function () {
+        items.forEach(function (i) { i.classList.remove('active'); });
+        item.classList.add('active');
+        state.service = item.getAttribute('data-service');
+        nextBtn.disabled = false;
+      });
     });
-  });
+  }
+  bindServiceSelection(Array.prototype.slice.call(stageDesktop.querySelectorAll('.service-item')), nextMain);
+  bindServiceSelection(Array.prototype.slice.call(stageMobile.querySelectorAll('.m-service-item')), mNextServices);
 
   /* ===== Переключатели опций ===== */
-  document.querySelectorAll('.option-row').forEach(function (row) {
-    row.addEventListener('click', function () {
-      var key = row.getAttribute('data-opt');
-      state.options[key] = !state.options[key];
-      row.classList.toggle('on', state.options[key]);
+  function bindToggles(rows) {
+    rows.forEach(function (row) {
+      row.addEventListener('click', function () {
+        var key = row.getAttribute('data-opt');
+        state.options[key] = !state.options[key];
+        row.classList.toggle('on', state.options[key]);
+      });
     });
-  });
+  }
+  bindToggles(Array.prototype.slice.call(stageDesktop.querySelectorAll('.option-row')));
+  bindToggles(Array.prototype.slice.call(stageMobile.querySelectorAll('.m-option-row')));
 
   /* ===== Загрузка файлов ===== */
-  var addFile = document.getElementById('add-file');
-  var fileInput = document.getElementById('file-input');
-  var addFileTitle = document.getElementById('add-file-title');
-  var addFileSub = document.getElementById('add-file-sub');
-  var progressFill = document.querySelector('#upload-progress .progress-fill');
-
   function pluralFiles(n) {
     var mod10 = n % 10;
     var mod100 = n % 100;
@@ -81,72 +133,123 @@
     return 'файлов';
   }
 
-  addFile.addEventListener('click', function () { fileInput.click(); });
-
-  fileInput.addEventListener('change', function (e) {
-    var files = Array.prototype.slice.call(e.target.files);
-    if (!files.length) return;
-    state.files = files;
-    simulateUpload(files.length);
-  });
-
-  function simulateUpload(count) {
+  function simulateUpload(count, addFileEl, titleEl, subEl, fillEl) {
     state.uploadStatus = 'uploading';
-    addFile.classList.remove('done');
-    addFile.classList.add('uploading');
-    addFileTitle.textContent = 'Загружаем: ' + count + ' ' + pluralFiles(count);
-    addFileSub.style.display = 'none';
-    progressFill.style.width = '0%';
+    addFileEl.classList.remove('done');
+    addFileEl.classList.add('uploading');
+    titleEl.textContent = 'Загружаем: ' + count + ' ' + pluralFiles(count);
+    subEl.style.display = 'none';
+    fillEl.style.width = '0%';
 
     var p = 0;
     var interval = setInterval(function () {
       p += 4;
       if (p >= 100) p = 100;
-      progressFill.style.width = p + '%';
+      fillEl.style.width = p + '%';
       if (p >= 100) {
         clearInterval(interval);
         state.uploadStatus = 'done';
-        addFile.classList.remove('uploading');
-        addFile.classList.add('done');
-        addFileTitle.textContent = 'Загружено!';
+        addFileEl.classList.remove('uploading');
+        addFileEl.classList.add('done');
+        titleEl.textContent = 'Загружено!';
       }
     }, 60);
   }
 
+  function setupUpload(addFileEl, inputEl, titleEl, subEl, fillEl) {
+    addFileEl.addEventListener('click', function () { inputEl.click(); });
+    inputEl.addEventListener('change', function (e) {
+      var files = Array.prototype.slice.call(e.target.files);
+      if (!files.length) return;
+      state.files = files;
+      simulateUpload(files.length, addFileEl, titleEl, subEl, fillEl);
+    });
+  }
+
+  setupUpload(
+    document.getElementById('add-file'),
+    document.getElementById('file-input'),
+    document.getElementById('add-file-title'),
+    document.getElementById('add-file-sub'),
+    document.querySelector('#upload-progress .progress-fill'));
+
+  setupUpload(
+    document.getElementById('m-add-file'),
+    document.getElementById('m-file-input'),
+    document.getElementById('m-add-file-title'),
+    document.getElementById('m-add-file-sub'),
+    document.querySelector('#m-upload-progress .m-progress-fill'));
+
   /* ===== Сводка на форме ===== */
   function yesNo(v) { return v ? 'Да' : 'Нет'; }
+  function setText(id, text) { var el = document.getElementById(id); if (el) el.textContent = text; }
 
   function updateSummary() {
-    document.getElementById('sum-service').textContent = state.service || '—';
-    document.getElementById('sum-urgent').textContent = yesNo(state.options.urgent);
-    document.getElementById('sum-outtown').textContent = yesNo(state.options.outOfTown);
-    document.getElementById('sum-materials').textContent = yesNo(state.options.materials);
+    setText('sum-service', state.service || '—');
+    setText('sum-urgent', yesNo(state.options.urgent));
+    setText('sum-outtown', yesNo(state.options.outOfTown));
+    setText('sum-materials', yesNo(state.options.materials));
+    setText('m-sum-service', state.service || '—');
+    setText('m-sum-urgent', yesNo(state.options.urgent));
+    setText('m-sum-outtown', yesNo(state.options.outOfTown));
     var n = state.files.length;
-    document.getElementById('sum-files').textContent = n === 0 ? 'Нет файлов' : n + ' ' + pluralFiles(n);
+    var fileText = n === 0 ? 'Нет файлов' : n + ' ' + pluralFiles(n);
+    setText('sum-files', fileText);
+    setText('m-sum-files', fileText);
   }
 
   /* ===== Сброс состояния ===== */
+  function resetAddFile(addFileEl, titleEl, subEl, fillEl, inputEl) {
+    addFileEl.classList.remove('uploading', 'done');
+    titleEl.textContent = 'Добавить фото';
+    subEl.style.display = '';
+    fillEl.style.width = '0%';
+    inputEl.value = '';
+  }
+
   function resetState() {
     state.service = null;
     state.options = { urgent: false, outOfTown: false, materials: false };
     state.files = [];
     state.uploadStatus = 'empty';
 
-    serviceItems.forEach(function (i) { i.classList.remove('active'); });
+    stageDesktop.querySelectorAll('.service-item').forEach(function (i) { i.classList.remove('active'); });
+    stageMobile.querySelectorAll('.m-service-item').forEach(function (i) { i.classList.remove('active'); });
     nextMain.disabled = true;
+    mNextServices.disabled = true;
 
-    document.querySelectorAll('.option-row').forEach(function (row) {
-      row.classList.remove('on');
+    stageDesktop.querySelectorAll('.option-row').forEach(function (r) { r.classList.remove('on'); });
+    stageMobile.querySelectorAll('.m-option-row').forEach(function (r) { r.classList.remove('on'); });
+
+    resetAddFile(
+      document.getElementById('add-file'),
+      document.getElementById('add-file-title'),
+      document.getElementById('add-file-sub'),
+      document.querySelector('#upload-progress .progress-fill'),
+      document.getElementById('file-input'));
+
+    resetAddFile(
+      document.getElementById('m-add-file'),
+      document.getElementById('m-add-file-title'),
+      document.getElementById('m-add-file-sub'),
+      document.querySelector('#m-upload-progress .m-progress-fill'),
+      document.getElementById('m-file-input'));
+
+    ['input-name', 'input-phone', 'input-desc', 'm-input-name', 'm-input-phone', 'm-input-desc', 'm-so-name', 'm-so-phone'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.value = '';
     });
-
-    addFile.classList.remove('uploading', 'done');
-    addFileTitle.textContent = 'Добавить фото';
-    addFileSub.style.display = '';
-    progressFill.style.width = '0%';
-    fileInput.value = '';
-
-    document.getElementById('input-name').value = '';
-    document.getElementById('input-phone').value = '';
-    document.getElementById('input-desc').value = '';
   }
+
+  /* ===== Заставка ===== */
+  function initSplash() {
+    if (isMobileMode()) {
+      splash.classList.add('active');
+      setTimeout(function () { splash.classList.remove('active'); }, 1500);
+    }
+  }
+
+  /* ===== Старт ===== */
+  applyMode();
+  initSplash();
 })();

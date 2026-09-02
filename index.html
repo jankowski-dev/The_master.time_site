@@ -11,9 +11,9 @@
 </head>
 <body>
 
-<div class="stage" id="stage">
+<!-- ===================== ДЕСКТОП (1920x1001) ===================== -->
+<div class="stage desktop" id="stage-desktop">
 
-  <!-- Шапка -->
   <header class="header">
     <button class="hamburger" type="button" aria-label="Меню">
       <img src="assets/icons/hamburger.svg" alt="">
@@ -29,7 +29,6 @@
     </div>
   </header>
 
-  <!-- Тёмный блок слева (в макете назван Right-Block) -->
   <aside class="dark-block">
     <div class="social">
       <span class="social-title">Присоединяйтесь к нам</span>
@@ -39,7 +38,6 @@
         <img src="assets/icons/social-1.svg" alt="">
       </div>
     </div>
-
     <div class="welcome">
       <h1 class="hero">
         <span class="hero-line">услуги</span>
@@ -49,7 +47,6 @@
       <p class="intro">Профессиональная укладка плитки - залог красивого и долговечного пола в вашем доме. Доверьте этот важный этап ремонта нашим специалистам.</p>
       <p class="copyright">Янковский В.В.  УНП 56723984   2025-2026</p>
     </div>
-
     <div class="dark-menu">
       <button class="btn-viber" type="button">
         <img src="assets/icons/viber.svg" alt="">Чат в Viber
@@ -60,10 +57,7 @@
     </div>
   </aside>
 
-  <!-- Экраны -->
   <main class="screens">
-
-    <!-- Главная: выбор услуги -->
     <section class="screen active" id="screen-main">
       <h2 class="title">Услуги</h2>
       <p class="subtitle">Выберите подходящую категорию услуг</p>
@@ -111,7 +105,6 @@
       </div>
     </section>
 
-    <!-- Опции -->
     <section class="screen" id="screen-options">
       <h2 class="title">Опции</h2>
       <p class="subtitle">Выберите подходящую опцию</p>
@@ -157,7 +150,6 @@
       </div>
     </section>
 
-    <!-- Форма -->
     <section class="screen" id="screen-form">
       <h2 class="title">Форма</h2>
       <p class="subtitle">Выберите подходящую опцию</p>
@@ -183,7 +175,6 @@
       </div>
     </section>
 
-    <!-- Успех -->
     <section class="screen" id="screen-success">
       <h2 class="title">Форма</h2>
       <p class="subtitle">Выберите подходящую опцию</p>
@@ -200,14 +191,217 @@
         <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
       </div>
     </section>
+  </main>
+
+  <div class="loader" id="loader"><div class="spinner"></div></div>
+</div>
+
+<!-- ===================== МОБИЛЬНАЯ (402x874) ===================== -->
+<div class="stage mobile" id="stage-mobile">
+
+  <header class="m-header">
+    <div class="m-logo">
+      <img src="assets/icons/logo.svg" alt="">
+      <span>Pracue</span>
+    </div>
+    <img class="m-header-vector" src="assets/icons/header-vector.svg" alt="">
+  </header>
+
+  <main class="m-screens">
+
+    <!-- Главная (хаб) -->
+    <section class="m-screen active" id="m-screen-main">
+      <div class="m-hero">
+        <h1>Услуги мастера на час в Гродно</h1>
+        <p>Широкий спектр услуг. Быстрый выезд при необходимости. Скидки для постоянных клиентов</p>
+      </div>
+      <div class="m-menu-grid">
+        <div class="m-menu-item" data-nav="services">
+          <img src="assets/icons/menu-services.svg" alt="">
+          <span>Услуги</span>
+        </div>
+        <div class="m-menu-item" data-nav="contact">
+          <img src="assets/icons/menu-contacts.svg" alt="">
+          <span>Контакты</span>
+        </div>
+        <div class="m-menu-item" data-external="instagram">
+          <img src="assets/icons/menu-instagram.svg" alt="">
+          <span>Instagram <i>2.3 K</i></span>
+        </div>
+        <div class="m-menu-item" data-external="viber">
+          <img src="assets/icons/menu-viber.svg" alt="">
+          <span>Чат в Viber</span>
+        </div>
+      </div>
+      <div class="m-actions">
+        <button class="m-btn m-btn-primary" data-nav="shortorder" type="button">
+          <img src="assets/icons/btn-fast-order.svg" alt="">Быстрая заявка
+        </button>
+        <button class="m-btn m-btn-call" data-call type="button">
+          <img src="assets/icons/btn-call.svg" alt="">Позвонить
+        </button>
+      </div>
+    </section>
+
+    <!-- Услуги -->
+    <section class="m-screen" id="m-screen-services">
+      <h2 class="m-title">Услуги</h2>
+      <button class="m-back" data-nav="main" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+      <div class="m-service-list">
+        <div class="m-service-item" data-service="Сантехнические">
+          <img src="assets/icons/service-plumbing.svg" alt=""><span>Сантехнические</span><img class="m-check" src="assets/icons/choose-mobile.svg" alt="">
+        </div>
+        <div class="m-service-item" data-service="Электромонтажные">
+          <img src="assets/icons/service-electric.svg" alt=""><span>Электромонтажные</span><img class="m-check" src="assets/icons/choose-mobile.svg" alt="">
+        </div>
+        <div class="m-service-item" data-service="Ремонт и отделка">
+          <img src="assets/icons/service-plumbing.svg" alt=""><span>Ремонт и отделка</span><img class="m-check" src="assets/icons/choose-mobile.svg" alt="">
+        </div>
+        <div class="m-service-item" data-service="Мебельные">
+          <img src="assets/icons/service-furniture.svg" alt=""><span>Мебельные</span><img class="m-check" src="assets/icons/choose-mobile.svg" alt="">
+        </div>
+        <div class="m-service-item" data-service="Погрузочные">
+          <img src="assets/icons/service-loading.svg" alt=""><span>Погрузочные</span><img class="m-check" src="assets/icons/choose-mobile.svg" alt="">
+        </div>
+        <div class="m-service-item" data-service="Бытовая техника">
+          <img src="assets/icons/service-appliances.svg" alt=""><span>Бытовая техника</span><img class="m-check" src="assets/icons/choose-mobile.svg" alt="">
+        </div>
+        <div class="m-service-item" data-service="Прочие услуги">
+          <img src="assets/icons/service-misc.svg" alt=""><span>Прочие услуги</span><img class="m-check" src="assets/icons/choose-mobile.svg" alt="">
+        </div>
+      </div>
+      <button class="m-btn m-btn-primary m-next" id="m-next-services" data-nav="options" type="button" disabled>
+        <img src="assets/icons/arrow-next.svg" alt="">Далее
+      </button>
+    </section>
+
+    <!-- Опции -->
+    <section class="m-screen" id="m-screen-options">
+      <h2 class="m-title">Опции</h2>
+      <button class="m-back" data-nav="services" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+      <div class="m-options">
+        <div class="m-option-row" data-opt="urgent">
+          <img class="m-opt-icon" src="assets/icons/opt-urgent.svg" alt="">
+          <div class="m-opt-text"><strong>Срочный вызов</strong><span>Приеду в течении 2 часов</span></div>
+          <div class="m-toggle"></div>
+        </div>
+        <div class="m-option-row" data-opt="outOfTown">
+          <img class="m-opt-icon" src="assets/icons/opt-outtown.svg" alt="">
+          <div class="m-opt-text"><strong>За городом</strong><span>20 км и более от г. Гродно</span></div>
+          <div class="m-toggle"></div>
+        </div>
+        <div class="m-option-row" data-opt="materials">
+          <img class="m-opt-icon" src="assets/icons/opt-materials.svg" alt="">
+          <div class="m-opt-text"><strong>Закупка материалов</strong><span>Съезжу сам за материалами</span></div>
+          <div class="m-toggle"></div>
+        </div>
+      </div>
+      <div class="m-add-file" id="m-add-file">
+        <img class="m-upload-icon" src="assets/icons/upload-mobile.svg" alt="">
+        <div class="m-add-file-body">
+          <strong id="m-add-file-title">Добавить фото</strong>
+          <span id="m-add-file-sub">Форматы JPG, PNG, GIF</span>
+        </div>
+        <div class="m-progress" id="m-upload-progress"><div class="m-progress-fill"></div></div>
+        <input type="file" id="m-file-input" multiple accept="image/*" hidden>
+      </div>
+      <button class="m-btn m-btn-primary m-next" data-nav="form" type="button">
+        <img src="assets/icons/arrow-next.svg" alt="">Далее
+      </button>
+    </section>
+
+    <!-- Форма -->
+    <section class="m-screen" id="m-screen-form">
+      <h2 class="m-title">Форма заявки</h2>
+      <button class="m-back" data-nav="options" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+      <div class="m-form">
+        <input class="m-field m-field-name" id="m-input-name" type="text" placeholder="Как к вам обращаться?">
+        <input class="m-field m-field-phone" id="m-input-phone" type="tel" placeholder="+375337075793">
+        <textarea class="m-field m-field-desc" id="m-input-desc" placeholder="Любая дополнительная информация..."></textarea>
+      </div>
+      <div class="m-summary">
+        <div class="m-summary-row"><span>Услуги</span><b id="m-sum-service">Мебельные</b></div>
+        <div class="m-summary-row"><span>Срочный вызов</span><b id="m-sum-urgent">Нет</b></div>
+        <div class="m-summary-row"><span>За городом</span><b id="m-sum-outtown">Нет</b></div>
+      </div>
+      <div class="m-add-file-summary"><span>Файлы</span><b id="m-sum-files">Нет файлов</b></div>
+      <button class="m-btn m-btn-primary m-next" data-nav="sent" type="button">
+        <img src="assets/icons/arrow-next.svg" alt="">Подтвердить
+      </button>
+    </section>
+
+    <!-- Контакты -->
+    <section class="m-screen" id="m-screen-contact">
+      <h2 class="m-title">Контакты</h2>
+      <button class="m-back" data-nav="main" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+      <div class="m-contact-list">
+        <div class="m-contact-card">
+          <img class="m-contact-icon" src="assets/icons/phone.svg" alt="">
+          <div class="m-contact-text">
+            <div class="m-contact-line"><span class="m-contact-code">8 025</span><span class="m-contact-number">707-67-93</span><span class="m-contact-mts">(MTS)</span></div>
+            <span class="m-contact-sub">Основной телефон</span>
+          </div>
+        </div>
+        <div class="m-contact-card" data-external="instagram">
+          <img class="m-contact-icon" src="assets/icons/menu-instagram.svg" alt="">
+          <div class="m-contact-text">
+            <strong>Написать в Instagram</strong>
+            <span class="m-contact-sub">Нас уже 2.3K</span>
+          </div>
+        </div>
+        <div class="m-contact-card" data-external="viber">
+          <img class="m-contact-icon" src="assets/icons/menu-viber.svg" alt="">
+          <div class="m-contact-text">
+            <strong>Написать в Viber</strong>
+            <span class="m-contact-sub">По клику прямо в чат</span>
+          </div>
+        </div>
+        <div class="m-contact-card" data-external="reviews">
+          <img class="m-contact-icon" src="assets/icons/reviews.svg" alt="">
+          <div class="m-contact-text">
+            <strong>Написать отзыв в Viber-Bot</strong>
+            <span class="m-contact-sub">Поделитесь впечатлением</span>
+          </div>
+        </div>
+      </div>
+      <button class="m-btn m-btn-primary m-next" data-nav="shortorder" type="button">
+        <img src="assets/icons/btn-fast-order.svg" alt="">Быстрая заявка
+      </button>
+    </section>
+
+    <!-- Быстрая заявка (модал) -->
+    <section class="m-screen m-screen-modal" id="m-screen-shortorder">
+      <div class="m-overlay"></div>
+      <div class="m-sheet">
+        <h3>Быстрая заявка</h3>
+        <p class="m-sheet-hint">Укажите актуальные данные</p>
+        <input class="m-field m-field-name" id="m-so-name" type="text" placeholder="Светлана">
+        <input class="m-field m-field-phone" id="m-so-phone" type="tel" placeholder="+375257075793">
+        <p class="m-sheet-note">После подтверждения отправки мы свяжемся с вами. Спасибо за доверие.</p>
+        <button class="m-btn m-btn-primary" data-nav="sent" type="button">
+          <img src="assets/icons/arrow-next.svg" alt="">Подтвердить
+        </button>
+      </div>
+    </section>
+
+    <!-- Заявка принята (модал) -->
+    <section class="m-screen m-screen-modal" id="m-screen-sent">
+      <div class="m-overlay"></div>
+      <div class="m-sheet m-sheet-small">
+        <div class="m-message">
+          <img src="assets/icons/success.svg" alt="">
+          <strong>Заявка принята</strong>
+        </div>
+        <button class="m-btn m-btn-primary" data-nav="main" data-reset="true" type="button">
+          <img src="assets/icons/arrow-next.svg" alt="">Закрыть
+        </button>
+      </div>
+    </section>
 
   </main>
 
-  <!-- Лоадер -->
-  <div class="loader" id="loader">
-    <div class="spinner"></div>
-  </div>
-
+  <div class="loader" id="m-loader"><div class="spinner"></div></div>
+  <div class="m-splash" id="m-splash"><img src="assets/icons/loader-mobile.svg" alt=""></div>
 </div>
 
 <script src="js/app.js"></script>
