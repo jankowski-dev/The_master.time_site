@@ -688,16 +688,26 @@ body {
   inset: 0;
   display: none;
   flex-direction: column;
-  padding: 78px 20px 16px;
+  padding: 84px 20px 0;
 }
 .m-screen.active { display: flex; }
 
-.m-title {
-  text-align: center;
-  line-height: 32px;
-  height: 32px;
+.m-gap {
+  flex-grow: var(--g, 1);
   flex-shrink: 0;
-  margin-bottom: 12px;
+  flex-basis: 0px;
+  min-height: 0;
+}
+
+.m-title-row {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+}
+.m-title {
   font-weight: 900;
   font-size: 18px;
   text-transform: uppercase;
@@ -705,8 +715,9 @@ body {
 }
 .m-back {
   position: absolute;
-  left: 20px;
-  top: 78px;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
   width: 40px;
   height: 40px;
   background: none;
@@ -740,45 +751,43 @@ body {
 .m-btn-primary:disabled { background: var(--gray-bg); color: var(--light-gray); cursor: default; }
 .m-btn-primary:disabled img { opacity: .4; }
 .m-btn-call { background: var(--gray-bg); color: var(--accent); }
-.m-next { margin-top: auto; }
 
 /* --- Главная --- */
-.m-hero { flex-shrink: 0; margin-top: 10px; }
+.m-hero { flex-shrink: 0; }
 .m-hero h1 {
   font-weight: 900;
-  font-size: 30px;
+  font-size: 34px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  line-height: 1.1;
+  line-height: 1.15;
   color: var(--accent);
 }
 .m-hero p {
-  margin-top: 12px;
+  margin-top: 14px;
   font-weight: 300;
   font-size: 14px;
   line-height: 21px;
   color: var(--gray-text);
 }
 .m-menu-grid {
-  margin-top: 18px;
   flex-shrink: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 .m-menu-item {
-  height: 90px;
+  height: 105px;
   background: var(--gray-bg);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 16px;
+  padding: 20px;
   cursor: pointer;
 }
 .m-menu-item img { width: 24px; height: 26px; }
 .m-menu-item span {
-  margin-top: 14px;
+  margin-top: 20px;
   font-weight: 700;
   font-size: 14px;
   line-height: 21px;
@@ -789,7 +798,7 @@ body {
   font-weight: 300;
 }
 .m-actions {
-  margin-top: auto;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -797,7 +806,7 @@ body {
 
 /* --- Услуги --- */
 .m-service-list {
-  flex: 1;
+  flex: 0 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -837,7 +846,7 @@ body {
 
 /* --- Опции --- */
 .m-options {
-  flex: 1;
+  flex: 0 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -894,7 +903,6 @@ body {
 .m-add-file {
   flex-shrink: 0;
   height: 136px;
-  margin-top: 20px;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   cursor: pointer;
@@ -933,7 +941,7 @@ body {
 
 /* --- Форма --- */
 .m-form {
-  flex: 1;
+  flex: 0 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -958,7 +966,6 @@ body {
 
 .m-summary {
   flex-shrink: 0;
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -979,7 +986,6 @@ body {
 .m-add-file-summary {
   flex-shrink: 0;
   height: 57px;
-  margin-top: 10px;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   display: flex;
@@ -992,7 +998,7 @@ body {
 
 /* --- Контакты --- */
 .m-contact-list {
-  flex: 1;
+  flex: 0 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;

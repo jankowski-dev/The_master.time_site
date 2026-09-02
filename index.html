@@ -211,10 +211,12 @@
 
     <!-- Главная (хаб) -->
     <section class="m-screen active" id="m-screen-main">
+      <div class="m-gap" style="--g:134"></div>
       <div class="m-hero">
         <h1>Услуги мастера на час в Гродно</h1>
         <p>Широкий спектр услуг. Быстрый выезд при необходимости. Скидки для постоянных клиентов</p>
       </div>
+      <div class="m-gap" style="--g:49"></div>
       <div class="m-menu-grid">
         <div class="m-menu-item" data-nav="services">
           <img src="assets/icons/menu-services.svg" alt="">
@@ -233,6 +235,7 @@
           <span>Чат в Viber</span>
         </div>
       </div>
+      <div class="m-gap" style="--g:25"></div>
       <div class="m-actions">
         <button class="m-btn m-btn-primary" data-nav="shortorder" type="button">
           <img src="assets/icons/btn-fast-order.svg" alt="">Быстрая заявка
@@ -241,12 +244,17 @@
           <img src="assets/icons/btn-call.svg" alt="">Позвонить
         </button>
       </div>
+      <div class="m-gap" style="--g:43"></div>
     </section>
 
     <!-- Услуги -->
     <section class="m-screen" id="m-screen-services">
-      <h2 class="m-title">Услуги</h2>
-      <button class="m-back" data-nav="main" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+      <div class="m-gap" style="--g:36"></div>
+      <div class="m-title-row">
+        <button class="m-back" data-nav="main" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+        <h2 class="m-title">Услуги</h2>
+      </div>
+      <div class="m-gap" style="--g:33"></div>
       <div class="m-service-list">
         <div class="m-service-item" data-service="Сантехнические">
           <img src="assets/icons/service-plumbing.svg" alt=""><span>Сантехнические</span><img class="m-check" src="assets/icons/choose-mobile.svg" alt="">
@@ -270,15 +278,21 @@
           <img src="assets/icons/service-misc.svg" alt=""><span>Прочие услуги</span><img class="m-check" src="assets/icons/choose-mobile.svg" alt="">
         </div>
       </div>
-      <button class="m-btn m-btn-primary m-next" id="m-next-services" data-nav="options" type="button" disabled>
+      <div class="m-gap" style="--g:47"></div>
+      <button class="m-btn m-btn-primary" id="m-next-services" data-nav="options" type="button" disabled>
         <img src="assets/icons/arrow-next.svg" alt="">Далее
       </button>
+      <div class="m-gap" style="--g:43"></div>
     </section>
 
     <!-- Опции -->
     <section class="m-screen" id="m-screen-options">
-      <h2 class="m-title">Опции</h2>
-      <button class="m-back" data-nav="services" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+      <div class="m-gap" style="--g:36"></div>
+      <div class="m-title-row">
+        <button class="m-back" data-nav="services" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+        <h2 class="m-title">Опции</h2>
+      </div>
+      <div class="m-gap" style="--g:33"></div>
       <div class="m-options">
         <div class="m-option-row" data-opt="urgent">
           <img class="m-opt-icon" src="assets/icons/opt-urgent.svg" alt="">
@@ -296,6 +310,7 @@
           <div class="m-toggle"></div>
         </div>
       </div>
+      <div class="m-gap" style="--g:121"></div>
       <div class="m-add-file" id="m-add-file">
         <img class="m-upload-icon" src="assets/icons/upload-mobile.svg" alt="">
         <div class="m-add-file-body">
@@ -305,35 +320,49 @@
         <div class="m-progress" id="m-upload-progress"><div class="m-progress-fill"></div></div>
         <input type="file" id="m-file-input" multiple accept="image/*" hidden>
       </div>
-      <button class="m-btn m-btn-primary m-next" data-nav="form" type="button">
+      <div class="m-gap" style="--g:20"></div>
+      <button class="m-btn m-btn-primary" data-nav="form" type="button">
         <img src="assets/icons/arrow-next.svg" alt="">Далее
       </button>
+      <div class="m-gap" style="--g:43"></div>
     </section>
 
     <!-- Форма -->
     <section class="m-screen" id="m-screen-form">
-      <h2 class="m-title">Форма заявки</h2>
-      <button class="m-back" data-nav="options" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+      <div class="m-gap" style="--g:36"></div>
+      <div class="m-title-row">
+        <button class="m-back" data-nav="options" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+        <h2 class="m-title">Форма заявки</h2>
+      </div>
+      <div class="m-gap" style="--g:33"></div>
       <div class="m-form">
         <input class="m-field m-field-name" id="m-input-name" type="text" placeholder="Как к вам обращаться?">
         <input class="m-field m-field-phone" id="m-input-phone" type="tel" placeholder="+375337075793">
         <textarea class="m-field m-field-desc" id="m-input-desc" placeholder="Любая дополнительная информация..."></textarea>
       </div>
+      <div class="m-gap" style="--g:20"></div>
       <div class="m-summary">
         <div class="m-summary-row"><span>Услуги</span><b id="m-sum-service">Мебельные</b></div>
         <div class="m-summary-row"><span>Срочный вызов</span><b id="m-sum-urgent">Нет</b></div>
         <div class="m-summary-row"><span>За городом</span><b id="m-sum-outtown">Нет</b></div>
       </div>
+      <div class="m-gap" style="--g:89"></div>
       <div class="m-add-file-summary"><span>Файлы</span><b id="m-sum-files">Нет файлов</b></div>
-      <button class="m-btn m-btn-primary m-next" data-nav="sent" type="button">
+      <div class="m-gap" style="--g:20"></div>
+      <button class="m-btn m-btn-primary" data-nav="sent" type="button">
         <img src="assets/icons/arrow-next.svg" alt="">Подтвердить
       </button>
+      <div class="m-gap" style="--g:43"></div>
     </section>
 
     <!-- Контакты -->
     <section class="m-screen" id="m-screen-contact">
-      <h2 class="m-title">Контакты</h2>
-      <button class="m-back" data-nav="main" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+      <div class="m-gap" style="--g:36"></div>
+      <div class="m-title-row">
+        <button class="m-back" data-nav="main" type="button"><img src="assets/icons/back-mobile.svg" alt=""></button>
+        <h2 class="m-title">Контакты</h2>
+      </div>
+      <div class="m-gap" style="--g:33"></div>
       <div class="m-contact-list">
         <div class="m-contact-card">
           <img class="m-contact-icon" src="assets/icons/phone.svg" alt="">
@@ -364,9 +393,11 @@
           </div>
         </div>
       </div>
-      <button class="m-btn m-btn-primary m-next" data-nav="shortorder" type="button">
+      <div class="m-gap" style="--g:167"></div>
+      <button class="m-btn m-btn-primary" data-nav="shortorder" type="button">
         <img src="assets/icons/btn-fast-order.svg" alt="">Быстрая заявка
       </button>
+      <div class="m-gap" style="--g:43"></div>
     </section>
 
     <!-- Быстрая заявка (модал) -->
