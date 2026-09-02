@@ -19,8 +19,10 @@
   /* ===== Переключение и масштабирование ===== */
   function isMobileMode() { return window.innerWidth < BREAKPOINT; }
 
-  function scaleStage(stage, w, h) {
-    var s = Math.min(window.innerWidth / w, window.innerHeight / h);
+  function scaleStage(stage, w, h, fillWidth) {
+    var s = fillWidth
+      ? window.innerWidth / w
+      : Math.min(window.innerWidth / w, window.innerHeight / h);
     stage.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
   }
 
@@ -28,8 +30,9 @@
     var mobile = isMobileMode();
     stageDesktop.classList.toggle('active', !mobile);
     stageMobile.classList.toggle('active', mobile);
-    scaleStage(stageDesktop, 1920, 1001);
-    scaleStage(stageMobile, 402, 874);
+    scaleStage(stageDesktop, 1920, 1001, false);
+    scaleStage(stageMobile, 402, 874, true);
+    document.body.style.background = mobile ? '#ffffff' : '#161312';
   }
   window.addEventListener('resize', applyMode);
 
