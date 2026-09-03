@@ -140,10 +140,11 @@
     var baseHeight = 0;
 
     function updateSheet() {
-      if (!focused) { sheet.style.transform = ''; return; }
-      var vv = window.visualViewport;
-      var kb = vv ? Math.max(0, baseHeight - vv.height) : 0;
-      sheet.style.transform = kb > 0 ? 'translateY(-' + kb + 'px)' : '';
+      var kbOpen = false;
+      if (window.visualViewport) {
+        kbOpen = window.visualViewport.height < baseHeight - 100;
+      }
+      sheet.style.transform = (focused && kbOpen) ? 'translateY(-35vh)' : '';
     }
 
     inputs.forEach(function (inp) {
