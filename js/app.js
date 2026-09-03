@@ -108,9 +108,18 @@
     el.addEventListener('click', function () { /* заглушка: реальные ссылки не заданы */ });
   });
 
-  stageMobile.querySelectorAll('.m-screen-modal .m-overlay').forEach(function (ov) {
-    ov.addEventListener('click', function () { navigateMobile('main'); });
-  });
+  var shortorderOverlay = document.querySelector('#m-screen-shortorder .m-overlay');
+  if (shortorderOverlay) {
+    shortorderOverlay.addEventListener('click', function () { navigateMobile('main'); });
+  }
+
+  var sentScreen = document.getElementById('m-screen-sent');
+  if (sentScreen) {
+    sentScreen.addEventListener('click', function () {
+      resetState();
+      navigateMobile('main');
+    });
+  }
 
   /* ===== Выбор услуги ===== */
   var nextMain = document.getElementById('next-main');
