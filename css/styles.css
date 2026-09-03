@@ -1076,14 +1076,15 @@ body {
 #m-screen-shortorder .m-sheet { transition: transform .25s ease; }
 #m-screen-shortorder:focus-within .m-sheet { transform: translateY(-35vh); }
 .m-sheet-small {
-  top: 50%;
-  bottom: auto;
+  bottom: 20px;
+  top: auto;
   left: 36px;
   right: 36px;
-  transform: translateY(-50%);
+  transform: none;
   border-radius: 20px;
-  padding: 36px 20px;
+  padding: 32px 20px;
   align-items: center;
+  justify-content: center;
 }
 .m-message {
   display: flex;
@@ -1097,6 +1098,13 @@ body {
   margin-top: 20px;
   font-weight: 700;
   font-size: 16px;
+  color: var(--gray-text);
+  white-space: nowrap;
+}
+.m-message span {
+  margin-top: 6px;
+  font-weight: 300;
+  font-size: 13px;
   color: var(--gray-text);
   white-space: nowrap;
 }
