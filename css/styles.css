@@ -464,11 +464,13 @@ body {
   top: 75px;
   height: 55px;
   background: transparent;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--light-gray);
   padding: 0 27px;
-  color: var(--accent);
+  color: var(--gray-text);
 }
-.field-phone::placeholder { color: var(--accent); }
+.field-phone::placeholder { color: var(--light-gray); }
+.field-phone:focus,
+.field-phone:not(:placeholder-shown) { border-color: var(--accent); color: var(--accent); }
 .field-desc {
   top: 150px;
   height: 202px;
@@ -689,7 +691,7 @@ body {
   inset: 0;
   display: none;
   flex-direction: column;
-  padding: 84px 20px 0;
+  padding: 84px 20px 20px;
 }
 .m-screen.active { display: flex; }
 
@@ -719,14 +721,14 @@ body {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+  width: 24px;
+  height: 24px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
 }
-.m-back img { width: 40px; height: 40px; display: block; }
+.m-back img { width: 24px; height: 24px; display: block; }
 
 .m-btn {
   width: 100%;
@@ -960,8 +962,10 @@ body {
 }
 .m-field-name { flex: 0 0 55px; background: var(--gray-bg); border: none; padding: 0 28px; color: var(--gray-text); }
 .m-field-name::placeholder { color: var(--light-gray); }
-.m-field-phone { flex: 0 0 55px; background: transparent; border: 1px solid var(--accent); padding: 0 28px; color: var(--accent); }
-.m-field-phone::placeholder { color: var(--accent); }
+.m-field-phone { flex: 0 0 55px; background: transparent; border: 1px solid var(--light-gray); padding: 0 28px; color: var(--gray-text); }
+.m-field-phone::placeholder { color: var(--light-gray); }
+.m-field-phone:focus,
+.m-field-phone:not(:placeholder-shown) { border-color: var(--accent); color: var(--accent); }
 .m-field-desc { flex: 1 1 90px; min-height: 70px; background: var(--gray-bg); border: none; padding: 16px 28px; color: var(--gray-text); resize: none; }
 .m-field-desc::placeholder { color: var(--light-gray); }
 

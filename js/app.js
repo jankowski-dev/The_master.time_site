@@ -50,10 +50,6 @@
     document.body.style.background = mobile ? '#ffffff' : '#161312';
   }
   window.addEventListener('resize', applyMode);
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', applyMode);
-    window.visualViewport.addEventListener('scroll', applyMode);
-  }
 
   /* ===== Навигация через лоадер ===== */
   var navigating = false;
