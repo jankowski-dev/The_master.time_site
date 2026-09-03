@@ -72,6 +72,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
 }
 .logo-icon { width: 45px; height: 46px; }
 .logo-text {
@@ -656,6 +657,7 @@ body {
   align-items: center;
   gap: 8px;
   height: 37px;
+  cursor: pointer;
 }
 .m-logo img { width: 36px; height: 37px; }
 .m-logo span {
@@ -1074,9 +1076,8 @@ body {
 }
 .m-sheet .m-btn { margin-top: 20px; }
 #m-screen-shortorder .m-sheet { transition: transform .25s ease; }
-#m-screen-shortorder:focus-within .m-sheet { transform: translateY(-35vh); }
 .m-sheet-small {
-  bottom: 20px;
+  bottom: 40px;
   top: auto;
   left: 36px;
   right: 36px;

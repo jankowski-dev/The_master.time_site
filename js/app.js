@@ -121,6 +121,49 @@
     });
   }
 
+  /* ===== Логотип -> на главную ===== */
+  var mLogo = document.querySelector('#stage-mobile .m-logo');
+  if (mLogo) {
+    mLogo.addEventListener('click', function () { navigateMobile('main'); });
+  }
+  var dLogo = document.querySelector('#stage-desktop .logo');
+  if (dLogo) {
+    dLogo.addEventListener('click', function () { navigateDesktop('main'); });
+  }
+
+  /* ===== Клавиатура в быстрой заявке ===== */
+  (function () {
+    var sheet = document.querySelector('#m-screen-shortorder .m-sheet');
+    if (!sheet) return;
+    var inputs = sheet.querySelectorAll('input');
+    var focused = false;
+    var baseHeight = 0;
+
+    function updateSheet() {
+      if (!focused) { sheet.style.transform = ''; return; }
+      var vv = window.visualViewport;
+      var kb = vv ? Math.max(0, baseHeight - vv.height) : 0;
+      sheet.style.transform = kb > 0 ? 'translateY(-' + kb + 'px)' : '';
+    }
+
+    inputs.forEach(function (inp) {
+      inp.addEventListener('focus', function () {
+        focused = true;
+        baseHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        updateSheet();
+      });
+      inp.addEventListener('blur', function () {
+        focused = false;
+        updateSheet();
+      });
+    });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateSheet);
+      window.visualViewport.addEventListener('scroll', updateSheet);
+    }
+  })();
+
   /* ===== Выбор услуги ===== */
   var nextMain = document.getElementById('next-main');
   var mNextServices = document.getElementById('m-next-services');
