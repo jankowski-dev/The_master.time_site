@@ -49,7 +49,13 @@
     scaleStage(stageMobile, 402, 874, true);
     document.body.style.background = mobile ? '#ffffff' : '#161312';
   }
-  window.addEventListener('resize', applyMode);
+  var lastInnerWidth = window.innerWidth;
+  window.addEventListener('resize', function () {
+    if (window.innerWidth !== lastInnerWidth) {
+      lastInnerWidth = window.innerWidth;
+      applyMode();
+    }
+  });
 
   /* ===== Навигация через лоадер ===== */
   var navigating = false;
@@ -144,7 +150,7 @@
       if (window.visualViewport) {
         kbOpen = window.visualViewport.height < baseHeight - 100;
       }
-      sheet.style.transform = (focused && kbOpen) ? 'translateY(-35vh)' : '';
+      sheet.style.transform = (focused && kbOpen) ? 'translateY(-22vh)' : '';
     }
 
     inputs.forEach(function (inp) {
@@ -161,7 +167,6 @@
 
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', updateSheet);
-      window.visualViewport.addEventListener('scroll', updateSheet);
     }
   })();
 
