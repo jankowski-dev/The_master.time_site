@@ -652,18 +652,18 @@ body {
 .m-header {
   position: absolute;
   left: 26px;
-  top: 35px;
+  top: 20px;
   width: 341px;
-  height: 46px;
+  height: 37px;
   z-index: 15;
 }
 .m-logo {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 46px;
+  height: 37px;
 }
-.m-logo img { width: 45px; height: 46px; }
+.m-logo img { width: 36px; height: 37px; }
 .m-logo span {
   font-weight: 900;
   font-size: 18px;
@@ -674,7 +674,8 @@ body {
 .m-header-vector {
   position: absolute;
   right: 0;
-  top: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 19px;
   height: 21px;
 }
