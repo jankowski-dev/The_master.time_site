@@ -752,10 +752,10 @@ body {
 .m-hero { flex-shrink: 0; }
 .m-hero h1 {
   font-weight: 900;
-  font-size: 34px;
-  letter-spacing: 0.04em;
+  font-size: 27px;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  line-height: 1.15;
+  line-height: 1.22;
   color: var(--accent);
 }
 .m-hero p {
@@ -785,13 +785,16 @@ body {
 .m-menu-item span {
   margin-top: 20px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 21px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: var(--gray-text);
 }
 .m-menu-item span i {
   font-style: normal;
   font-weight: 300;
+  letter-spacing: 0.02em;
 }
 .m-actions {
   flex-shrink: 0;
