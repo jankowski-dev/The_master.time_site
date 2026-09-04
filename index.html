@@ -6,7 +6,7 @@
 <title>Pracue — услуги мастера на час в Гродно</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&display=optional" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -262,11 +262,11 @@
       </div>
       <div class="m-gap" style="--g:25"></div>
       <div class="m-actions">
-        <button class="m-btn m-btn-primary" data-nav="shortorder" type="button">
-          <img src="assets/icons/btn-fast-order.svg" alt="">Быстрая заявка
+        <button class="m-btn m-btn-primary" data-call type="button">
+          <img src="assets/icons/btn-call-white.svg" alt="">Позвонить
         </button>
-        <button class="m-btn m-btn-call" data-call type="button">
-          <img src="assets/icons/btn-call.svg" alt="">Позвонить
+        <button class="m-btn m-btn-call" data-modal="shortorder" type="button">
+          <img src="assets/icons/btn-fast-order-orange.svg" alt="">Быстрая заявка
         </button>
       </div>
     </section>
@@ -368,7 +368,7 @@
       <div class="m-gap" style="--g:89"></div>
       <div class="m-add-file-summary"><span>Файлы</span><b id="m-sum-files">Нет файлов</b></div>
       <div class="m-gap" style="--g:20"></div>
-      <button class="m-btn m-btn-primary" data-nav="sent" type="button">
+      <button class="m-btn m-btn-primary" id="m-form-submit" type="button">
         <img src="assets/icons/arrow-next.svg" alt="">Подтвердить
       </button>
     </section>
@@ -412,39 +412,39 @@
         </div>
       </div>
       <div class="m-gap" style="--g:167"></div>
-      <button class="m-btn m-btn-primary" data-nav="shortorder" type="button">
+      <button class="m-btn m-btn-primary" data-modal="shortorder" type="button">
         <img src="assets/icons/btn-fast-order.svg" alt="">Быстрая заявка
       </button>
     </section>
 
-    <!-- Быстрая заявка (модал) -->
-    <section class="m-screen m-screen-modal" id="m-screen-shortorder">
-      <div class="m-overlay"></div>
-      <div class="m-sheet">
-        <h3>Быстрая заявка</h3>
-        <p class="m-sheet-hint">Укажите актуальные данные</p>
-        <input class="m-field m-field-name" id="m-so-name" type="text" placeholder="Светлана">
-        <input class="m-field m-field-phone" id="m-so-phone" type="tel" placeholder="+375257075793">
-        <p class="m-sheet-note">После подтверждения отправки мы свяжемся с вами. Спасибо за доверие.</p>
-        <button class="m-btn m-btn-primary" data-nav="sent" type="button">
-          <img src="assets/icons/arrow-next.svg" alt="">Подтвердить
-        </button>
-      </div>
-    </section>
-
-    <!-- Заявка принята (модал) -->
-    <section class="m-screen m-screen-modal" id="m-screen-sent">
-      <div class="m-overlay"></div>
-      <div class="m-sheet m-sheet-small">
-        <div class="m-message">
-          <img src="assets/icons/success.svg" alt="">
-          <strong>Заявка принята</strong>
-          <span>Ожидайте звонка от мастера</span>
-        </div>
-      </div>
-    </section>
-
   </main>
+
+  <!-- Быстрая заявка (модал) -->
+  <div class="m-modal" id="m-modal-shortorder">
+    <div class="m-overlay"></div>
+    <div class="m-sheet">
+      <h3>Быстрая заявка</h3>
+      <p class="m-sheet-hint">Укажите актуальные данные</p>
+      <input class="m-field m-field-name" id="m-so-name" type="text" placeholder="Светлана">
+      <input class="m-field m-field-phone" id="m-so-phone" type="tel" placeholder="+375257075793">
+      <p class="m-sheet-note">После подтверждения отправки мы свяжемся с вами. Спасибо за доверие.</p>
+      <button class="m-btn m-btn-primary" id="m-confirm-shortorder" type="button">
+        <img src="assets/icons/arrow-next.svg" alt="">Подтвердить
+      </button>
+    </div>
+  </div>
+
+  <!-- Заявка принята (модал) -->
+  <div class="m-modal" id="m-modal-sent">
+    <div class="m-overlay"></div>
+    <div class="m-sheet m-sheet-small">
+      <div class="m-message">
+        <img src="assets/icons/success.svg" alt="">
+        <strong>Заявка принята</strong>
+        <span>Ожидайте звонка от мастера</span>
+      </div>
+    </div>
+  </div>
 
   <div class="loader" id="m-loader"><div class="spinner"></div></div>
   <div class="m-splash" id="m-splash"><img src="assets/icons/loader-mobile.svg" alt=""></div>

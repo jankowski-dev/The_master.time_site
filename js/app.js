@@ -73,7 +73,12 @@
     }, 600);
   }
 
-  function navigateMobile(id) {
+  function navigateMobile(id, instant) {
+    if (instant) {
+      switchScreen(stageMobile, 'm-screen-', id);
+      if (id === 'form') updateSummary();
+      return;
+    }
     if (navigating) return;
     navigating = true;
     loaderMobile.classList.add('active');
@@ -109,16 +114,48 @@
     el.addEventListener('click', function () { /* заглушка: реальные ссылки не заданы */ });
   });
 
-  var shortorderOverlay = document.querySelector('#m-screen-shortorder .m-overlay');
-  if (shortorderOverlay) {
-    shortorderOverlay.addEventListener('click', function () { navigateMobile('main'); });
+  /* ===== Модальные окна ===== */
+  var modalShortorder = document.getElementById('m-modal-shortorder');
+  var modalSent = document.getElementById('m-modal-sent');
+
+  function showModal(el) { if (el) el.classList.add('active'); }
+  function hideModal(el) { if (el) el.classList.remove('active'); }
+
+  stageMobile.querySelectorAll('[data-modal]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      showModal(document.getElementById('m-modal-' + btn.getAttribute('data-modal')));
+    });
+  });
+
+  var confirmShortorder = document.getElementById('m-confirm-shortorder');
+  if (confirmShortorder) {
+    confirmShortorder.addEventListener('click', function () {
+      hideModal(modalShortorder);
+      showModal(modalSent);
+    });
   }
 
-  var sentScreen = document.getElementById('m-screen-sent');
-  if (sentScreen) {
-    sentScreen.addEventListener('click', function () {
+  var formSubmit = document.getElementById('m-form-submit');
+  if (formSubmit) {
+    formSubmit.addEventListener('click', function () {
+      navigateMobile('main', true);
+      showModal(modalSent);
+    });
+  }
+
+  if (modalSent) {
+    modalSent.addEventListener('click', function () {
+      hideModal(modalSent);
       resetState();
-      navigateMobile('main');
+      navigateMobile('main', true);
+    });
+  }
+
+  var shortorderOverlay = document.querySelector('#m-modal-shortorder .m-overlay');
+  if (shortorderOverlay) {
+    shortorderOverlay.addEventListener('click', function () {
+      if (document.activeElement) document.activeElement.blur();
+      hideModal(modalShortorder);
     });
   }
 
@@ -134,7 +171,7 @@
 
   /* ===== Клавиатура в быстрой заявке ===== */
   (function () {
-    var sheet = document.querySelector('#m-screen-shortorder .m-sheet');
+    var sheet = document.querySelector('#m-modal-shortorder .m-sheet');
     if (!sheet) return;
     var inputs = sheet.querySelectorAll('input');
     var focused = false;
