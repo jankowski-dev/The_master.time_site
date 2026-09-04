@@ -665,14 +665,7 @@ body {
   height: 37px;
   cursor: pointer;
 }
-.m-logo img { width: 36px; height: 37px; }
-.m-logo span {
-  font-weight: 900;
-  font-size: 18px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--gray-text);
-}
+.m-logo img { width: 147px; height: 23px; }
 .m-header-vector {
   position: absolute;
   right: 0;
