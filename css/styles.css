@@ -38,8 +38,32 @@ body {
   display: none;
 }
 .stage.active { display: block; }
-.stage.desktop { width: 1920px; height: 1001px; }
+.stage.desktop { width: 1920px; }
 .stage.mobile { width: 402px; height: 874px; }
+
+/* ===== Гибкие отступы (десктоп) ===== */
+.d-gap {
+  flex-grow: var(--g, 1);
+  flex-shrink: 0;
+  flex-basis: 0px;
+  min-height: 0;
+}
+.d-title-row {
+  position: relative;
+  flex-shrink: 0;
+  height: 49px;
+}
+.d-content-row {
+  flex-shrink: 0;
+  display: flex;
+  gap: 20px;
+}
+.d-col-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
 /* ===== Шапка ===== */
 .header {
@@ -114,18 +138,19 @@ body {
   position: absolute;
   left: 0;
   top: 0;
+  bottom: 0;
   width: 819px;
-  height: 1001px;
   background: var(--dark);
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  padding-left: 164px;
 }
 
 .social {
-  position: absolute;
-  left: 164px;
-  top: 182px;
   width: 378px;
   height: 31px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -147,10 +172,8 @@ body {
 .social-icons img:nth-child(3) { width: 23px; height: 27px; }
 
 .welcome {
-  position: absolute;
-  left: 165px;
-  top: 283px;
   width: 553px;
+  flex-shrink: 0;
 }
 .hero {
   display: flex;
@@ -182,11 +205,9 @@ body {
 }
 
 .dark-menu {
-  position: absolute;
-  left: 164px;
-  top: 759px;
   width: 460px;
   height: 52px;
+  flex-shrink: 0;
   display: flex;
   gap: 20px;
 }
@@ -222,8 +243,8 @@ body {
   position: absolute;
   left: 942px;
   top: 183px;
+  bottom: 0;
   width: 875px;
-  height: 627px;
   z-index: 20;
 }
 
@@ -231,11 +252,12 @@ body {
   position: absolute;
   left: 0;
   top: 0;
+  bottom: 0;
   width: 875px;
-  height: 627px;
   display: none;
+  flex-direction: column;
 }
-.screen.active { display: block; }
+.screen.active { display: flex; }
 
 .title {
   position: absolute;
@@ -259,11 +281,8 @@ body {
 
 /* --- Главная: услуги --- */
 .services {
-  position: absolute;
-  left: 0;
-  top: 113px;
   width: 862px;
-  height: 352px;
+  flex-shrink: 0;
   display: grid;
   grid-template-columns: 275px 273px 273px;
   grid-auto-rows: 104px;
@@ -308,10 +327,8 @@ body {
 
 /* --- Опции --- */
 .options {
-  position: absolute;
-  left: 0;
-  top: 114px;
   width: 361px;
+  flex-shrink: 0;
 }
 .option-row {
   position: relative;
@@ -381,11 +398,9 @@ body {
 }
 
 .add-file {
-  position: absolute;
-  left: 384px;
-  top: 114px;
   width: 478px;
   height: 352px;
+  flex-shrink: 0;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   cursor: pointer;
@@ -435,11 +450,10 @@ body {
 
 /* --- Форма --- */
 .form {
-  position: absolute;
-  left: 0;
-  top: 114px;
+  position: relative;
   width: 478px;
   height: 352px;
+  flex-shrink: 0;
 }
 .field {
   position: absolute;
@@ -476,10 +490,8 @@ body {
 }
 
 .summary {
-  position: absolute;
-  left: 501px;
-  top: 114px;
   width: 361px;
+  flex-shrink: 0;
 }
 .summary-row {
   width: 361px;
@@ -506,11 +518,9 @@ body {
 }
 
 .add-file-summary {
-  position: absolute;
-  left: 501px;
-  top: 409px;
   width: 361px;
   height: 57px;
+  flex-shrink: 0;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   display: flex;
@@ -533,11 +543,10 @@ body {
 
 /* --- Успех --- */
 .message {
-  position: absolute;
-  left: 202px;
-  top: 197px;
   width: 540px;
   height: 146px;
+  flex-shrink: 0;
+  align-self: center;
   display: flex;
   align-items: center;
 }
@@ -561,15 +570,12 @@ body {
 
 /* ===== Кнопки действий ===== */
 .actions {
-  position: absolute;
-  left: 0;
-  top: 576px;
-  width: 875px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
   height: 51px;
 }
 .btn {
-  position: absolute;
-  top: 0;
   height: 51px;
   border-radius: 10px;
   display: flex;
@@ -585,15 +591,14 @@ body {
 }
 .btn img { width: 14px; height: 14px; display: block; }
 .btn-back {
-  left: 0;
   width: 202px;
   background: var(--gray-bg);
   border: none;
   color: var(--light-gray);
 }
 .btn-primary {
-  left: 222px;
   width: 202px;
+  margin-left: 20px;
   background: var(--accent);
   border: none;
   color: var(--white);
@@ -605,8 +610,8 @@ body {
 }
 .btn-primary:disabled img { opacity: .4; }
 .btn-complain {
-  left: 659px;
   width: 216px;
+  margin-left: auto;
   background: transparent;
   border: 1px solid var(--accent);
   color: var(--accent);

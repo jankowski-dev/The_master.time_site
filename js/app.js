@@ -25,15 +25,10 @@
     return { width: window.innerWidth, height: window.innerHeight };
   }
 
-  function scaleStage(stage, w, h, isMobile) {
+  function scaleStage(stage, w) {
     var vp = getViewport();
-    var scale;
-    if (isMobile) {
-      scale = vp.width / w;
-      stage.style.height = (vp.height / scale) + 'px';
-    } else {
-      scale = Math.min(vp.width / w, vp.height / h);
-    }
+    var scale = vp.width / w;
+    stage.style.height = (vp.height / scale) + 'px';
     var cx = (vp.offsetLeft || 0) + vp.width / 2;
     var cy = (vp.offsetTop || 0) + vp.height / 2;
     stage.style.left = cx + 'px';
@@ -45,8 +40,8 @@
     var mobile = isMobileMode();
     stageDesktop.classList.toggle('active', !mobile);
     stageMobile.classList.toggle('active', mobile);
-    scaleStage(stageDesktop, 1920, 1001, false);
-    scaleStage(stageMobile, 402, 874, true);
+    scaleStage(stageDesktop, 1920);
+    scaleStage(stageMobile, 402);
     document.body.style.background = mobile ? '#ffffff' : '#161312';
   }
   var lastInnerWidth = window.innerWidth;

@@ -30,6 +30,7 @@
   </header>
 
   <aside class="dark-block">
+    <div class="d-gap" style="--g:182"></div>
     <div class="social">
       <span class="social-title">Присоединяйтесь к нам</span>
       <div class="social-icons">
@@ -38,6 +39,7 @@
         <img src="assets/icons/social-1.svg" alt="">
       </div>
     </div>
+    <div class="d-gap" style="--g:70"></div>
     <div class="welcome">
       <h1 class="hero">
         <span class="hero-line">услуги</span>
@@ -47,6 +49,7 @@
       <p class="intro">Профессиональная укладка плитки - залог красивого и долговечного пола в вашем доме. Доверьте этот важный этап ремонта нашим специалистам.</p>
       <p class="copyright">Янковский В.В.  УНП 56723984   2025-2026</p>
     </div>
+    <div class="d-gap" style="--g:97"></div>
     <div class="dark-menu">
       <button class="btn-viber" type="button">
         <img src="assets/icons/viber.svg" alt="">Чат в Viber
@@ -55,12 +58,16 @@
         <img src="assets/icons/instagram.svg" alt="">Instagram
       </button>
     </div>
+    <div class="d-gap" style="--g:190"></div>
   </aside>
 
   <main class="screens">
     <section class="screen active" id="screen-main">
-      <h2 class="title">Услуги</h2>
-      <p class="subtitle">Выберите подходящую категорию услуг</p>
+      <div class="d-title-row">
+        <h2 class="title">Услуги</h2>
+        <p class="subtitle">Выберите подходящую категорию услуг</p>
+      </div>
+      <div class="d-gap" style="--g:63"></div>
       <div class="services" id="services">
         <div class="service-item" data-service="Сантехнические">
           <img class="service-icon" src="assets/icons/service-plumbing.svg" alt="">
@@ -93,16 +100,22 @@
           <img class="service-check" src="assets/icons/check.svg" alt="">
         </div>
       </div>
+      <div class="d-gap" style="--g:235"></div>
       <div class="actions">
         <button class="btn btn-back" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
         <button class="btn btn-primary" id="next-main" data-nav="options" type="button" disabled><img src="assets/icons/arrow-next.svg" alt="">Далее</button>
         <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
       </div>
+      <div class="d-gap" style="--g:191"></div>
     </section>
 
     <section class="screen" id="screen-options">
-      <h2 class="title">Опции</h2>
-      <p class="subtitle">Выберите подходящую опцию</p>
+      <div class="d-title-row">
+        <h2 class="title">Опции</h2>
+        <p class="subtitle">Выберите подходящую опцию</p>
+      </div>
+      <div class="d-gap" style="--g:63"></div>
+      <div class="d-content-row">
       <div class="options">
         <div class="option-row" data-opt="urgent">
           <img class="opt-icon" src="assets/icons/opt-urgent.svg" alt="">
@@ -138,21 +151,29 @@
         <div class="progress" id="upload-progress"><div class="progress-fill"></div></div>
         <input type="file" id="file-input" multiple accept="image/*" hidden>
       </div>
+      </div>
+      <div class="d-gap" style="--g:111"></div>
       <div class="actions">
         <button class="btn btn-back" data-nav="main" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
         <button class="btn btn-primary" data-nav="form" type="button"><img src="assets/icons/arrow-next.svg" alt="">Далее</button>
         <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
       </div>
+      <div class="d-gap" style="--g:191"></div>
     </section>
 
     <section class="screen" id="screen-form">
-      <h2 class="title">Форма</h2>
-      <p class="subtitle">Выберите подходящую опцию</p>
+      <div class="d-title-row">
+        <h2 class="title">Форма</h2>
+        <p class="subtitle">Выберите подходящую опцию</p>
+      </div>
+      <div class="d-gap" style="--g:63"></div>
+      <div class="d-content-row">
       <div class="form">
         <input class="field field-name" id="input-name" type="text" placeholder="Как к вам обращаться?">
         <input class="field field-phone" id="input-phone" type="tel" placeholder="+375337075793">
         <textarea class="field field-desc" id="input-desc" placeholder="Можете описать проблему более детально..."></textarea>
       </div>
+      <div class="d-col-right">
       <div class="summary">
         <div class="summary-row"><span>Услуги</span><b id="sum-service">Мебельные</b></div>
         <div class="summary-row"><span>Срочный вызов</span><b id="sum-urgent">Нет</b></div>
@@ -163,16 +184,23 @@
         <span>Файлы</span>
         <b id="sum-files">Нет файлов</b>
       </div>
+      </div>
+      </div>
+      <div class="d-gap" style="--g:111"></div>
       <div class="actions">
         <button class="btn btn-back" data-nav="options" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
         <button class="btn btn-primary" data-nav="success" type="button"><img src="assets/icons/arrow-next.svg" alt="">Подтвердить</button>
         <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
       </div>
+      <div class="d-gap" style="--g:191"></div>
     </section>
 
     <section class="screen" id="screen-success">
-      <h2 class="title">Форма</h2>
-      <p class="subtitle">Выберите подходящую опцию</p>
+      <div class="d-title-row">
+        <h2 class="title">Форма</h2>
+        <p class="subtitle">Выберите подходящую опцию</p>
+      </div>
+      <div class="d-gap" style="--g:147"></div>
       <div class="message">
         <img class="message-icon" src="assets/icons/success.svg" alt="">
         <div class="message-text">
@@ -180,11 +208,13 @@
           <p>Мастер свяжеться с вами в ближашее время для уточнения деталей и адреса</p>
         </div>
       </div>
+      <div class="d-gap" style="--g:233"></div>
       <div class="actions">
         <button class="btn btn-back" data-nav="form" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
         <button class="btn btn-primary" data-nav="main" data-reset="true" type="button"><img src="assets/icons/arrow-next.svg" alt="">На главную</button>
         <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
       </div>
+      <div class="d-gap" style="--g:191"></div>
     </section>
   </main>
 
