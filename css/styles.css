@@ -749,7 +749,7 @@ body {
 .m-btn-call { background: var(--gray-bg); color: var(--accent); }
 
 /* --- Главная --- */
-.m-hero { flex-shrink: 0; }
+.m-hero { flex-shrink: 1; min-height: 0; overflow: hidden; }
 .m-hero h1 {
   font-weight: 900;
   font-size: 34px;

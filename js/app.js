@@ -501,4 +501,7 @@
   applyMode();
   initSplash();
   loadSettings();
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { applyMode(); });
+  }
 })();
