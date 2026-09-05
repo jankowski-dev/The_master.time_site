@@ -433,14 +433,25 @@
     </div>
   </div>
 
-  <!-- Заявка принята (модал) -->
+  <!-- Отправка / Заявка принята (модал) -->
   <div class="m-modal" id="m-modal-sent">
     <div class="m-overlay"></div>
     <div class="m-sheet m-sheet-small">
       <div class="m-message">
-        <img src="assets/icons/success.svg" alt="">
-        <strong>Заявка принята</strong>
-        <span>Ожидайте звонка от мастера</span>
+        <div class="m-state m-state-loading">
+          <div class="m-spinner"></div>
+          <strong>Отправляем</strong>
+        </div>
+        <div class="m-state m-state-success">
+          <img src="assets/icons/success.svg" alt="">
+          <strong>Заявка принята</strong>
+          <span>Ожидайте звонка от мастера</span>
+        </div>
+        <div class="m-state m-state-error">
+          <img src="assets/icons/flag.svg" alt="">
+          <strong>Произошла ошибка</strong>
+          <span>Попробуйте ещё раз</span>
+        </div>
       </div>
     </div>
   </div>

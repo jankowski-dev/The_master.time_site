@@ -123,9 +123,61 @@
   /* ===== Модальные окна ===== */
   var modalShortorder = document.getElementById('m-modal-shortorder');
   var modalSent = document.getElementById('m-modal-sent');
+  var isSending = false;
 
   function showModal(el) { if (el) el.classList.add('active'); }
   function hideModal(el) { if (el) el.classList.remove('active'); }
+
+  function setModalState(state) {
+    var msg = document.getElementById('m-message');
+    if (!msg) return;
+    msg.querySelectorAll('.m-state').forEach(function (el) {
+      el.classList.toggle('active', el.classList.contains('m-state-' + state));
+    });
+  }
+
+  function sendOrder(data) {
+    showModal(modalSent);
+    setModalState('loading');
+    isSending = true;
+
+    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
+    var done = false;
+    var timeoutId = setTimeout(function () {
+      if (done) return;
+      done = true;
+      finishOrderFail();
+    }, 10000);
+
+    function finishOrderFail() {
+      isSending = false;
+      setModalState('error');
+      setTimeout(function () {
+        hideModal(modalSent);
+        resetState();
+        navigateMobile('main', true);
+      }, 1600);
+    }
+
+    Promise.all([submitOrder(data), minDelay])
+      .then(function (results) {
+        if (done) return;
+        done = true;
+        clearTimeout(timeoutId);
+        isSending = false;
+        if (results[0] && results[0].ok) {
+          setModalState('success');
+        } else {
+          finishOrderFail();
+        }
+      })
+      .catch(function () {
+        if (done) return;
+        done = true;
+        clearTimeout(timeoutId);
+        finishOrderFail();
+      });
+  }
 
   stageMobile.querySelectorAll('[data-modal]').forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -136,7 +188,8 @@
   var confirmShortorder = document.getElementById('m-confirm-shortorder');
   if (confirmShortorder) {
     confirmShortorder.addEventListener('click', function () {
-      submitOrder({
+      hideModal(modalShortorder);
+      sendOrder({
         name: getVal('m-so-name'),
         phone: getVal('m-so-phone'),
         description: '',
@@ -145,15 +198,14 @@
         files: [],
         source: 'Быстрая заявка'
       });
-      hideModal(modalShortorder);
-      showModal(modalSent);
     });
   }
 
   var formSubmit = document.getElementById('m-form-submit');
   if (formSubmit) {
     formSubmit.addEventListener('click', function () {
-      submitOrder({
+      navigateMobile('main', true);
+      sendOrder({
         name: getVal('m-input-name'),
         phone: getVal('m-input-phone'),
         description: getVal('m-input-desc'),
@@ -162,8 +214,6 @@
         files: state.files,
         source: 'Форма'
       });
-      navigateMobile('main', true);
-      showModal(modalSent);
     });
   }
 
@@ -185,6 +235,7 @@
 
   if (modalSent) {
     modalSent.addEventListener('click', function () {
+      if (isSending) return;
       hideModal(modalSent);
       resetState();
       navigateMobile('main', true);
@@ -411,8 +462,7 @@
 
     return fetch('/api/order', { method: 'POST', body: fd })
       .then(function (r) { console.log('[submit] ответ статус:', r.status); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(function (j) { console.log('[submit] ответ:', JSON.stringify(j)); return j; })
-      .catch(function (e) { console.error('[submit] ошибка:', e); });
+      .then(function (j) { console.log('[submit] ответ:', JSON.stringify(j)); return j; });
   }
 
   function applySettings(s) {

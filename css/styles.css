@@ -1101,26 +1101,51 @@ body {
   justify-content: center;
 }
 .m-message {
+  position: relative;
+  width: 100%;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.m-state {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .35s ease, visibility .35s ease;
 }
-.m-message img { width: 72px; height: 72px; }
-.m-message strong {
-  margin-top: 20px;
+.m-state.active {
+  opacity: 1;
+  visibility: visible;
+}
+.m-state strong {
+  margin-top: 18px;
   font-weight: 700;
   font-size: 16px;
   color: var(--gray-text);
   white-space: nowrap;
 }
-.m-message span {
+.m-state span {
   margin-top: 6px;
   font-weight: 300;
   font-size: 13px;
   color: var(--gray-text);
   white-space: nowrap;
+}
+.m-state-success img { width: 72px; height: 72px; }
+.m-state-error img { width: 56px; height: 56px; }
+.m-spinner {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 4px solid rgba(234, 98, 73, 0.2);
+  border-top-color: var(--accent);
+  animation: spin .8s linear infinite;
 }
 
 /* --- Заставка --- */
