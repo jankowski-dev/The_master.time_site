@@ -490,11 +490,28 @@
   }
 
   /* ===== Заставка ===== */
-  function initSplash() {
-    if (isMobileMode()) {
-      splash.classList.add('active');
-      setTimeout(function () { splash.classList.remove('active'); }, 1500);
+  function waitForFonts() {
+    if (document.fonts && document.fonts.load) {
+      var w = ['300', '400', '500', '700', '900'].map(function (weight) {
+        return document.fonts.load(weight + ' 16px Montserrat');
+      });
+      return Promise.all(w).catch(function () {});
     }
+    return (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+  }
+
+  function initSplash() {
+    if (!isMobileMode()) return;
+    splash.classList.add('active');
+    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 1500); });
+    var windowLoad = new Promise(function (resolve) {
+      if (document.readyState === 'complete') resolve();
+      else window.addEventListener('load', resolve, { once: true });
+    });
+    Promise.all([minDelay, waitForFonts(), windowLoad]).then(function () {
+      splash.classList.remove('active');
+      applyMode();
+    });
   }
 
   /* ===== Старт ===== */
