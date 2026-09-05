@@ -56,6 +56,13 @@ function toBool(v) {
   return v === true || v === 'true' || v === '1' || v === 'on';
 }
 
+// Текущее время в Минске (UTC+3, без DST)
+function minskNow() {
+  var d = new Date();
+  var minsk = new Date(d.getTime() + 3 * 60 * 60 * 1000);
+  return minsk.toISOString().replace('Z', '+03:00');
+}
+
 // Логируем все API-запросы
 app.use('/api', function (req, res, next) {
   const start = Date.now();
@@ -92,6 +99,8 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
       'Имя': { title: [{ text: { content: name || 'Без имени' } }] },
       'Описание': { rich_text: description ? [{ text: { content: description } }] : [] },
       'Источник': { select: { name: source } },
+      'Статус': { select: { name: 'Новая' } },
+      'Прием': { date: { start: minskNow() } },
       'Срочный вызов': { checkbox: toBool(b.urgent) },
       'За городом': { checkbox: toBool(b.outOfTown) },
       'Закупка материалов': { checkbox: toBool(b.materials) }
