@@ -393,6 +393,11 @@
   function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
 
   function submitOrder(data) {
+    console.log('[submit] отправка заявки:', JSON.stringify({
+      name: data.name, phone: data.phone, service: data.service,
+      description: data.description, source: data.source,
+      options: data.options, filesCount: (data.files || []).length
+    }));
     var fd = new FormData();
     fd.append('name', data.name || '');
     fd.append('phone', data.phone || '');
@@ -405,8 +410,9 @@
     (data.files || []).forEach(function (f) { fd.append('files', f); });
 
     return fetch('/api/order', { method: 'POST', body: fd })
-      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .catch(function (e) { console.error('Order submit error:', e); });
+      .then(function (r) { console.log('[submit] ответ статус:', r.status); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (j) { console.log('[submit] ответ:', JSON.stringify(j)); return j; })
+      .catch(function (e) { console.error('[submit] ошибка:', e); });
   }
 
   function applySettings(s) {
@@ -428,9 +434,9 @@
 
   function loadSettings() {
     fetch('/api/settings')
-      .then(function (r) { return r.json(); })
-      .then(applySettings)
-      .catch(function () { /* оставляем значения по умолчанию */ });
+      .then(function (r) { console.log('[settings] статус:', r.status); return r.json(); })
+      .then(function (s) { console.log('[settings] данные:', JSON.stringify(s)); applySettings(s); })
+      .catch(function (e) { console.error('[settings] ошибка:', e); });
   }
 
   /* ===== Заставка ===== */

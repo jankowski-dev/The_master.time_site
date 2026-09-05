@@ -8,6 +8,10 @@ const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_ORDERS_DB = process.env.NOTION_ORDERS_DB;
 const NOTION_SETTINGS_DB = process.env.NOTION_SETTINGS_DB;
 
+function log() {
+  console.log.apply(console, ['[' + new Date().toISOString() + ']'].concat(Array.prototype.slice.call(arguments)));
+}
+
 const app = express();
 app.use(express.json());
 
@@ -52,9 +56,19 @@ function toBool(v) {
   return v === true || v === 'true' || v === '1' || v === 'on';
 }
 
+// Логируем все API-запросы
+app.use('/api', function (req, res, next) {
+  const start = Date.now();
+  res.on('finish', function () {
+    log(req.method, req.originalUrl, '->', res.statusCode, Math.round(Date.now() - start) + 'ms');
+  });
+  next();
+});
+
 // POST /api/order — сохранить заявку в Notion
 app.post('/api/order', upload.array('files', 10), async function (req, res) {
   if (!notionConfigured()) {
+    log('[order] БЕЗ КОНФИГА: NOTION_TOKEN=', !!NOTION_TOKEN, 'ORDERS_DB=', !!NOTION_ORDERS_DB, 'SETTINGS_DB=', !!NOTION_SETTINGS_DB);
     res.status(503).json({ error: 'Notion не настроен' });
     return;
   }
@@ -65,6 +79,14 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
     const service = (b.service || '').trim();
     const description = (b.description || '').trim();
     const source = (b.source || 'Форма').trim();
+
+    const files = (req.files || []);
+    log('[order] принято:', {
+      name: name, phone: phone, service: service, description: description,
+      source: source,
+      urgent: toBool(b.urgent), outOfTown: toBool(b.outOfTown), materials: toBool(b.materials),
+      files: files.map(function (f) { return f.originalname + ' (' + f.size + 'b)'; })
+    });
 
     const properties = {
       'Имя': { title: [{ text: { content: name || 'Без имени' } }] },
@@ -77,23 +99,25 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
     if (phone) properties['Телефон'] = { phone_number: phone };
     if (service) properties['Услуга'] = { select: { name: service } };
 
-    const files = (req.files || []).map(function (f) {
-      return {
-        type: 'external',
-        name: f.originalname,
-        external: { url: req.protocol + '://' + req.get('host') + '/uploads/' + f.filename }
-      };
-    });
-    if (files.length) properties['Файлы'] = { files: files };
+    if (files.length) {
+      properties['Файлы'] = { files: files.map(function (f) {
+        return {
+          type: 'external',
+          name: f.originalname,
+          external: { url: req.protocol + '://' + req.get('host') + '/uploads/' + f.filename }
+        };
+      }) };
+    }
 
-    await notionApi('POST', 'https://api.notion.com/v1/pages', {
+    log('[order] шлю в Notion, payload properties:', JSON.stringify(properties));
+    const result = await notionApi('POST', 'https://api.notion.com/v1/pages', {
       parent: { database_id: NOTION_ORDERS_DB },
       properties: properties
     });
-
+    log('[order] Notion ОК, page id =', result.id);
     res.json({ ok: true });
   } catch (e) {
-    console.error('Order error:', e.message);
+    log('[order] ОШИБКА:', e.message);
     res.status(500).json({ error: 'Ошибка сохранения заявки' });
   }
 });
@@ -101,13 +125,16 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
 // GET /api/settings — настройки и контент сайта
 app.get('/api/settings', async function (req, res) {
   if (!notionConfigured()) {
+    log('[settings] БЕЗ КОНФИГА: NOTION_TOKEN=', !!NOTION_TOKEN, 'ORDERS_DB=', !!NOTION_ORDERS_DB, 'SETTINGS_DB=', !!NOTION_SETTINGS_DB);
     res.status(503).json({ error: 'Notion не настроен' });
     return;
   }
   try {
+    log('[settings] query DB', NOTION_SETTINGS_DB);
     const data = await notionApi('POST', 'https://api.notion.com/v1/databases/' + NOTION_SETTINGS_DB + '/query', { page_size: 1 });
     const row = data.results && data.results[0];
     if (!row) {
+      log('[settings] записей нет');
       res.json({});
       return;
     }
@@ -119,7 +146,7 @@ app.get('/api/settings', async function (req, res) {
     function url(prop) {
       return p[prop] && p[prop].url ? p[prop].url : '';
     }
-    res.json({
+    const out = {
       phone: text('Телефон (показ)'),
       phoneLink: text('Телефон (tel)'),
       instagram: url('Instagram'),
@@ -127,9 +154,11 @@ app.get('/api/settings', async function (req, res) {
       intro: text('Интро'),
       subtitle: text('Подзаголовок'),
       copyright: text('Копирайт')
-    });
+    };
+    log('[settings] ОК', JSON.stringify(out));
+    res.json(out);
   } catch (e) {
-    console.error('Settings error:', e.message);
+    log('[settings] ОШИБКА:', e.message);
     res.status(500).json({ error: 'Ошибка загрузки настроек' });
   }
 });
@@ -146,5 +175,5 @@ app.get('*', function (req, res) {
 });
 
 app.listen(PORT, function () {
-  console.log('Pracue is running on port ' + PORT);
+  log('Порт:', PORT, '| Проверки Notion конфига: TOKEN=', !!NOTION_TOKEN, 'ORDERS_DB=', !!NOTION_ORDERS_DB, 'SETTINGS_DB=', !!NOTION_SETTINGS_DB);
 });
