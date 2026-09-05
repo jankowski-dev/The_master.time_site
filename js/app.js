@@ -106,12 +106,18 @@
     });
   });
 
-  stageMobile.querySelectorAll('[data-call]').forEach(function (el) {
-    el.addEventListener('click', function () { window.location.href = 'tel:+375257076793'; });
+  var phoneLink = '+375257076793';
+  var externalLinks = { instagram: '', viber: '' };
+
+  document.querySelectorAll('[data-call]').forEach(function (el) {
+    el.addEventListener('click', function () { window.location.href = 'tel:' + phoneLink; });
   });
 
-  stageMobile.querySelectorAll('[data-external]').forEach(function (el) {
-    el.addEventListener('click', function () { /* заглушка: реальные ссылки не заданы */ });
+  document.querySelectorAll('[data-external]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var url = externalLinks[el.getAttribute('data-external')];
+      if (url) window.open(url, '_blank');
+    });
   });
 
   /* ===== Модальные окна ===== */
@@ -130,6 +136,15 @@
   var confirmShortorder = document.getElementById('m-confirm-shortorder');
   if (confirmShortorder) {
     confirmShortorder.addEventListener('click', function () {
+      submitOrder({
+        name: getVal('m-so-name'),
+        phone: getVal('m-so-phone'),
+        description: '',
+        service: null,
+        options: { urgent: false, outOfTown: false, materials: false },
+        files: [],
+        source: 'Быстрая заявка'
+      });
       hideModal(modalShortorder);
       showModal(modalSent);
     });
@@ -138,8 +153,33 @@
   var formSubmit = document.getElementById('m-form-submit');
   if (formSubmit) {
     formSubmit.addEventListener('click', function () {
+      submitOrder({
+        name: getVal('m-input-name'),
+        phone: getVal('m-input-phone'),
+        description: getVal('m-input-desc'),
+        service: state.service,
+        options: state.options,
+        files: state.files,
+        source: 'Форма'
+      });
       navigateMobile('main', true);
       showModal(modalSent);
+    });
+  }
+
+  var dFormSubmit = document.getElementById('d-form-submit');
+  if (dFormSubmit) {
+    dFormSubmit.addEventListener('click', function () {
+      submitOrder({
+        name: getVal('input-name'),
+        phone: getVal('input-phone'),
+        description: getVal('input-desc'),
+        service: state.service,
+        options: state.options,
+        files: state.files,
+        source: 'Форма'
+      });
+      navigateDesktop('success');
     });
   }
 
@@ -349,6 +389,50 @@
     });
   }
 
+  /* ===== Backend / API ===== */
+  function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+
+  function submitOrder(data) {
+    var fd = new FormData();
+    fd.append('name', data.name || '');
+    fd.append('phone', data.phone || '');
+    fd.append('service', data.service || '');
+    fd.append('description', data.description || '');
+    fd.append('source', data.source || 'Форма');
+    fd.append('urgent', data.options.urgent ? '1' : '0');
+    fd.append('outOfTown', data.options.outOfTown ? '1' : '0');
+    fd.append('materials', data.options.materials ? '1' : '0');
+    (data.files || []).forEach(function (f) { fd.append('files', f); });
+
+    return fetch('/api/order', { method: 'POST', body: fd })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .catch(function (e) { console.error('Order submit error:', e); });
+  }
+
+  function applySettings(s) {
+    if (!s || s.error) return;
+    if (s.phone) {
+      var parts = s.phone.split(/\s+/);
+      var code = parts.slice(0, 2).join(' ');
+      var number = parts.slice(2).join(' ');
+      document.querySelectorAll('[data-field="phone-code"]').forEach(function (el) { el.textContent = code; });
+      document.querySelectorAll('[data-field="phone-number"]').forEach(function (el) { el.textContent = number; });
+    }
+    if (s.phoneLink) phoneLink = s.phoneLink;
+    if (s.instagram) externalLinks.instagram = s.instagram;
+    if (s.viber) externalLinks.viber = s.viber;
+    if (s.intro) document.querySelectorAll('[data-field="intro"]').forEach(function (el) { el.textContent = s.intro; });
+    if (s.subtitle) document.querySelectorAll('[data-field="subtitle"]').forEach(function (el) { el.textContent = s.subtitle; });
+    if (s.copyright) document.querySelectorAll('[data-field="copyright"]').forEach(function (el) { el.textContent = s.copyright; });
+  }
+
+  function loadSettings() {
+    fetch('/api/settings')
+      .then(function (r) { return r.json(); })
+      .then(applySettings)
+      .catch(function () { /* оставляем значения по умолчанию */ });
+  }
+
   /* ===== Заставка ===== */
   function initSplash() {
     if (isMobileMode()) {
@@ -360,4 +444,5 @@
   /* ===== Старт ===== */
   applyMode();
   initSplash();
+  loadSettings();
 })();
