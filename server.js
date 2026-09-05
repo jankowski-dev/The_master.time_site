@@ -63,6 +63,12 @@ function minskNow() {
   return minsk.toISOString().replace('Z', '+03:00');
 }
 
+// Телефон РБ: начинается с +375 или 80
+function isBelarusPhone(phone) {
+  var p = (phone || '').replace(/[^0-9+]/g, '');
+  return /^\+375\d{9}$/.test(p) || /^80\d{9}$/.test(p);
+}
+
 // Логируем все API-запросы
 app.use('/api', function (req, res, next) {
   const start = Date.now();
@@ -94,6 +100,12 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
       urgent: toBool(b.urgent), outOfTown: toBool(b.outOfTown), materials: toBool(b.materials),
       files: files.map(function (f) { return f.originalname + ' (' + f.size + 'b)'; })
     });
+
+    if (!isBelarusPhone(phone)) {
+      log('[order] ТЕЛЕФОН НЕ ПРОШЁЛ: "' + phone + '"');
+      res.status(400).json({ error: 'Некорректный номер телефона' });
+      return;
+    }
 
     const properties = {
       'Имя': { title: [{ text: { content: name || 'Без имени' } }] },

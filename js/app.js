@@ -143,13 +143,12 @@
 
     var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
     var done = false;
-    var timeoutId = setTimeout(function () {
-      if (done) return;
-      done = true;
-      finishOrderFail();
-    }, 10000);
+    var timeoutId = setTimeout(function () { finishOrderFail(); }, 10000);
 
     function finishOrderFail() {
+      if (done) return;
+      done = true;
+      clearTimeout(timeoutId);
       isSending = false;
       setModalState('error');
       setTimeout(function () {
@@ -159,23 +158,28 @@
       }, 1600);
     }
 
-    Promise.all([submitOrder(data), minDelay])
+    function finishSuccess() {
+      if (done) return;
+      done = true;
+      clearTimeout(timeoutId);
+      isSending = false;
+      setModalState('success');
+    }
+
+    if (!isBelarusPhone(data.phone)) {
+      console.log('[submit] телефон невалидный:', data.phone);
+      setTimeout(finishOrderFail, 2000);
+      return;
+    }
+
+    Promise.allSettled([submitOrder(data), minDelay])
       .then(function (results) {
-        if (done) return;
-        done = true;
-        clearTimeout(timeoutId);
-        isSending = false;
-        if (results[0] && results[0].ok) {
-          setModalState('success');
+        var r = results[0];
+        if (r.status === 'fulfilled' && r.value && r.value.ok) {
+          finishSuccess();
         } else {
           finishOrderFail();
         }
-      })
-      .catch(function () {
-        if (done) return;
-        done = true;
-        clearTimeout(timeoutId);
-        finishOrderFail();
       });
   }
 
@@ -442,6 +446,10 @@
 
   /* ===== Backend / API ===== */
   function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+  function isBelarusPhone(phone) {
+    var p = (phone || '').replace(/[^0-9+]/g, '');
+    return /^\+375\d{9}$/.test(p) || /^80\d{9}$/.test(p);
+  }
 
   function submitOrder(data) {
     console.log('[submit] отправка заявки:', JSON.stringify({
