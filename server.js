@@ -166,8 +166,8 @@ app.post('/api/review', async function (req, res) {
     }
 
     const properties = {
-      'Отзыв': { title: [{ text: { content: review } }] },
-      'Имя': { rich_text: name ? [{ text: { content: name } }] : [] },
+      'Имя': { title: name ? [{ text: { content: name } }] : [{ text: { content: 'Анонимный отзыв' } }] },
+      'Отзыв': { rich_text: review ? [{ text: { content: review } }] : [] },
       'Дата добавления': { date: { start: minskNow() } },
       'Анонимно': { checkbox: anonymous }
     };

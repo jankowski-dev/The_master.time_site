@@ -123,7 +123,6 @@
   /* ===== Модальные окна ===== */
   var modalShortorder = document.getElementById('m-modal-shortorder');
   var modalSent = document.getElementById('m-modal-sent');
-  var modalReview = document.getElementById('m-modal-review');
   var isSending = false;
 
   function showModal(el) { if (el) el.classList.add('active'); }
@@ -207,17 +206,18 @@
   }
 
   /* ===== Отзыв ===== */
+  var modalReview = document.getElementById('m-modal-review');
+  var modalReviewSent = document.getElementById('m-modal-review-sent');
   var rvName = document.getElementById('m-rv-name');
   var rvText = document.getElementById('m-rv-text');
   var rvAnon = document.getElementById('m-rv-anon');
-  var rvMessage = document.getElementById('m-review-message');
+  var rvSentMessage = document.getElementById('m-review-sent-message');
   var rvConfirm = document.getElementById('m-confirm-review');
   var rvAnonymous = false;
 
   function setReviewState(state) {
-    if (!rvMessage) return;
-    rvMessage.style.display = 'flex';
-    rvMessage.querySelectorAll('.m-state').forEach(function (el) {
+    if (!rvSentMessage) return;
+    rvSentMessage.querySelectorAll('.m-state').forEach(function (el) {
       el.classList.toggle('active', el.classList.contains('m-state-' + state));
     });
   }
@@ -242,6 +242,8 @@
       if (rvText) rvText.focus();
       return;
     }
+    hideModal(modalReview);
+    showModal(modalReviewSent);
     setReviewState('loading');
 
     var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
@@ -254,7 +256,7 @@
       clearTimeout(timeoutId);
       setReviewState(success ? 'success' : 'error');
       setTimeout(function () {
-        hideModal(modalReview);
+        hideModal(modalReviewSent);
         resetReview();
       }, 1600);
     }
@@ -281,9 +283,8 @@
     if (rvAnon) rvAnon.classList.remove('on');
     if (rvName) { rvName.disabled = false; rvName.value = ''; }
     if (rvText) rvText.value = '';
-    if (rvMessage) {
-      rvMessage.style.display = 'none';
-      rvMessage.querySelectorAll('.m-state').forEach(function (el) { el.classList.remove('active'); });
+    if (rvSentMessage) {
+      rvSentMessage.querySelectorAll('.m-state').forEach(function (el) { el.classList.remove('active'); });
     }
   }
 

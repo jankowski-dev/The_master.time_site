@@ -1128,14 +1128,6 @@ body {
 .m-review-anon .m-toggle { right: 26px; }
 .m-review-anon.on .m-toggle { background: var(--accent); border-color: var(--accent); }
 .m-review-anon.on .m-toggle::after { left: 19px; background: var(--white); }
-#m-review-message {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  background: var(--white);
-  border-radius: 50px 50px 0 0;
-  display: none;
-}
 
 .m-sheet-small {
   bottom: 40px;
