@@ -228,7 +228,9 @@
     <div class="m-logo">
       <img src="assets/icons/logo-mobile-new.svg" alt="">
     </div>
-    <img class="m-header-vector" src="assets/icons/header-vector.svg" alt="">
+    <button class="m-review-btn" data-modal="review" type="button" aria-label="Оставить отзыв">
+      <img src="assets/icons/reviews.svg" alt="">
+    </button>
   </header>
 
   <main class="m-screens">
@@ -402,10 +404,10 @@
             <span class="m-contact-sub">По клику прямо в чат</span>
           </div>
         </div>
-        <div class="m-contact-card" data-external="reviews">
+        <div class="m-contact-card" data-modal="review">
           <img class="m-contact-icon" src="assets/icons/reviews.svg" alt="">
           <div class="m-contact-text">
-            <strong>Написать отзыв в Viber-Bot</strong>
+            <strong>Отправить отзыв</strong>
             <span class="m-contact-sub">Поделитесь впечатлением</span>
           </div>
         </div>
@@ -430,6 +432,44 @@
       <button class="m-btn m-btn-primary" id="m-confirm-shortorder" type="button">
         <img src="assets/icons/arrow-next.svg" alt="">Подтвердить
       </button>
+    </div>
+  </div>
+
+  <!-- Отзыв (модал) -->
+  <div class="m-modal" id="m-modal-review">
+    <div class="m-overlay"></div>
+    <div class="m-sheet">
+      <h3>Оставить отзыв</h3>
+      <div class="m-review-body" id="m-review-body">
+        <input class="m-field m-field-rv-name" id="m-rv-name" type="text" placeholder="Ваше имя">
+        <textarea class="m-field m-field-desc m-field-rv-text" id="m-rv-text" placeholder="Расскажите о вашем впечатлении"></textarea>
+        <div class="m-review-anon" id="m-rv-anon">
+          <div class="m-opt-text">
+            <strong>Анонимно</strong>
+            <span>Не указывать имя в отзыве</span>
+          </div>
+          <div class="m-toggle"></div>
+        </div>
+        <button class="m-btn m-btn-primary" id="m-confirm-review" type="button">
+          <img src="assets/icons/arrow-next.svg" alt="">Отправить
+        </button>
+      </div>
+      <div class="m-message" id="m-review-message">
+        <div class="m-state m-state-loading">
+          <div class="m-spinner"></div>
+          <strong>Отправляем</strong>
+        </div>
+        <div class="m-state m-state-success">
+          <img src="assets/icons/success.svg" alt="">
+          <strong>Отзыв принят</strong>
+          <span>Спасибо за ваше мнение</span>
+        </div>
+        <div class="m-state m-state-error">
+          <img src="assets/icons/flag.svg" alt="">
+          <strong>Произошла ошибка</strong>
+          <span>Попробуйте ещё раз</span>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_ORDERS_DB = process.env.NOTION_ORDERS_DB;
 const NOTION_SETTINGS_DB = process.env.NOTION_SETTINGS_DB;
+const NOTION_REVIEWS_DB = process.env.NOTION_REVIEWS_DB;
 
 function log() {
   console.log.apply(console, ['[' + new Date().toISOString() + ']'].concat(Array.prototype.slice.call(arguments)));
@@ -140,6 +141,47 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
   } catch (e) {
     log('[order] ОШИБКА:', e.message);
     res.status(500).json({ error: 'Ошибка сохранения заявки' });
+  }
+});
+
+// POST /api/review — сохранить отзыв в Notion
+app.post('/api/review', async function (req, res) {
+  if (!NOTION_TOKEN || !NOTION_REVIEWS_DB) {
+    log('[review] БЕЗ КОНФИГА: NOTION_TOKEN=', !!NOTION_TOKEN, 'REVIEWS_DB=', !!NOTION_REVIEWS_DB);
+    res.status(503).json({ error: 'Notion не настроен' });
+    return;
+  }
+  try {
+    const b = req.body || {};
+    const review = (b.review || '').trim();
+    const name = (b.name || '').trim();
+    const anonymous = toBool(b.anonymous);
+
+    log('[review] принято:', { name: name, review: review, anonymous: anonymous });
+
+    if (!review) {
+      log('[review] ОТЗЫВ ПУСТОЙ');
+      res.status(400).json({ error: 'Заполните отзыв' });
+      return;
+    }
+
+    const properties = {
+      'Отзыв': { title: [{ text: { content: review } }] },
+      'Имя': { rich_text: name ? [{ text: { content: name } }] : [] },
+      'Дата добавления': { date: { start: minskNow() } },
+      'Анонимно': { checkbox: anonymous }
+    };
+
+    log('[review] шлю в Notion, payload properties:', JSON.stringify(properties));
+    const result = await notionApi('POST', 'https://api.notion.com/v1/pages', {
+      parent: { database_id: NOTION_REVIEWS_DB },
+      properties: properties
+    });
+    log('[review] Notion ОК, page id =', result.id);
+    res.json({ ok: true });
+  } catch (e) {
+    log('[review] ОШИБКА:', e.message);
+    res.status(500).json({ error: 'Ошибка сохранения отзыва' });
   }
 });
 

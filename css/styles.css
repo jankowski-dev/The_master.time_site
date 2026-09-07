@@ -666,14 +666,22 @@ body {
   cursor: pointer;
 }
 .m-logo img { width: 147px; height: 23px; }
-.m-header-vector {
+.m-review-btn {
   position: absolute;
-  right: 0;
+  right: 17px;
   top: 50%;
   transform: translateY(-50%);
-  width: 19px;
-  height: 21px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
+.m-review-btn img { width: 25px; height: 25px; display: block; }
 
 .m-screens {
   position: absolute;
@@ -1091,6 +1099,37 @@ body {
 }
 .m-sheet .m-btn { margin-top: 20px; }
 #m-screen-shortorder .m-sheet { transition: transform .25s ease; }
+
+/* --- Модалка отзыва --- */
+.m-review-body {
+  display: flex;
+  flex-direction: column;
+}
+.m-field-rv-name { height: 55px; margin-top: 15px; }
+.m-field-rv-name:disabled { opacity: .5; }
+.m-field-rv-text {
+  margin-top: 10px;
+  min-height: 110px;
+  padding: 16px 28px;
+  resize: none;
+}
+.m-review-anon {
+  position: relative;
+  margin-top: 15px;
+  min-height: 60px;
+  background: var(--gray-bg);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 26px;
+  cursor: pointer;
+}
+.m-review-anon .m-opt-text { margin-left: 0; }
+.m-review-anon .m-toggle { right: 26px; }
+.m-review-anon.on .m-toggle { background: var(--accent); border-color: var(--accent); }
+.m-review-anon.on .m-toggle::after { left: 19px; background: var(--white); }
+#m-review-message { display: none; }
+
 .m-sheet-small {
   bottom: 40px;
   left: 36px;

@@ -123,6 +123,7 @@
   /* ===== Модальные окна ===== */
   var modalShortorder = document.getElementById('m-modal-shortorder');
   var modalSent = document.getElementById('m-modal-sent');
+  var modalReview = document.getElementById('m-modal-review');
   var isSending = false;
 
   function showModal(el) { if (el) el.classList.add('active'); }
@@ -205,6 +206,98 @@
     });
   }
 
+  /* ===== Отзыв ===== */
+  var rvName = document.getElementById('m-rv-name');
+  var rvText = document.getElementById('m-rv-text');
+  var rvAnon = document.getElementById('m-rv-anon');
+  var rvBody = document.getElementById('m-review-body');
+  var rvMessage = document.getElementById('m-review-message');
+  var rvConfirm = document.getElementById('m-confirm-review');
+  var rvAnonymous = false;
+
+  function setReviewState(state) {
+    if (!rvMessage) return;
+    rvMessage.style.display = '';
+    rvMessage.querySelectorAll('.m-state').forEach(function (el) {
+      el.classList.toggle('active', el.classList.contains('m-state-' + state));
+    });
+  }
+
+  if (rvAnon && rvName) {
+    rvAnon.addEventListener('click', function () {
+      rvAnonymous = !rvAnonymous;
+      rvAnon.classList.toggle('on', rvAnonymous);
+      if (rvAnonymous) {
+        rvName.disabled = true;
+        rvName.value = '';
+      } else {
+        rvName.disabled = false;
+      }
+    });
+  }
+
+  function sendReview() {
+    var review = rvText ? rvText.value.trim() : '';
+    var name = rvAnonymous ? '' : (rvName ? rvName.value.trim() : '');
+    if (!review) {
+      if (rvText) rvText.focus();
+      return;
+    }
+    if (rvBody) rvBody.style.display = 'none';
+    setReviewState('loading');
+
+    var done = false;
+    var timeoutId = setTimeout(function () { finishFalse(); }, 10000);
+
+    function finishFalse() {
+      if (done) return;
+      done = true;
+      clearTimeout(timeoutId);
+      setReviewState('error');
+      setTimeout(function () {
+        hideModal(modalReview);
+        resetReview();
+      }, 1600);
+    }
+
+    function finishTrue() {
+      if (done) return;
+      done = true;
+      clearTimeout(timeoutId);
+      setReviewState('success');
+      setTimeout(function () {
+        hideModal(modalReview);
+        resetReview();
+      }, 1600);
+    }
+
+    fetch('/api/review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, review: review, anonymous: rvAnonymous })
+    })
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function () { finishTrue(); })
+      .catch(function () { finishFalse(); });
+  }
+
+  function resetReview() {
+    if (rvBody) rvBody.style.display = '';
+    if (rvMessage) rvMessage.style.display = 'none';
+    rvAnonymous = false;
+    if (rvAnon) rvAnon.classList.remove('on');
+    if (rvName) { rvName.disabled = false; rvName.value = ''; }
+    if (rvText) rvText.value = '';
+    if (rvMessage) rvMessage.querySelectorAll('.m-state').forEach(function (el) { el.classList.remove('active'); });
+  }
+
+  if (rvConfirm) {
+    rvConfirm.addEventListener('click', sendReview);
+  }
+
   var formSubmit = document.getElementById('m-form-submit');
   if (formSubmit) {
     formSubmit.addEventListener('click', function () {
@@ -251,6 +344,15 @@
     shortorderOverlay.addEventListener('click', function () {
       if (document.activeElement) document.activeElement.blur();
       hideModal(modalShortorder);
+    });
+  }
+
+  var reviewOverlay = document.querySelector('#m-modal-review .m-overlay');
+  if (reviewOverlay) {
+    reviewOverlay.addEventListener('click', function () {
+      if (document.activeElement) document.activeElement.blur();
+      hideModal(modalReview);
+      resetReview();
     });
   }
 
