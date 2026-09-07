@@ -673,11 +673,10 @@ body {
   transform: translateY(-50%);
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  background: var(--gray-bg);
   display: flex;
   align-items: center;
   justify-content: center;
+  background: none;
   border: none;
   cursor: pointer;
   padding: 0;

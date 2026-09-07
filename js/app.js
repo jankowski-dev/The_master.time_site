@@ -216,7 +216,7 @@
 
   function setReviewState(state) {
     if (!rvMessage) return;
-    rvMessage.style.display = '';
+    rvMessage.style.display = 'flex';
     rvMessage.querySelectorAll('.m-state').forEach(function (el) {
       el.classList.toggle('active', el.classList.contains('m-state-' + state));
     });
