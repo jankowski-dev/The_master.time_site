@@ -210,7 +210,6 @@
   var rvName = document.getElementById('m-rv-name');
   var rvText = document.getElementById('m-rv-text');
   var rvAnon = document.getElementById('m-rv-anon');
-  var rvBody = document.getElementById('m-review-body');
   var rvMessage = document.getElementById('m-review-message');
   var rvConfirm = document.getElementById('m-confirm-review');
   var rvAnonymous = false;
@@ -243,55 +242,49 @@
       if (rvText) rvText.focus();
       return;
     }
-    if (rvBody) rvBody.style.display = 'none';
     setReviewState('loading');
 
+    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
     var done = false;
-    var timeoutId = setTimeout(function () { finishFalse(); }, 10000);
+    var timeoutId = setTimeout(function () { finishReview(false); }, 10000);
 
-    function finishFalse() {
+    function finishReview(success) {
       if (done) return;
       done = true;
       clearTimeout(timeoutId);
-      setReviewState('error');
+      setReviewState(success ? 'success' : 'error');
       setTimeout(function () {
         hideModal(modalReview);
         resetReview();
       }, 1600);
     }
 
-    function finishTrue() {
-      if (done) return;
-      done = true;
-      clearTimeout(timeoutId);
-      setReviewState('success');
-      setTimeout(function () {
-        hideModal(modalReview);
-        resetReview();
-      }, 1600);
-    }
-
-    fetch('/api/review', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, review: review, anonymous: rvAnonymous })
-    })
-      .then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
+    Promise.allSettled([
+      fetch('/api/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, review: review, anonymous: rvAnonymous })
       })
-      .then(function () { finishTrue(); })
-      .catch(function () { finishFalse(); });
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        }),
+      minDelay
+    ]).then(function (results) {
+      var r = results[0];
+      finishReview(r.status === 'fulfilled' && r.value && r.value.ok);
+    });
   }
 
   function resetReview() {
-    if (rvBody) rvBody.style.display = '';
-    if (rvMessage) rvMessage.style.display = 'none';
     rvAnonymous = false;
     if (rvAnon) rvAnon.classList.remove('on');
     if (rvName) { rvName.disabled = false; rvName.value = ''; }
     if (rvText) rvText.value = '';
-    if (rvMessage) rvMessage.querySelectorAll('.m-state').forEach(function (el) { el.classList.remove('active'); });
+    if (rvMessage) {
+      rvMessage.style.display = 'none';
+      rvMessage.querySelectorAll('.m-state').forEach(function (el) { el.classList.remove('active'); });
+    }
   }
 
   if (rvConfirm) {

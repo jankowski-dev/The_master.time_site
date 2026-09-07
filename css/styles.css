@@ -668,20 +668,21 @@ body {
 .m-logo img { width: 147px; height: 23px; }
 .m-review-btn {
   position: absolute;
-  right: 17px;
+  right: -9px;
   top: 50%;
   transform: translateY(-50%);
   width: 32px;
   height: 32px;
+  border-radius: 50%;
+  background: var(--gray-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
   border: none;
   cursor: pointer;
   padding: 0;
 }
-.m-review-btn img { width: 25px; height: 25px; display: block; }
+.m-review-btn img { width: 20px; height: 20px; display: block; }
 
 .m-screens {
   position: absolute;
@@ -1128,7 +1129,14 @@ body {
 .m-review-anon .m-toggle { right: 26px; }
 .m-review-anon.on .m-toggle { background: var(--accent); border-color: var(--accent); }
 .m-review-anon.on .m-toggle::after { left: 19px; background: var(--white); }
-#m-review-message { display: none; }
+#m-review-message {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background: var(--white);
+  border-radius: 50px 50px 0 0;
+  display: none;
+}
 
 .m-sheet-small {
   bottom: 40px;
