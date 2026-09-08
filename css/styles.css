@@ -239,52 +239,49 @@ body {
   border: 1px solid var(--gray-bg);
 }
 .btn-instagram img { width: 21px; height: 21px; }
-.btn-instagram { position: relative; }
-.btn-instagram .follow-badge {
+
+/* Позиция счётчика в шапке (десктоп): напротив логотипа, слева от телефона */
+.header .ig-counter {
   position: absolute;
-  top: -10px;
-  right: -10px;
+  right: 360px;
+  top: 10px;
 }
 
-/* --- Живой бейдж подписчиков --- */
-.follow-badge {
+/* --- Инстаграм-счётчик подписчиков --- */
+.ig-counter {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 11px;
-  background: var(--accent);
-  color: var(--white);
+  gap: 7px;
+  padding: 6px 14px 6px 8px;
   border-radius: 999px;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+  color: var(--white);
+  text-decoration: none;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1;
   white-space: nowrap;
-  box-shadow: 0 3px 10px rgba(234, 98, 73, 0.35);
+  box-shadow: 0 4px 14px rgba(214, 36, 159, 0.35);
 }
-.follow-badge b {
+.ig-counter-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  filter: brightness(0) invert(1);
+  display: block;
+}
+.ig-counter b {
   font-weight: 700;
   font-style: normal;
 }
-.follow-badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--white);
-  flex-shrink: 0;
-  animation: follow-pulse 1.6s ease-in-out infinite;
+.ig-counter--sm {
+  padding: 5px 11px 5px 7px;
+  font-size: 12px;
+  gap: 6px;
 }
-@keyframes follow-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.7); }
-}
-/* Малый размер (мобильное меню / карточка контакта) */
-.follow-badge--sm {
-  padding: 3px 9px;
-  font-size: 11px;
-}
-.follow-badge--sm .follow-badge-dot {
-  width: 5px;
-  height: 5px;
+.ig-counter--sm .ig-counter-icon {
+  width: 16px;
+  height: 16px;
 }
 
 /* ===== Экраны ===== */
@@ -739,6 +736,13 @@ body {
   padding: 0;
 }
 .m-review-btn img { width: 20px; height: 20px; display: block; }
+/* Позиция инстаграм-счётчика в мобильной шапке: слева от кнопки отзыва */
+.m-header .ig-counter {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+}
 
 .m-screens {
   position: absolute;
@@ -854,19 +858,6 @@ body {
   font-size: 14px;
   line-height: 21px;
   color: var(--gray-text);
-}
-.m-menu-item .follow-badge {
-  margin-top: 0;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 11px;
-  line-height: 1;
-  padding: 4px 9px;
-}
-.m-menu-item .follow-badge .follow-badge-dot {
-  width: 5px;
-  height: 5px;
 }
 .m-actions {
   flex-shrink: 0;

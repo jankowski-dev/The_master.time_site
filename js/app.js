@@ -689,7 +689,7 @@
     if (s.followersCount) {
       var n = parseInt(s.followersCount, 10);
       if (!isNaN(n)) {
-        var fcText = n >= 1000 ? (n / 1000).toFixed(1).replace('.0', '') + ' K' : String(n);
+        var fcText = n >= 1000 ? (n / 1000).toFixed(1).replace('.0', '').replace('.', ',') + 'K' : String(n);
         document.querySelectorAll('[data-field="followers-count"]').forEach(function (el) { el.textContent = fcText; });
       }
     }
