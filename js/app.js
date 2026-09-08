@@ -120,7 +120,7 @@
       var url = externalLinks[key];
       if (!url) return;
       if (key === 'viber' && !/^https?:\/\//i.test(url)) {
-        url = 'viber://chat?number=' + encodeURIComponent(url);
+        url = 'viber://chat?number=' + url;
       }
       window.open(url, '_blank');
     });
