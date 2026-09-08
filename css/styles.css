@@ -1112,6 +1112,7 @@ body {
 }
 .m-sheet .m-btn { margin-top: 20px; }
 #m-screen-shortorder .m-sheet { transition: transform .25s ease; }
+#so-add-file { margin-top: 15px; }
 
 /* --- Модалка отзыва --- */
 .m-review-body {
