@@ -239,7 +239,53 @@ body {
   border: 1px solid var(--gray-bg);
 }
 .btn-instagram img { width: 21px; height: 21px; }
-.btn-instagram i { font-style: normal; font-weight: 300; }
+.btn-instagram { position: relative; }
+.btn-instagram .follow-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+
+/* --- Живой бейдж подписчиков --- */
+.follow-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  background: var(--accent);
+  color: var(--white);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(234, 98, 73, 0.35);
+}
+.follow-badge b {
+  font-weight: 700;
+  font-style: normal;
+}
+.follow-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--white);
+  flex-shrink: 0;
+  animation: follow-pulse 1.6s ease-in-out infinite;
+}
+@keyframes follow-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.7); }
+}
+/* Малый размер (мобильное меню / карточка контакта) */
+.follow-badge--sm {
+  padding: 3px 9px;
+  font-size: 11px;
+}
+.follow-badge--sm .follow-badge-dot {
+  width: 5px;
+  height: 5px;
+}
 
 /* ===== Экраны ===== */
 .screens {
@@ -799,6 +845,7 @@ body {
   align-items: flex-start;
   padding: 20px;
   cursor: pointer;
+  position: relative;
 }
 .m-menu-item img { width: 24px; height: 26px; }
 .m-menu-item span {
@@ -808,9 +855,16 @@ body {
   line-height: 21px;
   color: var(--gray-text);
 }
-.m-menu-item span i {
-  font-style: normal;
-  font-weight: 300;
+.m-menu-item .follow-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 11px;
+  padding: 3px 9px;
+}
+.m-menu-item .follow-badge .follow-badge-dot {
+  width: 5px;
+  height: 5px;
 }
 .m-actions {
   flex-shrink: 0;
