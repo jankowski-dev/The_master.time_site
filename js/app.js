@@ -11,6 +11,7 @@
     service: null,
     options: { urgent: false, outOfTown: false, materials: false },
     files: [],
+    shortorderFiles: [],
     uploadStatus: 'empty'
   };
 
@@ -199,9 +200,10 @@
         description: '',
         service: null,
         options: { urgent: false, outOfTown: false, materials: false },
-        files: [],
+        files: state.shortorderFiles,
         source: 'Быстрая заявка'
       });
+      state.shortorderFiles = [];
     });
   }
 
@@ -338,6 +340,13 @@
     shortorderOverlay.addEventListener('click', function () {
       if (document.activeElement) document.activeElement.blur();
       hideModal(modalShortorder);
+      resetAddFile(
+        document.getElementById('so-add-file'),
+        document.getElementById('so-add-file-title'),
+        document.getElementById('so-add-file-sub'),
+        document.querySelector('#so-upload-progress .m-progress-fill'),
+        document.getElementById('so-file-input'));
+      state.shortorderFiles = [];
     });
   }
 
@@ -520,6 +529,35 @@
     document.getElementById('m-add-file-sub'),
     document.querySelector('#m-upload-progress .m-progress-fill'));
 
+  /* ===== Загрузка файлов — быстрая заявка ===== */
+  (function () {
+    var addEl = document.getElementById('so-add-file');
+    var inputEl = document.getElementById('so-file-input');
+    var titleEl = document.getElementById('so-add-file-title');
+    var subEl = document.getElementById('so-add-file-sub');
+    var fillEl = document.querySelector('#so-upload-progress .m-progress-fill');
+    if (!addEl || !inputEl) return;
+
+    addEl.addEventListener('click', function () { inputEl.click(); });
+    inputEl.addEventListener('change', function (e) {
+      var files = Array.prototype.slice.call(e.target.files);
+      if (!files.length) return;
+      var err = validateFiles(files);
+      if (err === 'non-image') {
+        state.shortorderFiles = [];
+        showFileError(addEl, inputEl, titleEl, subEl, 'Загружать можно только фото');
+        return;
+      }
+      if (err === 'too-many') {
+        state.shortorderFiles = [];
+        showFileError(addEl, inputEl, titleEl, subEl, 'Не более 5 файлов');
+        return;
+      }
+      state.shortorderFiles = files;
+      simulateUpload(files.length, addEl, titleEl, subEl, fillEl);
+    });
+  })();
+
   /* ===== Сводка на форме ===== */
   function yesNo(v) { return v ? 'Да' : 'Нет'; }
   function setText(id, text) { var el = document.getElementById(id); if (el) el.textContent = text; }
@@ -553,6 +591,7 @@
     state.service = null;
     state.options = { urgent: false, outOfTown: false, materials: false };
     state.files = [];
+    state.shortorderFiles = [];
     state.uploadStatus = 'empty';
 
     stageDesktop.querySelectorAll('.service-item').forEach(function (i) { i.classList.remove('active'); });
@@ -576,6 +615,13 @@
       document.getElementById('m-add-file-sub'),
       document.querySelector('#m-upload-progress .m-progress-fill'),
       document.getElementById('m-file-input'));
+
+    resetAddFile(
+      document.getElementById('so-add-file'),
+      document.getElementById('so-add-file-title'),
+      document.getElementById('so-add-file-sub'),
+      document.querySelector('#so-upload-progress .m-progress-fill'),
+      document.getElementById('so-file-input'));
 
     ['input-name', 'input-phone', 'input-desc', 'm-input-name', 'm-input-phone', 'm-input-desc', 'm-so-name', 'm-so-phone'].forEach(function (id) {
       var el = document.getElementById(id);
