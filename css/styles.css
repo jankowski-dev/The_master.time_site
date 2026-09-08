@@ -739,7 +739,7 @@ body {
 /* Позиция инстаграм-счётчика в мобильной шапке: слева от кнопки отзыва */
 .m-header .ig-counter {
   position: absolute;
-  right: 46px;
+  right: 39px;
   top: 50%;
   transform: translateY(-50%);
   background: var(--gray-bg);
@@ -747,7 +747,7 @@ body {
   box-shadow: none;
 }
 .m-header .ig-counter .ig-counter-icon {
-  filter: none;
+  filter: brightness(0) invert(0.377);
 }
 
 .m-screens {
