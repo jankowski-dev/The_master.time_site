@@ -120,7 +120,8 @@
       var url = externalLinks[key];
       if (!url) return;
       if (key === 'viber' && !/^https?:\/\//i.test(url)) {
-        url = 'viber://chat?number=' + url;
+        var num = url.replace(/[^0-9]/g, '');
+        url = 'viber://chat?number=' + num;
       }
       console.log('[external] opening:', key, url);
       var a = document.createElement('a');
