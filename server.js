@@ -216,7 +216,8 @@ app.get('/api/settings', async function (req, res) {
       viber: url('Viber'),
       intro: text('Интро'),
       subtitle: text('Подзаголовок'),
-      copyright: text('Копирайт')
+      copyright: text('Копирайт'),
+      followersCount: text('Подписчики Instagram')
     };
     log('[settings] ОК', JSON.stringify(out));
     res.json(out);

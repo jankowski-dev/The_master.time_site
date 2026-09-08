@@ -239,6 +239,7 @@ body {
   border: 1px solid var(--gray-bg);
 }
 .btn-instagram img { width: 21px; height: 21px; }
+.btn-instagram i { font-style: normal; font-weight: 300; }
 
 /* ===== Экраны ===== */
 .screens {
@@ -1043,6 +1044,7 @@ body {
 }
 .m-contact-text strong { font-weight: 700; font-size: 14px; color: var(--gray-text); }
 .m-contact-sub { margin-top: 4px; font-weight: 300; font-size: 14px; line-height: 21px; color: var(--gray-text); }
+.m-contact-sub b { font-weight: 500; }
 .m-contact-line { display: flex; align-items: baseline; gap: 10px; }
 .m-contact-code { font-weight: 300; font-size: 18px; text-transform: uppercase; color: var(--gray-text); }
 .m-contact-number { font-weight: 700; font-size: 18px; text-transform: uppercase; color: var(--gray-text); }

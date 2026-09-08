@@ -686,6 +686,13 @@
     if (s.intro) document.querySelectorAll('[data-field="intro"]').forEach(function (el) { el.textContent = s.intro; });
     if (s.subtitle) document.querySelectorAll('[data-field="subtitle"]').forEach(function (el) { el.textContent = s.subtitle; });
     if (s.copyright) document.querySelectorAll('[data-field="copyright"]').forEach(function (el) { el.textContent = s.copyright; });
+    if (s.followersCount) {
+      var n = parseInt(s.followersCount, 10);
+      if (!isNaN(n)) {
+        var fcText = n >= 1000 ? (n / 1000).toFixed(1).replace('.0', '') + ' K' : String(n);
+        document.querySelectorAll('[data-field="followers-count"]').forEach(function (el) { el.textContent = fcText; });
+      }
+    }
   }
 
   function loadSettings() {
