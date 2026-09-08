@@ -432,6 +432,36 @@
     return 'файлов';
   }
 
+  var IMAGE_EXTS = /\.(jpe?g|png|gif|webp|bmp|svg|heic|heif)$/i;
+  var MAX_FILES = 5;
+  var fileErrorTimers = {};
+
+  function validateFiles(files) {
+    for (var i = 0; i < files.length; i++) {
+      if (!files[i].type.startsWith('image/') && !IMAGE_EXTS.test(files[i].name)) {
+        return 'non-image';
+      }
+    }
+    if (files.length > MAX_FILES) return 'too-many';
+    return null;
+  }
+
+  function showFileError(addFileEl, inputEl, titleEl, subEl, msg) {
+    var key = inputEl.id;
+    if (fileErrorTimers[key]) clearTimeout(fileErrorTimers[key]);
+    addFileEl.classList.remove('uploading', 'done');
+    addFileEl.classList.add('error');
+    titleEl.textContent = msg;
+    subEl.style.display = 'none';
+    inputEl.value = '';
+    fileErrorTimers[key] = setTimeout(function () {
+      addFileEl.classList.remove('error');
+      titleEl.textContent = 'Добавить фото';
+      subEl.style.display = '';
+      fileErrorTimers[key] = null;
+    }, 2500);
+  }
+
   function simulateUpload(count, addFileEl, titleEl, subEl, fillEl) {
     state.uploadStatus = 'uploading';
     addFileEl.classList.remove('done');
@@ -460,6 +490,17 @@
     inputEl.addEventListener('change', function (e) {
       var files = Array.prototype.slice.call(e.target.files);
       if (!files.length) return;
+      var err = validateFiles(files);
+      if (err === 'non-image') {
+        state.files = [];
+        showFileError(addFileEl, inputEl, titleEl, subEl, 'Загружать можно только фото');
+        return;
+      }
+      if (err === 'too-many') {
+        state.files = [];
+        showFileError(addFileEl, inputEl, titleEl, subEl, 'Не более 5 файлов');
+        return;
+      }
       state.files = files;
       simulateUpload(files.length, addFileEl, titleEl, subEl, fillEl);
     });
@@ -499,11 +540,13 @@
 
   /* ===== Сброс состояния ===== */
   function resetAddFile(addFileEl, titleEl, subEl, fillEl, inputEl) {
-    addFileEl.classList.remove('uploading', 'done');
+    addFileEl.classList.remove('uploading', 'done', 'error');
     titleEl.textContent = 'Добавить фото';
     subEl.style.display = '';
     fillEl.style.width = '0%';
     inputEl.value = '';
+    var key = inputEl.id;
+    if (fileErrorTimers[key]) { clearTimeout(fileErrorTimers[key]); fileErrorTimers[key] = null; }
   }
 
   function resetState() {
