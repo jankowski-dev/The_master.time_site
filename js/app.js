@@ -122,7 +122,14 @@
       if (key === 'viber' && !/^https?:\/\//i.test(url)) {
         url = 'viber://chat?number=' + url;
       }
-      window.open(url, '_blank');
+      console.log('[external] opening:', key, url);
+      var a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     });
   });
 
