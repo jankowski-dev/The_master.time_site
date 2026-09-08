@@ -116,8 +116,13 @@
 
   document.querySelectorAll('[data-external]').forEach(function (el) {
     el.addEventListener('click', function () {
-      var url = externalLinks[el.getAttribute('data-external')];
-      if (url) window.open(url, '_blank');
+      var key = el.getAttribute('data-external');
+      var url = externalLinks[key];
+      if (!url) return;
+      if (key === 'viber' && !/^https?:\/\//i.test(url)) {
+        url = 'viber://chat?number=' + encodeURIComponent(url);
+      }
+      window.open(url, '_blank');
     });
   });
 
