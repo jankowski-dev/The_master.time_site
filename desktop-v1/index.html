@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pracue — Услуги мастера на час в Гродно</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- SPLASH -->
+  <div id="splash" class="splash">
+    <img src="../assets/icons/logo.svg" alt="Pracue" class="splash-logo">
+  </div>
+
+  <!-- APP -->
+  <div id="app" class="app hidden">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <a href="#" id="logo-home">
+          <img src="../assets/icons/logo.svg" alt="Pracue" class="header-logo">
+          <span class="header-brand">Pracue</span>
+        </a>
+      </div>
+      <div class="header-right">
+        <div class="ig-pill" id="ig-pill">
+          <img src="../assets/icons/instagram.svg" alt="" class="ig-pill-icon">
+          <span class="ig-pill-count" data-field="followers-count">—</span>
+        </div>
+        <button class="header-review" data-modal="review">
+          <img src="../assets/icons/reviews.svg" alt="" class="header-review-icon">
+        </button>
+      </div>
+    </header>
+
+    <!-- SCREEN: HOME -->
+    <section id="screen-home" class="screen active">
+      <div class="screen-inner">
+        <h1 class="hero-title">Услуги мастера<br>на час в Гродно</h1>
+        <p class="hero-sub" data-field="subtitle">Квалифицированный мастер по ремонту квартир и домов</p>
+
+        <div class="service-grid">
+          <button class="service-tile" data-service="Сантехнические">
+            <img src="../assets/icons/service-plumbing.svg" alt="" class="tile-icon">
+            <span class="tile-name">Сантехнические</span>
+          </button>
+          <button class="service-tile" data-service="Электромонтажные">
+            <img src="../assets/icons/service-electric.svg" alt="" class="tile-icon">
+            <span class="tile-name">Электромонтажные</span>
+          </button>
+          <button class="service-tile" data-service="Ремонт и отделка">
+            <img src="../assets/icons/service-plumbing.svg" alt="" class="tile-icon">
+            <span class="tile-name">Ремонт и отделка</span>
+          </button>
+          <button class="service-tile" data-service="Мебельные">
+            <img src="../assets/icons/service-furniture.svg" alt="" class="tile-icon">
+            <span class="tile-name">Мебельные</span>
+          </button>
+          <button class="service-tile" data-service="Бытовая техника">
+            <img src="../assets/icons/service-appliances.svg" alt="" class="tile-icon">
+            <span class="tile-name">Бытовая техника</span>
+          </button>
+          <button class="service-tile" data-service="Прочие услуги">
+            <img src="../assets/icons/service-misc.svg" alt="" class="tile-icon">
+            <span class="tile-name">Прочие услуги</span>
+          </button>
+        </div>
+
+        <div class="hero-actions">
+          <a href="tel:+375257076793" class="btn btn-call">
+            <img src="../assets/icons/btn-call-white.svg" alt="" class="btn-icon">
+            Позвонить
+          </a>
+          <button class="btn btn-order" data-modal="shortorder">
+            <img src="../assets/icons/btn-fast-order-orange.svg" alt="" class="btn-icon">
+            Быстрая заявка
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN: OPTIONS -->
+    <section id="screen-options" class="screen">
+      <div class="screen-inner">
+        <h2 class="screen-title">Опции</h2>
+
+        <div class="options-list">
+          <button class="option-row" data-opt="urgent">
+            <img src="../assets/icons/opt-urgent.svg" alt="" class="opt-icon">
+            <div class="opt-text">
+              <span class="opt-name">Срочный вызов</span>
+              <span class="opt-desc">Приоритет в очереди заявок</span>
+            </div>
+            <div class="toggle"><div class="toggle-knob"></div></div>
+          </button>
+          <button class="option-row" data-opt="outOfTown">
+            <img src="../assets/icons/opt-outtown.svg" alt="" class="opt-icon">
+            <div class="opt-text">
+              <span class="opt-name">За городом</span>
+              <span class="opt-desc">Выезд за пределы Гродно</span>
+            </div>
+            <div class="toggle"><div class="toggle-knob"></div></div>
+          </button>
+          <button class="option-row" data-opt="materials">
+            <img src="../assets/icons/opt-materials.svg" alt="" class="opt-icon">
+            <div class="opt-text">
+              <span class="opt-name">Закупка материалов</span>
+              <span class="opt-desc">Мастер закупит необходимые материалы</span>
+            </div>
+            <div class="toggle"><div class="toggle-knob"></div></div>
+          </button>
+        </div>
+
+        <div class="add-file" id="add-file">
+          <img src="../assets/icons/upload.svg" alt="" class="add-file-icon">
+          <span class="add-file-title">Добавить фото</span>
+          <span class="add-file-sub">JPG, PNG до 5 файлов</span>
+          <div class="add-file-bar"><div class="add-file-fill" id="file-fill"></div></div>
+          <span class="add-file-status" id="file-status"></span>
+          <input type="file" id="file-input" multiple accept="image/*" class="hidden-input">
+        </div>
+
+        <div class="screen-actions">
+          <button class="btn btn-back" data-nav="home">Назад</button>
+          <button class="btn btn-next" id="next-options" data-nav="form">Далее</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN: FORM -->
+    <section id="screen-form" class="screen">
+      <div class="screen-inner">
+        <h2 class="screen-title">Заявка</h2>
+
+        <div class="form-layout">
+          <div class="form-fields">
+            <input type="text" id="input-name" class="field" placeholder="Ваше имя">
+            <input type="tel" id="input-phone" class="field" placeholder="Телефон">
+            <textarea id="input-desc" class="field field-area" placeholder="Описание работ (необязательно)"></textarea>
+          </div>
+
+          <div class="form-summary" id="form-summary">
+            <div class="summary-row">
+              <span class="summary-label">Услуга</span>
+              <span class="summary-value" id="sum-service">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Срочный</span>
+              <span class="summary-value" id="sum-urgent">Нет</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">За городом</span>
+              <span class="summary-value" id="sum-outOfTown">Нет</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Материалы</span>
+              <span class="summary-value" id="sum-materials">Нет</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Файлы</span>
+              <span class="summary-value" id="sum-files">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="screen-actions">
+          <button class="btn btn-back" data-nav="options">Назад</button>
+          <button class="btn btn-next btn-accent" id="form-submit">Отправить</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN: SUCCESS -->
+    <section id="screen-success" class="screen">
+      <div class="screen-inner screen-center">
+        <img src="../assets/icons/success.svg" alt="" class="success-icon">
+        <h2 class="success-title">Заявка принята</h2>
+        <p class="success-text">Мастер свяжется с вами в ближайшее время</p>
+        <button class="btn btn-accent" data-nav="home" data-reset="true">На главную</button>
+      </div>
+    </section>
+
+  </div><!-- /app -->
+
+  <!-- MODAL: QUICK ORDER -->
+  <div id="modal-shortorder" class="modal">
+    <div class="modal-overlay" data-close-modal></div>
+    <div class="modal-sheet">
+      <h3 class="modal-title">Быстрая заявка</h3>
+      <input type="text" id="so-name" class="field" placeholder="Ваше имя">
+      <input type="tel" id="so-phone" class="field" placeholder="Телефон">
+      <div class="add-file add-file-sm" id="so-add-file">
+        <img src="../assets/icons/upload.svg" alt="" class="add-file-icon-sm">
+        <span class="add-file-title-sm">Добавить фото</span>
+        <input type="file" id="so-file-input" multiple accept="image/*" class="hidden-input">
+      </div>
+      <p class="modal-note">Нажимая «Отправить», вы соглашаетесь с обработкой персональных данных</p>
+      <button class="btn btn-accent btn-full" id="so-submit">Отправить</button>
+    </div>
+  </div>
+
+  <!-- MODAL: ORDER SENT -->
+  <div id="modal-sent" class="modal">
+    <div class="modal-overlay" data-close-modal></div>
+    <div class="modal-sheet modal-msg">
+      <div class="modal-state loading">
+        <div class="spinner"></div>
+        <p>Отправка...</p>
+      </div>
+      <div class="modal-state success hidden">
+        <img src="../assets/icons/success.svg" alt="" class="modal-state-icon">
+        <p>Заявка принята</p>
+      </div>
+      <div class="modal-state error hidden">
+        <p class="error-text">Ошибка отправки</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REVIEW -->
+  <div id="modal-review" class="modal">
+    <div class="modal-overlay" data-close-modal></div>
+    <div class="modal-sheet">
+      <h3 class="modal-title">Оставить отзыв</h3>
+      <input type="text" id="rv-name" class="field" placeholder="Ваше имя">
+      <textarea id="rv-text" class="field field-area" placeholder="Ваш отзыв"></textarea>
+      <label class="checkbox-row">
+        <input type="checkbox" id="rv-anon" class="hidden-check">
+        <span class="custom-check"></span>
+        Анонимно
+      </label>
+      <button class="btn btn-accent btn-full" id="rv-submit">Отправить</button>
+    </div>
+  </div>
+
+  <!-- MODAL: REVIEW SENT -->
+  <div id="modal-review-sent" class="modal">
+    <div class="modal-overlay" data-close-modal></div>
+    <div class="modal-sheet modal-msg">
+      <div class="modal-state loading">
+        <div class="spinner"></div>
+        <p>Отправка...</p>
+      </div>
+      <div class="modal-state success hidden">
+        <img src="../assets/icons/success.svg" alt="" class="modal-state-icon">
+        <p>Отзыв отправлен</p>
+      </div>
+      <div class="modal-state error hidden">
+        <p class="error-text">Ошибка отправки</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

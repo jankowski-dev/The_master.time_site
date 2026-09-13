@@ -108,14 +108,15 @@
   });
 
   var phoneLink = '+375257076793';
-  var externalLinks = { instagram: '', viber: '' };
+  var externalLinks = { instagram: '', viber: '', youtube: '', twitter: '' };
 
   document.querySelectorAll('[data-call]').forEach(function (el) {
     el.addEventListener('click', function () { window.location.href = 'tel:' + phoneLink; });
   });
 
   document.querySelectorAll('[data-external]').forEach(function (el) {
-    el.addEventListener('click', function () {
+    el.addEventListener('click', function (e) {
+      if (el.tagName === 'A') e.preventDefault();
       var key = el.getAttribute('data-external');
       var url = externalLinks[key];
       if (!url) return;
@@ -306,6 +307,107 @@
   if (rvConfirm) {
     rvConfirm.addEventListener('click', sendReview);
   }
+
+  /* ===== Отзыв (десктоп) ===== */
+  var dModalReview = document.getElementById('d-modal-review');
+  var dModalReviewSent = document.getElementById('d-modal-review-sent');
+  var dRvName = document.getElementById('d-rv-name');
+  var dRvText = document.getElementById('d-rv-text');
+  var dRvAnon = document.getElementById('d-rv-anon');
+  var dRvSentMessage = document.getElementById('d-review-sent-message');
+  var dRvConfirm = document.getElementById('d-confirm-review');
+  var dRvAnonymous = false;
+
+  function setDReviewState(state) {
+    if (!dRvSentMessage) return;
+    dRvSentMessage.querySelectorAll('.d-state').forEach(function (el) {
+      el.classList.toggle('active', el.classList.contains('d-state-' + state));
+    });
+  }
+
+  if (dRvAnon && dRvName) {
+    dRvAnon.addEventListener('click', function () {
+      dRvAnonymous = !dRvAnonymous;
+      dRvAnon.classList.toggle('on', dRvAnonymous);
+      if (dRvAnonymous) {
+        dRvName.disabled = true;
+        dRvName.value = '';
+      } else {
+        dRvName.disabled = false;
+      }
+    });
+  }
+
+  function resetDReview() {
+    dRvAnonymous = false;
+    if (dRvAnon) dRvAnon.classList.remove('on');
+    if (dRvName) { dRvName.disabled = false; dRvName.value = ''; }
+    if (dRvText) dRvText.value = '';
+    if (dRvSentMessage) {
+      dRvSentMessage.querySelectorAll('.d-state').forEach(function (el) { el.classList.remove('active'); });
+    }
+  }
+
+  function sendDReview() {
+    var review = dRvText ? dRvText.value.trim() : '';
+    var name = dRvAnonymous ? '' : (dRvName ? dRvName.value.trim() : '');
+    if (!review) {
+      if (dRvText) dRvText.focus();
+      return;
+    }
+    hideModal(dModalReview);
+    showModal(dModalReviewSent);
+    setDReviewState('loading');
+
+    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
+    var done = false;
+    var timeoutId = setTimeout(function () { finishDReview(false); }, 10000);
+
+    function finishDReview(success) {
+      if (done) return;
+      done = true;
+      clearTimeout(timeoutId);
+      setDReviewState(success ? 'success' : 'error');
+      setTimeout(function () {
+        hideModal(dModalReviewSent);
+        resetDReview();
+      }, 1600);
+    }
+
+    Promise.allSettled([
+      fetch('/api/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, review: review, anonymous: dRvAnonymous })
+      }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }),
+      minDelay
+    ]).then(function (results) {
+      var r = results[0];
+      finishDReview(r.status === 'fulfilled' && r.value && r.value.ok);
+    });
+  }
+
+  if (dRvConfirm) {
+    dRvConfirm.addEventListener('click', sendDReview);
+  }
+
+  stageDesktop.querySelectorAll('[data-modal]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      showModal(document.getElementById('d-modal-' + btn.getAttribute('data-modal')));
+    });
+  });
+
+  document.querySelectorAll('#d-modal-review .d-modal-overlay, #d-modal-review-sent .d-modal-overlay').forEach(function (ov) {
+    ov.addEventListener('click', function () {
+      if (document.activeElement) document.activeElement.blur();
+      hideModal(dModalReview);
+      hideModal(dModalReviewSent);
+      resetDReview();
+    });
+  });
 
   var formSubmit = document.getElementById('m-form-submit');
   if (formSubmit) {
@@ -683,6 +785,8 @@
     if (s.phoneLink) phoneLink = s.phoneLink;
     if (s.instagram) externalLinks.instagram = s.instagram;
     if (s.viber) externalLinks.viber = s.viber;
+    if (s.youtube) externalLinks.youtube = s.youtube;
+    if (s.twitter) externalLinks.twitter = s.twitter;
     if (s.intro) document.querySelectorAll('[data-field="intro"]').forEach(function (el) { el.textContent = s.intro; });
     if (s.subtitle) document.querySelectorAll('[data-field="subtitle"]').forEach(function (el) { el.textContent = s.subtitle; });
     if (s.copyright) document.querySelectorAll('[data-field="copyright"]').forEach(function (el) { el.textContent = s.copyright; });

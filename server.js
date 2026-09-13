@@ -233,6 +233,9 @@ app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/uploads', express.static(uploadDir));
+app.use('/desktop-v1', express.static(path.join(__dirname, 'desktop-v1')));
+app.use('/desktop-v2', express.static(path.join(__dirname, 'desktop-v2')));
+app.use('/desktop-v3', express.static(path.join(__dirname, 'desktop-v3')));
 
 app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));

@@ -15,17 +15,9 @@
 <div class="stage desktop" id="stage-desktop">
 
   <header class="header">
-    <button class="hamburger" type="button" aria-label="Меню">
-      <img src="assets/icons/hamburger.svg" alt="">
-    </button>
     <div class="logo">
-      <img src="assets/icons/logo.svg" class="logo-icon" alt="">
-      <span class="logo-text">Pracue</span>
+      <img src="assets/icons/logo-mobile-light.svg" class="logo-icon" alt="The Master Time">
     </div>
-    <a class="ig-counter" data-external="instagram" href="#">
-      <img class="ig-counter-icon" src="assets/icons/instagram.svg" alt="">
-      <b data-field="followers-count">2,3K</b>
-    </a>
     <div class="phone">
       <img src="assets/icons/phone.svg" class="phone-icon" alt="">
       <span class="phone-code" data-field="phone-code">8 025</span>
@@ -34,13 +26,14 @@
   </header>
 
   <aside class="dark-block">
+    <div class="dark-block-bg"><img src="assets/img/dark-bg.jpg" alt=""></div>
     <div class="d-gap" style="--g:182"></div>
     <div class="social">
       <span class="social-title">Присоединяйтесь к нам</span>
       <div class="social-icons">
-        <img src="assets/icons/social-2.svg" alt="">
-        <img src="assets/icons/social-3.svg" alt="">
-        <img src="assets/icons/social-1.svg" alt="">
+        <a class="social-link" data-external="youtube" href="#" aria-label="YouTube"><img src="assets/icons/social-2.svg" alt=""></a>
+        <a class="social-link" data-external="instagram" href="#" aria-label="Instagram"><img src="assets/icons/social-3.svg" alt=""></a>
+        <a class="social-link" data-external="twitter" href="#" aria-label="X"><img src="assets/icons/social-1.svg" alt=""></a>
       </div>
     </div>
     <div class="d-gap" style="--g:70"></div>
@@ -56,13 +49,13 @@
     <div class="d-gap" style="--g:97"></div>
     <div class="dark-menu">
       <button class="btn-viber" data-external="viber" type="button">
-        <img src="assets/icons/viber.svg" alt="">Чат в Viber
+        <img src="assets/icons/viber.svg" alt="">Viber
       </button>
       <button class="btn-instagram" data-external="instagram" type="button">
         <img src="assets/icons/instagram.svg" alt="">Instagram
       </button>
     </div>
-    <div class="d-gap" style="--g:190"></div>
+    <div class="d-gap d-gap-bottom"></div>
   </aside>
 
   <main class="screens">
@@ -108,9 +101,9 @@
       <div class="actions">
         <button class="btn btn-back" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
         <button class="btn btn-primary" id="next-main" data-nav="options" type="button" disabled><img src="assets/icons/arrow-next.svg" alt="">Далее</button>
-        <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
+        <button class="btn btn-complain" data-modal="review" type="button"><img src="assets/icons/reviews.svg" alt="">Оставить отзыв</button>
       </div>
-      <div class="d-gap" style="--g:191"></div>
+      <div class="d-gap d-gap-bottom"></div>
     </section>
 
     <section class="screen" id="screen-options">
@@ -160,9 +153,9 @@
       <div class="actions">
         <button class="btn btn-back" data-nav="main" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
         <button class="btn btn-primary" data-nav="form" type="button"><img src="assets/icons/arrow-next.svg" alt="">Далее</button>
-        <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
+        <button class="btn btn-complain" data-modal="review" type="button"><img src="assets/icons/reviews.svg" alt="">Оставить отзыв</button>
       </div>
-      <div class="d-gap" style="--g:191"></div>
+      <div class="d-gap d-gap-bottom"></div>
     </section>
 
     <section class="screen" id="screen-form">
@@ -194,9 +187,9 @@
       <div class="actions">
         <button class="btn btn-back" data-nav="options" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
         <button class="btn btn-primary" id="d-form-submit" type="button"><img src="assets/icons/arrow-next.svg" alt="">Подтвердить</button>
-        <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
+        <button class="btn btn-complain" data-modal="review" type="button"><img src="assets/icons/reviews.svg" alt="">Оставить отзыв</button>
       </div>
-      <div class="d-gap" style="--g:191"></div>
+      <div class="d-gap d-gap-bottom"></div>
     </section>
 
     <section class="screen" id="screen-success">
@@ -216,11 +209,42 @@
       <div class="actions">
         <button class="btn btn-back" data-nav="form" type="button"><img src="assets/icons/arrow-back.svg" alt="">Назад</button>
         <button class="btn btn-primary" data-nav="main" data-reset="true" type="button"><img src="assets/icons/arrow-next.svg" alt="">На главную</button>
-        <button class="btn btn-complain" type="button"><img src="assets/icons/flag.svg" alt="">Пожаловаться</button>
+        <button class="btn btn-complain" data-modal="review" type="button"><img src="assets/icons/reviews.svg" alt="">Оставить отзыв</button>
       </div>
-      <div class="d-gap" style="--g:191"></div>
+      <div class="d-gap d-gap-bottom"></div>
     </section>
   </main>
+
+  <!-- ДЕСКТОП: модалка отзыва -->
+  <div class="d-modal" id="d-modal-review">
+    <div class="d-modal-overlay" data-close-modal></div>
+    <div class="d-modal-card">
+      <h3 class="d-modal-title">Оставить отзыв</h3>
+      <p class="d-modal-hint">Опишите ваш опыт работы с нами</p>
+      <input class="d-field" id="d-rv-name" type="text" placeholder="Ваше имя">
+      <textarea class="d-field d-field-text" id="d-rv-text" placeholder="Расскажите о вашем впечатлении"></textarea>
+      <div class="d-review-anon" id="d-rv-anon">
+        <div class="d-opt-text">
+          <strong>Анонимно</strong>
+          <span>Не указывать имя в отзыве</span>
+        </div>
+        <div class="d-toggle"></div>
+      </div>
+      <button class="d-modal-btn" id="d-confirm-review" type="button">Отправить</button>
+    </div>
+  </div>
+
+  <!-- ДЕСКТОП: отзыв отправлен -->
+  <div class="d-modal" id="d-modal-review-sent">
+    <div class="d-modal-overlay" data-close-modal></div>
+    <div class="d-modal-card d-modal-card-small">
+      <div class="d-message" id="d-review-sent-message">
+        <div class="d-state d-state-loading"><div class="d-spinner"></div><strong>Отправляем</strong></div>
+        <div class="d-state d-state-success"><img src="assets/icons/success.svg" alt=""><strong>Отзыв принят</strong><span>Спасибо за ваше мнение</span></div>
+        <div class="d-state d-state-error"><img src="assets/icons/flag.svg" alt=""><strong>Произошла ошибка</strong><span>Попробуйте ещё раз</span></div>
+      </div>
+    </div>
+  </div>
 
   <div class="loader" id="loader"><div class="spinner"></div></div>
 </div>
