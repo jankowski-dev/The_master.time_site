@@ -887,8 +887,8 @@ body {
 }
 
 .btn-primary:disabled {
-  background: transparent;
-  color: #CFCFCF;
+  background: var(--gray-bg);
+  color: var(--light-gray);
   cursor: default;
 }
 
@@ -907,12 +907,12 @@ body {
   background: rgba(67, 59, 56, .05);
 }
 
-/* Неактивное состояние: Назад и Далее одинаковы и почти незаметны */
+/* Неактивное состояние: Назад и Далее одинаковы и малозаметны */
 .actions:has(.btn-primary:disabled) .btn-back,
 .actions:has(.btn-primary:disabled) .btn-back:hover {
-  background: transparent;
+  background: var(--gray-bg);
   border-color: transparent;
-  color: #CFCFCF;
+  color: var(--light-gray);
   cursor: default;
 }
 
