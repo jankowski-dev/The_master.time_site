@@ -6,6 +6,7 @@
   var loaderDesktop = document.getElementById('loader');
   var loaderMobile = document.getElementById('m-loader');
   var splash = document.getElementById('m-splash');
+  var dSplash = document.getElementById('d-splash');
 
   var state = {
     service: null,
@@ -108,10 +109,13 @@
   });
 
   var phoneLink = '+375257076793';
-  var externalLinks = { instagram: '', viber: '', youtube: '', twitter: '' };
+  var externalLinks = { instagram: 'https://www.instagram.com/the_master.time/', viber: '', youtube: '', twitter: '' };
 
   document.querySelectorAll('[data-call]').forEach(function (el) {
-    el.addEventListener('click', function () { window.location.href = 'tel:' + phoneLink; });
+    el.addEventListener('click', function (e) {
+      if (el.tagName === 'A') e.preventDefault();
+      window.location.href = 'tel:' + phoneLink;
+    });
   });
 
   document.querySelectorAll('[data-external]').forEach(function (el) {
@@ -818,15 +822,16 @@
   }
 
   function initSplash() {
-    if (!isMobileMode()) return;
-    splash.classList.add('active');
+    var activeSplash = isMobileMode() ? splash : dSplash;
+    if (!activeSplash) return;
+    activeSplash.classList.add('active');
     var minDelay = new Promise(function (resolve) { setTimeout(resolve, 1500); });
     var windowLoad = new Promise(function (resolve) {
       if (document.readyState === 'complete') resolve();
       else window.addEventListener('load', resolve, { once: true });
     });
     Promise.all([minDelay, waitForFonts(), windowLoad]).then(function () {
-      splash.classList.remove('active');
+      activeSplash.classList.remove('active');
       applyMode();
     });
   }

@@ -53,6 +53,31 @@ body {
   height: 874px;
 }
 
+/* ===== Заставка (десктоп) ===== */
+.d-splash {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .5s ease, visibility .5s ease;
+}
+
+.d-splash img {
+  width: 260px;
+  height: auto;
+  display: block;
+}
+
+.d-splash.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* ===== Гибкие отступы (десктоп) ===== */
 .d-gap {
   flex-grow: var(--g, 1);
@@ -117,7 +142,10 @@ body {
   height: 21px;
   display: flex;
   align-items: center;
+  text-decoration: none;
+  cursor: pointer;
 }
+.phone:hover .phone-number { color: var(--accent); }
 
 .phone-icon {
   width: 17px;
@@ -157,36 +185,11 @@ body {
   overflow: hidden;
 }
 
-.dark-block-bg {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 56%;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.dark-block-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center bottom;
-  opacity: .7;
-}
-
-.dark-block-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(67, 59, 56, 1) 0%, rgba(67, 59, 56, .6) 55%, rgba(67, 59, 56, .35) 100%);
-}
-
 .social {
   position: relative;
   z-index: 2;
   width: 378px;
-  height: 31px;
+  height: 44px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -200,41 +203,33 @@ body {
   color: var(--white);
 }
 
-.social-icons {
-  display: flex;
-  align-items: center;
-  gap: 18px;
+.social .ig-counter {
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 5px;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, .5);
+  color: var(--white);
+  box-shadow: none;
+  font-weight: 500;
+  font-size: 15px;
+  gap: 8px;
+  transition: background .18s, border-color .18s;
 }
 
-.social-link {
-  display: block;
-  line-height: 0;
-  cursor: pointer;
-  transition: opacity .2s, transform .2s;
+.social .ig-counter:hover {
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .85);
 }
 
-.social-link:hover {
-  opacity: .65;
-  transform: translateY(-2px);
+.social .ig-counter b {
+  font-weight: 500;
 }
 
-.social-icons img {
-  display: block;
-}
-
-.social-icons .social-link:nth-child(1) img {
-  width: 33px;
-  height: 24px;
-}
-
-.social-icons .social-link:nth-child(2) img {
-  width: 26px;
-  height: 26px;
-}
-
-.social-icons .social-link:nth-child(3) img {
-  width: 23px;
-  height: 27px;
+.social .ig-counter .ig-counter-icon {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
 }
 
 .welcome {
@@ -283,8 +278,8 @@ body {
 .dark-menu {
   position: relative;
   z-index: 2;
-  width: 460px;
-  height: 52px;
+  width: 380px;
+  height: 44px;
   flex-shrink: 0;
   display: flex;
   gap: 20px;
@@ -292,39 +287,36 @@ body {
 
 .btn-viber,
 .btn-instagram {
-  width: 220px;
-  height: 52px;
-  border-radius: 10px;
+  min-width: 180px;
+  height: 44px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 6px;
+  padding: 0 26px;
   font-family: inherit;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 21px;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--white);
   cursor: pointer;
-}
-
-.btn-viber {
-  background: rgba(255, 255, 255, 0.25);
-  border: none;
-}
-
-.btn-viber img {
-  width: 20px;
-  height: 21px;
-}
-
-.btn-instagram {
   background: transparent;
-  border: 1px solid var(--gray-bg);
+  border: 1.5px solid rgba(255, 255, 255, .5);
+  transition: background .18s, border-color .18s;
 }
 
+.btn-viber:hover,
+.btn-instagram:hover {
+  background: rgba(255, 255, 255, .12);
+  border-color: rgba(255, 255, 255, .85);
+}
+
+.btn-viber img,
 .btn-instagram img {
-  width: 21px;
-  height: 21px;
+  width: 18px;
+  height: 18px;
 }
 
 /* --- Инстаграм-счётчик подписчиков --- */
@@ -332,7 +324,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 6px 14px 6px 8px;
+  padding: 7px 10px;
   border-radius: 999px;
   background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
   color: var(--white);
@@ -419,7 +411,7 @@ body {
   flex-shrink: 0;
   display: grid;
   grid-template-columns: 275px 273px 273px;
-  grid-auto-rows: 104px;
+  grid-auto-rows: 124px;
   column-gap: 21px;
   row-gap: 20px;
 }
@@ -819,79 +811,104 @@ body {
   color: var(--gray-text);
 }
 
-/* ===== Кнопки действий ===== */
+/* ===== Кнопки действий (design system) ===== */
 .actions {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  height: 51px;
+  height: 44px;
 }
 
 .btn {
-  height: 51px;
-  border-radius: 10px;
+  min-width: 180px;
+  height: 44px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 6px;
+  padding: 0 26px;
   font-family: inherit;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 21px;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
   cursor: pointer;
-  transition: opacity .2s, background .2s;
+  border: none;
+  transition: background .18s, border-color .18s, color .18s;
 }
 
 .btn img {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   display: block;
 }
 
-.btn-back {
-  width: 202px;
-  background: var(--gray-bg);
-  border: none;
-  color: var(--gray-text);
-}
+/* Иконки-стрелки: цвет = цвет текста кнопки */
+.btn-back img { filter: brightness(0) invert(0.38); }
+.btn-primary img { filter: brightness(0) invert(1); }
+.btn-primary:disabled img { filter: brightness(0) invert(0.81); }
+.actions:has(.btn-primary:disabled) .btn-back img { filter: brightness(0) invert(0.81); }
 
-.btn-back:hover {
-  background: #ECECEC;
-}
-
+/* Contained */
 .btn-primary {
-  width: 202px;
   margin-left: 20px;
   background: var(--accent);
-  border: none;
   color: var(--white);
 }
 
+.btn-primary:hover {
+  background: #F0765F;
+}
+
+.btn-primary:active {
+  background: #CE4B33;
+}
+
 .btn-primary:disabled {
-  background: var(--gray-bg);
-  color: var(--light-gray);
+  background: transparent;
+  color: #CFCFCF;
   cursor: default;
 }
 
 .btn-primary:disabled img {
-  opacity: .4;
+  opacity: .45;
 }
 
+/* Outlined */
+.btn-back {
+  background: transparent;
+  border: 1.5px solid #D2D2D2;
+  color: var(--gray-text);
+}
+
+.btn-back:hover {
+  background: rgba(67, 59, 56, .05);
+}
+
+/* Неактивное состояние: Назад и Далее одинаковы и почти незаметны */
+.actions:has(.btn-primary:disabled) .btn-back,
+.actions:has(.btn-primary:disabled) .btn-back:hover {
+  background: transparent;
+  border-color: transparent;
+  color: #CFCFCF;
+  cursor: default;
+}
+
+.actions:has(.btn-primary:disabled) .btn-back img {
+  opacity: .45;
+}
+
+/* Outlined accent */
 .btn-complain {
-  width: 216px;
   margin-left: auto;
   background: transparent;
-  border: 1px solid var(--accent);
+  border: 1.5px solid var(--accent);
   color: var(--accent);
 }
 
 .btn-complain:hover {
-  background: var(--light-accent);
-}
-
-.btn-complain img {
-  width: 20px;
-  height: 20px;
+  background: rgba(234, 98, 73, .07);
 }
 
 /* ===== Лоадер (только правая область экранов) ===== */
@@ -1322,9 +1339,18 @@ body {
   display: block;
 }
 
-.m-btn img[src*="arrow"] {
-  width: 14px;
-  height: 14px;
+.m-btn img[src*="arrow"],
+.m-btn img[src*="chevron"] {
+  width: 16px;
+  height: 16px;
+}
+
+.m-btn-primary img[src*="chevron"] {
+  filter: brightness(0) invert(1);
+}
+
+.m-btn-primary:disabled img[src*="chevron"] {
+  filter: brightness(0) invert(0.83);
 }
 
 .m-btn img[src*="fast"] {
