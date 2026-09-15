@@ -1617,15 +1617,16 @@ body {
 .m-add-file {
   position: relative;
   flex-shrink: 0;
-  height: 72px;
+  height: 52px;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   cursor: pointer;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
+  justify-content: flex-start;
+  padding: 0 22px;
+  gap: 22px;
 }
 
 .m-upload-icon {
@@ -1651,17 +1652,17 @@ body {
   margin-top: 2px;
   font-weight: 300;
   font-size: 12px;
-  line-height: 21px;
+  line-height: 17px;
   color: var(--gray-text);
 }
 
 .m-progress {
   position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: 12px;
+  left: 22px;
+  right: 22px;
+  bottom: 5px;
   width: auto;
-  height: 6px;
+  height: 4px;
   border-radius: 40px;
   background: var(--gray-bg);
   overflow: hidden;
@@ -2089,7 +2090,7 @@ body {
   position: absolute;
   inset: 0;
   z-index: 105;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2101,6 +2102,12 @@ body {
 .m-loader.active {
   opacity: 1;
   visibility: visible;
+}
+
+.m-loader img {
+  width: 200px;
+  height: auto;
+  display: block;
 }
 
 .m-spinner {
