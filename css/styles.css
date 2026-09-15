@@ -464,12 +464,14 @@ body {
 
 /* --- Опции --- */
 .options {
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
 .option-row {
+  flex: 1 1 auto;
   position: relative;
   display: flex;
   align-items: center;
@@ -557,7 +559,7 @@ body {
 
 .add-file {
   position: relative;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 120px;
   width: 100%;
   border: 1px dashed var(--light-gray);
@@ -707,6 +709,14 @@ body {
 .field:focus {
   background: var(--white);
   border-color: var(--accent);
+}
+
+.field:-webkit-autofill,
+.field:-webkit-autofill:hover,
+.field:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--gray-bg) inset;
+  -webkit-text-fill-color: var(--gray-text);
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 .field-name {
@@ -1605,27 +1615,29 @@ body {
 }
 
 .m-add-file {
+  position: relative;
   flex-shrink: 0;
   height: 112px;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 12px;
 }
 
 .m-upload-icon {
-  width: 25px;
-  height: 32px;
+  width: 20px;
+  height: 26px;
+  flex-shrink: 0;
 }
 
 .m-add-file-body {
-  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .m-add-file-body strong {
@@ -1644,8 +1656,11 @@ body {
 }
 
 .m-progress {
-  margin-top: 8px;
-  width: 300px;
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 12px;
+  width: auto;
   height: 6px;
   border-radius: 40px;
   background: var(--gray-bg);
@@ -1711,6 +1726,14 @@ body {
 .m-field:focus {
   background: var(--white);
   border-color: var(--accent);
+}
+
+.m-field:-webkit-autofill,
+.m-field:-webkit-autofill:hover,
+.m-field:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--gray-bg) inset;
+  -webkit-text-fill-color: var(--gray-text);
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 .m-field-name {

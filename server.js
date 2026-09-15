@@ -98,7 +98,7 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
     log('[order] принято:', {
       name: name, phone: phone, service: service, description: description,
       source: source,
-      urgent: toBool(b.urgent), outOfTown: toBool(b.outOfTown), materials: toBool(b.materials),
+      urgent: toBool(b.urgent), outOfTown: toBool(b.outOfTown),
       files: files.map(function (f) { return f.originalname + ' (' + f.size + 'b)'; })
     });
 
@@ -115,8 +115,7 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
       'Статус': { select: { name: 'Новая' } },
       'Прием': { date: { start: minskNow() } },
       'Срочный вызов': { checkbox: toBool(b.urgent) },
-      'За городом': { checkbox: toBool(b.outOfTown) },
-      'Закупка материалов': { checkbox: toBool(b.materials) }
+      'За городом': { checkbox: toBool(b.outOfTown) }
     };
     if (phone) properties['Телефон'] = { phone_number: phone };
     if (service) properties['Услуга'] = { select: { name: service } };

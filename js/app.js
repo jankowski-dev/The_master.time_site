@@ -10,7 +10,7 @@
 
   var state = {
     service: null,
-    options: { urgent: false, outOfTown: false, materials: false },
+    options: { urgent: false, outOfTown: false },
     files: [],
     shortorderFiles: [],
     uploadStatus: 'empty'
@@ -217,7 +217,7 @@
         phone: getVal('m-so-phone'),
         description: '',
         service: null,
-        options: { urgent: false, outOfTown: false, materials: false },
+        options: { urgent: false, outOfTown: false },
         files: state.shortorderFiles,
         source: 'Быстрая заявка'
       });
@@ -685,7 +685,6 @@
     setText('sum-service', state.service || '—');
     setText('sum-urgent', yesNo(state.options.urgent));
     setText('sum-outtown', yesNo(state.options.outOfTown));
-    setText('sum-materials', yesNo(state.options.materials));
     setText('m-sum-service', state.service || '—');
     setText('m-sum-urgent', yesNo(state.options.urgent));
     setText('m-sum-outtown', yesNo(state.options.outOfTown));
@@ -708,7 +707,7 @@
 
   function resetState() {
     state.service = null;
-    state.options = { urgent: false, outOfTown: false, materials: false };
+    state.options = { urgent: false, outOfTown: false };
     state.files = [];
     state.shortorderFiles = [];
     state.uploadStatus = 'empty';
@@ -769,7 +768,6 @@
     fd.append('source', data.source || 'Форма');
     fd.append('urgent', data.options.urgent ? '1' : '0');
     fd.append('outOfTown', data.options.outOfTown ? '1' : '0');
-    fd.append('materials', data.options.materials ? '1' : '0');
     (data.files || []).forEach(function (f) { fd.append('files', f); });
 
     return fetch('/api/order', { method: 'POST', body: fd })
