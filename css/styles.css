@@ -1296,6 +1296,34 @@ body {
   display: flex;
 }
 
+.m-screen.m-enter {
+  animation: m-screen-in .28s ease both;
+}
+
+.m-screen.m-leave {
+  animation: m-screen-out .22s ease both;
+}
+
+@keyframes m-screen-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes m-screen-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
 .m-gap {
   flex-grow: var(--g, 1);
   flex-shrink: 0;
@@ -1532,13 +1560,13 @@ body {
 
 .m-option-row {
   flex: 0 0 auto;
-  min-height: 52px;
+  min-height: 76px;
   position: relative;
   background: var(--gray-bg);
   border-radius: 10px;
   display: flex;
   align-items: center;
-  padding: 0 22px;
+  padding: 18px 22px;
   cursor: pointer;
 }
 
@@ -1617,7 +1645,7 @@ body {
 .m-add-file {
   position: relative;
   flex-shrink: 0;
-  height: 52px;
+  min-height: 76px;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   cursor: pointer;
@@ -1625,7 +1653,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 22px;
+  padding: 18px 22px;
   gap: 22px;
 }
 
@@ -2084,30 +2112,6 @@ body {
 .m-state-error img {
   width: 56px;
   height: 56px;
-}
-
-.m-loader {
-  position: absolute;
-  inset: 0;
-  z-index: 105;
-  background: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity .25s ease, visibility .25s ease;
-}
-
-.m-loader.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.m-loader img {
-  width: 200px;
-  height: auto;
-  display: block;
 }
 
 .m-spinner {

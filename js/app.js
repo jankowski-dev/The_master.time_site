@@ -4,7 +4,6 @@
   var stageDesktop = document.getElementById('stage-desktop');
   var stageMobile = document.getElementById('stage-mobile');
   var loaderDesktop = document.getElementById('loader');
-  var loaderMobile = document.getElementById('m-loader');
   var splash = document.getElementById('m-splash');
   var dSplash = document.getElementById('d-splash');
 
@@ -76,6 +75,8 @@
   }
 
   function navigateMobile(id, instant) {
+    var target = stageMobile.querySelector('#m-screen-' + id);
+    if (!target) return;
     if (instant) {
       switchScreen(stageMobile, 'm-screen-', id);
       if (id === 'form') updateSummary();
@@ -83,13 +84,23 @@
     }
     if (navigating) return;
     navigating = true;
-    loaderMobile.classList.add('active');
-    setTimeout(function () {
+    var current = stageMobile.querySelector('.m-screen.active');
+    if (!current || current === target) {
       switchScreen(stageMobile, 'm-screen-', id);
       if (id === 'form') updateSummary();
-      loaderMobile.classList.remove('active');
       navigating = false;
-    }, 600);
+      return;
+    }
+    current.classList.add('m-leave');
+    setTimeout(function () {
+      current.classList.remove('active', 'm-leave');
+      target.classList.add('active', 'm-enter');
+      if (id === 'form') updateSummary();
+      setTimeout(function () {
+        target.classList.remove('m-enter');
+        navigating = false;
+      }, 280);
+    }, 220);
   }
 
   stageDesktop.querySelectorAll('[data-nav]').forEach(function (btn) {
