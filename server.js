@@ -64,10 +64,15 @@ function minskNow() {
   return minsk.toISOString().replace('Z', '+03:00');
 }
 
-// Телефон РБ: начинается с +375 или 80
-function isBelarusPhone(phone) {
-  var p = (phone || '').replace(/[^0-9+]/g, '');
-  return /^\+375\d{9}$/.test(p) || /^80\d{9}$/.test(p);
+// Телефон РБ: +375XXXXXXXXX, 375XXXXXXXXX, 80XXXXXXXXX, 8XXXXXXXXX, XXXXXXXXX
+// Возвращает нормализованный номер (+375XXXXXXXXX) или null
+function normalizeBelarusPhone(phone) {
+  var p = (phone || '').replace(/[^0-9]/g, '');
+  if (p.length === 12 && p.slice(0, 3) === '375') return '+375' + p.slice(3);
+  if (p.length === 11 && p.slice(0, 2) === '80') return '+375' + p.slice(2);
+  if (p.length === 10 && p.slice(0, 1) === '8') return '+375' + p.slice(1);
+  if (p.length === 9) return '+375' + p;
+  return null;
 }
 
 // Логируем все API-запросы
@@ -89,21 +94,22 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
   try {
     const b = req.body || {};
     const name = (b.name || '').trim();
-    const phone = (b.phone || '').trim();
+    const phoneRaw = (b.phone || '').trim();
+    const phone = normalizeBelarusPhone(phoneRaw);
     const service = (b.service || '').trim();
     const description = (b.description || '').trim();
     const source = (b.source || 'Форма').trim();
 
     const files = (req.files || []);
     log('[order] принято:', {
-      name: name, phone: phone, service: service, description: description,
+      name: name, phone: phoneRaw, service: service, description: description,
       source: source,
       urgent: toBool(b.urgent), outOfTown: toBool(b.outOfTown),
       files: files.map(function (f) { return f.originalname + ' (' + f.size + 'b)'; })
     });
 
-    if (!isBelarusPhone(phone)) {
-      log('[order] ТЕЛЕФОН НЕ ПРОШЁЛ: "' + phone + '"');
+    if (!phone) {
+      log('[order] ТЕЛЕФОН НЕ ПРОШЁЛ: "' + phoneRaw + '"');
       res.status(400).json({ error: 'Некорректный номер телефона' });
       return;
     }

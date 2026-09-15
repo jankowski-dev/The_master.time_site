@@ -166,9 +166,17 @@
     });
   }
 
+  function setErrorText(title, text) {
+    var t = document.getElementById('m-error-title');
+    var s = document.getElementById('m-error-text');
+    if (t) t.textContent = title;
+    if (s) s.textContent = text;
+  }
+
   function sendOrder(data) {
     showModal(modalSent);
     setModalState('loading');
+    setErrorText('Произошла ошибка', 'Попробуйте ещё раз');
     isSending = true;
 
     var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
@@ -196,13 +204,15 @@
       setModalState('success');
     }
 
-    if (!isBelarusPhone(data.phone)) {
+    var phone = normalizeBelarusPhone(data.phone);
+    if (!phone) {
       console.log('[submit] телефон невалидный:', data.phone);
+      setErrorText('Проверьте номер телефона', 'Укажите в формате +375 XX XXX-XX-XX');
       setTimeout(finishOrderFail, 2000);
       return;
     }
 
-    Promise.allSettled([submitOrder(data), minDelay])
+    Promise.allSettled([submitOrder(data, phone), minDelay])
       .then(function (results) {
         var r = results[0];
         if (r.status === 'fulfilled' && r.value && r.value.ok) {
@@ -776,12 +786,16 @@
 
   /* ===== Backend / API ===== */
   function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
-  function isBelarusPhone(phone) {
-    var p = (phone || '').replace(/[^0-9+]/g, '');
-    return /^\+375\d{9}$/.test(p) || /^80\d{9}$/.test(p);
+  function normalizeBelarusPhone(phone) {
+    var p = (phone || '').replace(/[^0-9]/g, '');
+    if (p.length === 12 && p.slice(0, 3) === '375') return '+375' + p.slice(3);
+    if (p.length === 11 && p.slice(0, 2) === '80') return '+375' + p.slice(2);
+    if (p.length === 10 && p.slice(0, 1) === '8') return '+375' + p.slice(1);
+    if (p.length === 9) return '+375' + p;
+    return null;
   }
 
-  function submitOrder(data) {
+  function submitOrder(data, phone) {
     console.log('[submit] отправка заявки:', JSON.stringify({
       name: data.name, phone: data.phone, service: data.service,
       description: data.description, source: data.source,
@@ -789,7 +803,7 @@
     }));
     var fd = new FormData();
     fd.append('name', data.name || '');
-    fd.append('phone', data.phone || '');
+    fd.append('phone', phone || data.phone || '');
     fd.append('service', data.service || '');
     fd.append('description', data.description || '');
     fd.append('source', data.source || 'Форма');
