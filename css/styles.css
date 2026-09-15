@@ -12,6 +12,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -1684,29 +1685,18 @@ body {
   color: var(--gray-text);
 }
 
-.m-progress {
-  position: absolute;
-  left: 22px;
-  right: 22px;
-  bottom: 5px;
-  width: auto;
-  height: 4px;
-  border-radius: 40px;
-  background: var(--gray-bg);
-  overflow: hidden;
+.m-upload-percent {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
   display: none;
 }
 
-.m-progress-fill {
-  height: 100%;
-  width: 0;
-  background: var(--accent);
-  border-radius: 40px;
-  transition: width .2s linear;
-}
-
-.m-add-file.uploading .m-progress,
-.m-add-file.done .m-progress {
+.m-add-file.uploading .m-upload-percent,
+.m-add-file.done .m-upload-percent {
   display: block;
 }
 

@@ -474,7 +474,8 @@
         document.getElementById('so-add-file'),
         document.getElementById('so-add-file-title'),
         document.getElementById('so-add-file-sub'),
-        document.querySelector('#so-upload-progress .m-progress-fill'),
+        null,
+        document.getElementById('so-upload-percent'),
         document.getElementById('so-file-input'));
       state.shortorderFiles = [];
     });
@@ -590,6 +591,7 @@
     if (fileErrorTimers[key]) clearTimeout(fileErrorTimers[key]);
     addFileEl.classList.remove('uploading', 'done');
     addFileEl.classList.add('error');
+    addFileEl.style.backgroundImage = '';
     titleEl.textContent = msg;
     subEl.style.display = 'none';
     inputEl.value = '';
@@ -601,19 +603,27 @@
     }, 2500);
   }
 
-  function simulateUpload(count, addFileEl, titleEl, subEl, fillEl) {
+  function setUploadProgress(addFileEl, fillEl, percentEl, p) {
+    if (fillEl) fillEl.style.width = p + '%';
+    if (percentEl) {
+      percentEl.textContent = p + '%';
+      addFileEl.style.backgroundImage = 'linear-gradient(to right, rgba(234, 98, 73, 0.12) ' + p + '%, transparent ' + p + '%)';
+    }
+  }
+
+  function simulateUpload(count, addFileEl, titleEl, subEl, fillEl, percentEl) {
     state.uploadStatus = 'uploading';
     addFileEl.classList.remove('done');
     addFileEl.classList.add('uploading');
     titleEl.textContent = 'Загружаем: ' + count + ' ' + pluralFiles(count);
     subEl.style.display = 'none';
-    fillEl.style.width = '0%';
+    setUploadProgress(addFileEl, fillEl, percentEl, 0);
 
     var p = 0;
     var interval = setInterval(function () {
       p += 4;
       if (p >= 100) p = 100;
-      fillEl.style.width = p + '%';
+      setUploadProgress(addFileEl, fillEl, percentEl, p);
       if (p >= 100) {
         clearInterval(interval);
         state.uploadStatus = 'done';
@@ -624,7 +634,7 @@
     }, 60);
   }
 
-  function setupUpload(addFileEl, inputEl, titleEl, subEl, fillEl) {
+  function setupUpload(addFileEl, inputEl, titleEl, subEl, fillEl, percentEl) {
     addFileEl.addEventListener('click', function () { inputEl.click(); });
     inputEl.addEventListener('change', function (e) {
       var files = Array.prototype.slice.call(e.target.files);
@@ -641,7 +651,7 @@
         return;
       }
       state.files = files;
-      simulateUpload(files.length, addFileEl, titleEl, subEl, fillEl);
+      simulateUpload(files.length, addFileEl, titleEl, subEl, fillEl, percentEl);
     });
   }
 
@@ -657,7 +667,8 @@
     document.getElementById('m-file-input'),
     document.getElementById('m-add-file-title'),
     document.getElementById('m-add-file-sub'),
-    document.querySelector('#m-upload-progress .m-progress-fill'));
+    null,
+    document.getElementById('m-upload-percent'));
 
   /* ===== Загрузка файлов — быстрая заявка ===== */
   (function () {
@@ -665,7 +676,7 @@
     var inputEl = document.getElementById('so-file-input');
     var titleEl = document.getElementById('so-add-file-title');
     var subEl = document.getElementById('so-add-file-sub');
-    var fillEl = document.querySelector('#so-upload-progress .m-progress-fill');
+    var percentEl = document.getElementById('so-upload-percent');
     if (!addEl || !inputEl) return;
 
     addEl.addEventListener('click', function () { inputEl.click(); });
@@ -684,7 +695,7 @@
         return;
       }
       state.shortorderFiles = files;
-      simulateUpload(files.length, addEl, titleEl, subEl, fillEl);
+      simulateUpload(files.length, addEl, titleEl, subEl, null, percentEl);
     });
   })();
 
@@ -706,11 +717,13 @@
   }
 
   /* ===== Сброс состояния ===== */
-  function resetAddFile(addFileEl, titleEl, subEl, fillEl, inputEl) {
+  function resetAddFile(addFileEl, titleEl, subEl, fillEl, percentEl, inputEl) {
     addFileEl.classList.remove('uploading', 'done', 'error');
+    addFileEl.style.backgroundImage = '';
     titleEl.textContent = 'Добавить фото';
     subEl.style.display = '';
-    fillEl.style.width = '0%';
+    if (fillEl) fillEl.style.width = '0%';
+    if (percentEl) percentEl.textContent = '';
     inputEl.value = '';
     var key = inputEl.id;
     if (fileErrorTimers[key]) { clearTimeout(fileErrorTimers[key]); fileErrorTimers[key] = null; }
@@ -736,20 +749,23 @@
       document.getElementById('add-file-title'),
       document.getElementById('add-file-sub'),
       document.querySelector('#upload-progress .progress-fill'),
+      null,
       document.getElementById('file-input'));
 
     resetAddFile(
       document.getElementById('m-add-file'),
       document.getElementById('m-add-file-title'),
       document.getElementById('m-add-file-sub'),
-      document.querySelector('#m-upload-progress .m-progress-fill'),
+      null,
+      document.getElementById('m-upload-percent'),
       document.getElementById('m-file-input'));
 
     resetAddFile(
       document.getElementById('so-add-file'),
       document.getElementById('so-add-file-title'),
       document.getElementById('so-add-file-sub'),
-      document.querySelector('#so-upload-progress .m-progress-fill'),
+      null,
+      document.getElementById('so-upload-percent'),
       document.getElementById('so-file-input'));
 
     ['input-name', 'input-phone', 'input-desc', 'm-input-name', 'm-input-phone', 'm-input-desc', 'm-so-name', 'm-so-phone'].forEach(function (id) {

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=5">
+<link rel="stylesheet" href="css/styles.css?v=6">
 </head>
 <body>
 
@@ -334,7 +334,7 @@
           <strong id="m-add-file-title">Добавить фото</strong>
           <span id="m-add-file-sub">Форматы JPG, PNG, GIF</span>
         </div>
-        <div class="m-progress" id="m-upload-progress"><div class="m-progress-fill"></div></div>
+        <span class="m-upload-percent" id="m-upload-percent"></span>
         <input type="file" id="m-file-input" multiple accept="image/*" hidden>
       </div>
       <div class="m-gap" style="--g:20"></div>
@@ -403,7 +403,7 @@
           <strong id="so-add-file-title">Добавить фото</strong>
           <span id="so-add-file-sub">Форматы JPG, PNG, GIF</span>
         </div>
-        <div class="m-progress" id="so-upload-progress"><div class="m-progress-fill"></div></div>
+        <span class="m-upload-percent" id="so-upload-percent"></span>
         <input type="file" id="so-file-input" multiple accept="image/*" hidden>
       </div>
       <p class="m-sheet-note">После подтверждения отправки мы свяжемся с вами. Спасибо за доверие.</p>
@@ -485,6 +485,6 @@
   <div class="m-splash" id="m-splash"><img src="assets/icons/logo-mobile-white.svg" alt="The Master Time"></div>
 </div>
 
-<script src="js/app.js?v=5"></script>
+<script src="js/app.js?v=6"></script>
 </body>
 </html>
