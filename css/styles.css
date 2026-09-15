@@ -1521,8 +1521,8 @@ body {
 }
 
 .m-option-row {
-  flex: 0 1 100px;
-  min-height: 78px;
+  flex: 0 0 auto;
+  min-height: 64px;
   position: relative;
   background: var(--gray-bg);
   border-radius: 10px;
@@ -1606,7 +1606,7 @@ body {
 
 .m-add-file {
   flex-shrink: 0;
-  height: 136px;
+  height: 112px;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   cursor: pointer;
