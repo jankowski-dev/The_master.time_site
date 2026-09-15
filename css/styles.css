@@ -1532,13 +1532,13 @@ body {
 
 .m-option-row {
   flex: 0 0 auto;
-  min-height: 64px;
+  min-height: 52px;
   position: relative;
   background: var(--gray-bg);
   border-radius: 10px;
   display: flex;
   align-items: center;
-  padding: 0 26px;
+  padding: 0 22px;
   cursor: pointer;
 }
 
@@ -1575,7 +1575,7 @@ body {
   margin-top: 2px;
   font-weight: 300;
   font-size: 12px;
-  line-height: 21px;
+  line-height: 17px;
   color: var(--gray-text);
 }
 
@@ -1617,7 +1617,7 @@ body {
 .m-add-file {
   position: relative;
   flex-shrink: 0;
-  height: 112px;
+  height: 72px;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   cursor: pointer;
@@ -2083,6 +2083,24 @@ body {
 .m-state-error img {
   width: 56px;
   height: 56px;
+}
+
+.m-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 105;
+  background: rgba(255, 255, 255, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+
+.m-loader.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 .m-spinner {
