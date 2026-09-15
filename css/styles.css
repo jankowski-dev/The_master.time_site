@@ -464,8 +464,9 @@ body {
 
 /* --- Опции --- */
 .options {
-  width: 361px;
-  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .option-row {
@@ -473,27 +474,18 @@ body {
   display: flex;
   align-items: center;
   background: var(--gray-bg);
-  border-radius: 15px;
-  padding: 30px 26px;
+  border-radius: 12px;
+  padding: 19px 22px;
   cursor: pointer;
   transition: background .2s;
-}
-
-.option-row+.option-row {
-  margin-top: 20px;
 }
 
 .option-row .opt-icon {
   flex-shrink: 0;
 }
 
-.option-row[data-opt="urgent"] {
-  padding-top: 30px;
-  padding-bottom: 30px;
-}
-
 .opt-text {
-  margin-left: 24px;
+  margin-left: 20px;
   display: flex;
   flex-direction: column;
 }
@@ -509,7 +501,7 @@ body {
   margin-top: 2px;
   font-weight: 300;
   font-size: 12px;
-  line-height: 21px;
+  line-height: 18px;
   color: var(--gray-text);
 }
 
@@ -530,7 +522,7 @@ body {
 
 .toggle {
   position: absolute;
-  right: 26px;
+  right: 22px;
   top: 50%;
   transform: translateY(-50%);
   width: 40px;
@@ -564,28 +556,30 @@ body {
 }
 
 .add-file {
-  width: 478px;
-  height: 352px;
-  flex-shrink: 0;
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 120px;
+  width: 100%;
   border: 1px dashed var(--light-gray);
   border-radius: 15px;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 14px;
 }
 
 .upload-icon {
-  width: 39px;
-  height: 50px;
+  width: 20px;
+  height: 26px;
+  flex-shrink: 0;
 }
 
 .add-file-body {
-  margin-top: 18px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .add-file-body strong {
@@ -604,8 +598,11 @@ body {
 }
 
 .progress {
-  margin-top: 12px;
-  width: 310px;
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 14px;
+  width: auto;
   height: 6px;
   border-radius: 40px;
   background: var(--gray-bg);
@@ -664,21 +661,36 @@ body {
 }
 
 /* --- Форма --- */
+/* Комбинированный экран заявки: форма слева, опции + загрузка справа */
+.order-row {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  gap: 32px;
+  margin: 28px 0;
+}
+
+.order-side {
+  flex: 0 0 361px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .form {
-  position: relative;
-  width: 478px;
-  height: 352px;
-  flex-shrink: 0;
+  flex: 1 1 478px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .field {
-  position: absolute;
-  left: 0;
-  width: 478px;
+  width: 100%;
   border-radius: 15px;
   font-family: inherit;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 21px;
   outline: none;
   padding: 0 27px;
@@ -698,18 +710,16 @@ body {
 }
 
 .field-name {
-  top: 0;
-  height: 55px;
+  flex: 0 0 55px;
 }
 
 .field-phone {
-  top: 75px;
-  height: 55px;
+  flex: 0 0 55px;
 }
 
 .field-desc {
-  top: 150px;
-  height: 202px;
+  flex: 1 1 auto;
+  min-height: 90px;
   padding: 18px 27px;
   resize: none;
 }
