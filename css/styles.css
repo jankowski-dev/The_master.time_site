@@ -2078,7 +2078,7 @@ body {
   z-index: 110;
   opacity: 0;
   visibility: hidden;
-  background: var(--white);
+  background: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
