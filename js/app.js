@@ -269,6 +269,7 @@
       if (rvAnonymous) {
         rvName.disabled = true;
         rvName.value = '';
+        applyFieldState(rvName, 'empty');
       } else {
         rvName.disabled = false;
       }
@@ -276,12 +277,9 @@
   }
 
   function sendReview() {
+    if (!validateFields(REVIEW_FIELDS.mobile, VALIDATION_UI.mobile)) return;
     var review = rvText ? rvText.value.trim() : '';
     var name = rvAnonymous ? '' : (rvName ? rvName.value.trim() : '');
-    if (!review) {
-      if (rvText) rvText.focus();
-      return;
-    }
     hideModal(modalReview);
     showModal(modalReviewSent);
     setReviewState('loading');
@@ -323,6 +321,7 @@
     if (rvAnon) rvAnon.classList.remove('on');
     if (rvName) { rvName.disabled = false; rvName.value = ''; }
     if (rvText) rvText.value = '';
+    resetFields(REVIEW_FIELDS.mobile);
     if (rvSentMessage) {
       rvSentMessage.querySelectorAll('.m-state').forEach(function (el) { el.classList.remove('active'); });
     }
@@ -356,6 +355,7 @@
       if (dRvAnonymous) {
         dRvName.disabled = true;
         dRvName.value = '';
+        applyFieldState(dRvName, 'empty');
       } else {
         dRvName.disabled = false;
       }
@@ -367,18 +367,16 @@
     if (dRvAnon) dRvAnon.classList.remove('on');
     if (dRvName) { dRvName.disabled = false; dRvName.value = ''; }
     if (dRvText) dRvText.value = '';
+    resetFields(REVIEW_FIELDS.desktop);
     if (dRvSentMessage) {
       dRvSentMessage.querySelectorAll('.d-state').forEach(function (el) { el.classList.remove('active'); });
     }
   }
 
   function sendDReview() {
+    if (!validateFields(REVIEW_FIELDS.desktop, VALIDATION_UI.desktop)) return;
     var review = dRvText ? dRvText.value.trim() : '';
     var name = dRvAnonymous ? '' : (dRvName ? dRvName.value.trim() : '');
-    if (!review) {
-      if (dRvText) dRvText.focus();
-      return;
-    }
     hideModal(dModalReview);
     showModal(dModalReviewSent);
     setDReviewState('loading');
@@ -854,10 +852,13 @@
 
   // Правило: значение → состояние поля
   // 'empty' пусто · 'typing' ещё вводится · 'valid' · 'invalid'
+  function optionalText(value) {
+    return (value || '').trim() ? 'valid' : 'empty';
+  }
+
   var RULES = {
-    name: function (value) {
-      return (value || '').trim() ? 'valid' : 'empty';
-    },
+    name: optionalText,
+    message: optionalText,
     phone: function (value) {
       var v = (value || '').trim();
       if (!v) return 'empty';
@@ -905,15 +906,29 @@
   var ORDER_FIELDS = {
     desktop: [
       { input: document.getElementById('input-name'), rule: 'name' },
-      { input: document.getElementById('input-phone'), rule: 'phone', required: true }
+      { input: document.getElementById('input-phone'), rule: 'phone', required: true },
+      { input: document.getElementById('input-desc'), rule: 'message' }
     ],
     mobile: [
       { input: document.getElementById('m-input-name'), rule: 'name' },
-      { input: document.getElementById('m-input-phone'), rule: 'phone', required: true }
+      { input: document.getElementById('m-input-phone'), rule: 'phone', required: true },
+      { input: document.getElementById('m-input-desc'), rule: 'message' }
     ],
     shortorder: [
       { input: document.getElementById('m-so-name'), rule: 'name' },
       { input: document.getElementById('m-so-phone'), rule: 'phone', required: true }
+    ]
+  };
+
+  // Поля отзыва (та же зелёная гамма, что и в заявке)
+  var REVIEW_FIELDS = {
+    desktop: [
+      { input: document.getElementById('d-rv-name'), rule: 'message' },
+      { input: document.getElementById('d-rv-text'), rule: 'message', required: true }
+    ],
+    mobile: [
+      { input: document.getElementById('m-rv-name'), rule: 'message' },
+      { input: document.getElementById('m-rv-text'), rule: 'message', required: true }
     ]
   };
 
@@ -922,6 +937,8 @@
       var ui = key === 'desktop' ? VALIDATION_UI.desktop : VALIDATION_UI.mobile;
       ORDER_FIELDS[key].forEach(function (f) { bindField(f.input, f.rule, ui); });
     });
+    REVIEW_FIELDS.desktop.forEach(function (f) { bindField(f.input, f.rule, VALIDATION_UI.desktop); });
+    REVIEW_FIELDS.mobile.forEach(function (f) { bindField(f.input, f.rule, VALIDATION_UI.mobile); });
   }
 
   // Проверка перед отправкой: подсвечивает поля, трясёт первое невалидное
@@ -938,10 +955,12 @@
     return !firstInvalid;
   }
 
+  function resetFields(fields) {
+    (fields || []).forEach(function (f) { applyFieldState(f.input, 'empty'); });
+  }
+
   function resetFieldStates() {
-    Object.keys(ORDER_FIELDS).forEach(function (key) {
-      ORDER_FIELDS[key].forEach(function (f) { applyFieldState(f.input, 'empty'); });
-    });
+    Object.keys(ORDER_FIELDS).forEach(function (key) { resetFields(ORDER_FIELDS[key]); });
   }
 
   bindOrderFields();

@@ -1769,19 +1769,22 @@ body {
 
 /* --- Состояния полей (общая валидация) --- */
 .field.is-valid,
-.m-field.is-valid {
+.m-field.is-valid,
+.d-field.is-valid {
   background: #F0F7F0;
   border-color: #A9CDA9;
 }
 
 .field.is-invalid,
-.m-field.is-invalid {
+.m-field.is-invalid,
+.d-field.is-invalid {
   background: #FDF1F0;
   border-color: #E0524A;
 }
 
 .field.shake,
-.m-field.shake {
+.m-field.shake,
+.d-field.shake {
   animation: field-shake .4s ease;
 }
 
