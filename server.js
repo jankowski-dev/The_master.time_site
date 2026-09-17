@@ -65,8 +65,8 @@ function minskNow() {
 }
 
 // Телефон РБ: +375XXXXXXXXX, 375XXXXXXXXX, 80XXXXXXXXX, 8XXXXXXXXX, XXXXXXXXX
-// Код оператора/региона должен быть белорусским. Возвращает +375XXXXXXXXX или null
-var BY_CODES = ['15', '16', '17', '21', '22', '23', '25', '29', '33', '44'];
+// Код мобильного оператора РБ: 25, 29, 33, 44. Возвращает +375XXXXXXXXX или null
+var BY_CODES = ['25', '29', '33', '44'];
 function normalizeBelarusPhone(phone) {
   var p = (phone || '').replace(/[^0-9]/g, '');
   var nat = null;

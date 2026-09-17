@@ -820,7 +820,7 @@
 
   /* ===== Backend / API ===== */
   function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
-  var BY_CODES = ['15', '16', '17', '21', '22', '23', '25', '29', '33', '44'];
+  var BY_CODES = ['25', '29', '33', '44'];
   function normalizeBelarusPhone(phone) {
     var p = (phone || '').replace(/[^0-9]/g, '');
     var nat = null;
