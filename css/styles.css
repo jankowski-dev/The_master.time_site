@@ -811,6 +811,12 @@ body {
   flex-shrink: 0;
 }
 
+.message-icon-error {
+  width: 116px;
+  height: 116px;
+  margin: 15px;
+}
+
 .message-text {
   margin-left: 68px;
 }

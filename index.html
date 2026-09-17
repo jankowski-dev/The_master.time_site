@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=9">
+<link rel="stylesheet" href="css/styles.css?v=10">
 </head>
 <body>
 
@@ -176,6 +176,28 @@
       </div>
       <div class="d-gap d-gap-bottom"></div>
     </section>
+
+    <section class="screen" id="screen-error">
+      <div class="d-title-row">
+        <h2 class="title">Форма</h2>
+        <p class="subtitle">Выберите подходящую опцию</p>
+      </div>
+      <div class="d-gap" style="--g:147"></div>
+      <div class="message">
+        <img class="message-icon message-icon-error" src="assets/icons/flag.svg" alt="">
+        <div class="message-text">
+          <strong id="d-error-title">Произошла ошибка</strong>
+          <p id="d-error-text">Попробуйте ещё раз</p>
+        </div>
+      </div>
+      <div class="d-gap" style="--g:233"></div>
+      <div class="actions">
+        <button class="btn btn-back" data-nav="form" type="button"><img src="assets/icons/chevron-left.svg" alt="">Назад</button>
+        <button class="btn btn-primary" data-nav="main" data-reset="true" type="button"><img src="assets/icons/chevron-right.svg" alt="">На главную</button>
+        <button class="btn btn-complain" data-modal="review" type="button"><img src="assets/icons/reviews.svg" alt="">Оставить отзыв</button>
+      </div>
+      <div class="d-gap d-gap-bottom"></div>
+    </section>
   </main>
 
   <!-- ДЕСКТОП: модалка отзыва -->
@@ -205,18 +227,6 @@
         <div class="d-state d-state-loading"><div class="d-spinner"></div><strong>Отправляем</strong></div>
         <div class="d-state d-state-success"><img src="assets/icons/success.svg" alt=""><strong>Отзыв принят</strong><span>Спасибо за ваше мнение</span></div>
         <div class="d-state d-state-error"><img src="assets/icons/flag.svg" alt=""><strong>Произошла ошибка</strong><span>Попробуйте ещё раз</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ДЕСКТОП: заявка отправлена -->
-  <div class="d-modal" id="d-modal-order-sent">
-    <div class="d-modal-overlay"></div>
-    <div class="d-modal-card d-modal-card-small">
-      <div class="d-message" id="d-order-message">
-        <div class="d-state d-state-loading"><div class="d-spinner"></div><strong>Отправляем</strong></div>
-        <div class="d-state d-state-success"><img src="assets/icons/success.svg" alt=""><strong>Заявка принята</strong><span>Ожидайте звонка от мастера</span></div>
-        <div class="d-state d-state-error"><img src="assets/icons/flag.svg" alt=""><strong id="d-order-error-title">Произошла ошибка</strong><span id="d-order-error-text">Попробуйте ещё раз</span></div>
       </div>
     </div>
   </div>
@@ -497,6 +507,6 @@
   <div class="m-splash" id="m-splash"><img src="assets/icons/logo-mobile-white.svg" alt="The Master Time"></div>
 </div>
 
-<script src="js/app.js?v=9"></script>
+<script src="js/app.js?v=10"></script>
 </body>
 </html>

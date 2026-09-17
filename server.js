@@ -65,14 +65,18 @@ function minskNow() {
 }
 
 // Телефон РБ: +375XXXXXXXXX, 375XXXXXXXXX, 80XXXXXXXXX, 8XXXXXXXXX, XXXXXXXXX
-// Возвращает нормализованный номер (+375XXXXXXXXX) или null
+// Код оператора/региона должен быть белорусским. Возвращает +375XXXXXXXXX или null
+var BY_CODES = ['15', '16', '17', '21', '22', '23', '25', '29', '33', '44'];
 function normalizeBelarusPhone(phone) {
   var p = (phone || '').replace(/[^0-9]/g, '');
-  if (p.length === 12 && p.slice(0, 3) === '375') return '+375' + p.slice(3);
-  if (p.length === 11 && p.slice(0, 2) === '80') return '+375' + p.slice(2);
-  if (p.length === 10 && p.slice(0, 1) === '8') return '+375' + p.slice(1);
-  if (p.length === 9) return '+375' + p;
-  return null;
+  var nat = null;
+  if (p.length === 12 && p.slice(0, 3) === '375') nat = p.slice(3);
+  else if (p.length === 11 && p.slice(0, 2) === '80') nat = p.slice(2);
+  else if (p.length === 10 && p.slice(0, 1) === '8') nat = p.slice(1);
+  else if (p.length === 9) nat = p;
+  if (!nat || nat.length !== 9) return null;
+  if (BY_CODES.indexOf(nat.slice(0, 2)) === -1) return null;
+  return '+375' + nat;
 }
 
 // Логируем все API-запросы

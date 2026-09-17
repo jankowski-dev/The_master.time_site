@@ -450,62 +450,38 @@
     });
   }
 
-  var dModalOrderSent = document.getElementById('d-modal-order-sent');
-  var dOrderMessage = document.getElementById('d-order-message');
   var dIsSending = false;
 
-  function setDOrderState(state) {
-    if (!dOrderMessage) return;
-    dOrderMessage.querySelectorAll('.d-state').forEach(function (el) {
-      el.classList.toggle('active', el.classList.contains('d-state-' + state));
-    });
-  }
-
-  function setDOrderError(title, text) {
-    var t = document.getElementById('d-order-error-title');
-    var s = document.getElementById('d-order-error-text');
+  function showDOrderError(title, text) {
+    var t = document.getElementById('d-error-title');
+    var s = document.getElementById('d-error-text');
     if (t) t.textContent = title;
     if (s) s.textContent = text;
+    navigateDesktop('error');
   }
 
   function sendDOrder(data) {
     if (dIsSending) return;
-    dIsSending = true;
-    showModal(dModalOrderSent);
-    setDOrderState('loading');
-    setDOrderError('Произошла ошибка', 'Попробуйте ещё раз');
-
-    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
-    var done = false;
-    var timeoutId = setTimeout(function () { finish(false); }, 10000);
-
-    function finish(ok) {
-      if (done) return;
-      done = true;
-      clearTimeout(timeoutId);
-      dIsSending = false;
-      setDOrderState(ok ? 'success' : 'error');
-      setTimeout(function () {
-        hideModal(dModalOrderSent);
-        if (ok) {
-          resetState();
-          navigateDesktop('success');
-        }
-      }, 1600);
-    }
-
     var phone = normalizeBelarusPhone(data.phone);
     if (!phone) {
       console.log('[submit] телефон невалидный:', data.phone);
-      setDOrderError('Проверьте номер телефона', 'Укажите в формате +375 XX XXX-XX-XX');
-      setTimeout(function () { finish(false); }, 2000);
+      showDOrderError('Проверьте номер телефона', 'Укажите в формате +375 XX XXX-XX-XX');
       return;
     }
-
+    dIsSending = true;
+    loaderDesktop.classList.add('active');
+    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 700); });
     Promise.allSettled([submitOrder(data, phone), minDelay])
       .then(function (results) {
+        dIsSending = false;
+        loaderDesktop.classList.remove('active');
         var r = results[0];
-        finish(r.status === 'fulfilled' && r.value && r.value.ok);
+        if (r.status === 'fulfilled' && r.value && r.value.ok) {
+          resetState();
+          navigateDesktop('success');
+        } else {
+          showDOrderError('Произошла ошибка', 'Попробуйте ещё раз');
+        }
       });
   }
 
@@ -844,13 +820,17 @@
 
   /* ===== Backend / API ===== */
   function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+  var BY_CODES = ['15', '16', '17', '21', '22', '23', '25', '29', '33', '44'];
   function normalizeBelarusPhone(phone) {
     var p = (phone || '').replace(/[^0-9]/g, '');
-    if (p.length === 12 && p.slice(0, 3) === '375') return '+375' + p.slice(3);
-    if (p.length === 11 && p.slice(0, 2) === '80') return '+375' + p.slice(2);
-    if (p.length === 10 && p.slice(0, 1) === '8') return '+375' + p.slice(1);
-    if (p.length === 9) return '+375' + p;
-    return null;
+    var nat = null;
+    if (p.length === 12 && p.slice(0, 3) === '375') nat = p.slice(3);
+    else if (p.length === 11 && p.slice(0, 2) === '80') nat = p.slice(2);
+    else if (p.length === 10 && p.slice(0, 1) === '8') nat = p.slice(1);
+    else if (p.length === 9) nat = p;
+    if (!nat || nat.length !== 9) return null;
+    if (BY_CODES.indexOf(nat.slice(0, 2)) === -1) return null;
+    return '+375' + nat;
   }
 
   function submitOrder(data, phone) {
