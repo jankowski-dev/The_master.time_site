@@ -450,10 +450,69 @@
     });
   }
 
+  var dModalOrderSent = document.getElementById('d-modal-order-sent');
+  var dOrderMessage = document.getElementById('d-order-message');
+  var dIsSending = false;
+
+  function setDOrderState(state) {
+    if (!dOrderMessage) return;
+    dOrderMessage.querySelectorAll('.d-state').forEach(function (el) {
+      el.classList.toggle('active', el.classList.contains('d-state-' + state));
+    });
+  }
+
+  function setDOrderError(title, text) {
+    var t = document.getElementById('d-order-error-title');
+    var s = document.getElementById('d-order-error-text');
+    if (t) t.textContent = title;
+    if (s) s.textContent = text;
+  }
+
+  function sendDOrder(data) {
+    if (dIsSending) return;
+    dIsSending = true;
+    showModal(dModalOrderSent);
+    setDOrderState('loading');
+    setDOrderError('Произошла ошибка', 'Попробуйте ещё раз');
+
+    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
+    var done = false;
+    var timeoutId = setTimeout(function () { finish(false); }, 10000);
+
+    function finish(ok) {
+      if (done) return;
+      done = true;
+      clearTimeout(timeoutId);
+      dIsSending = false;
+      setDOrderState(ok ? 'success' : 'error');
+      setTimeout(function () {
+        hideModal(dModalOrderSent);
+        if (ok) {
+          resetState();
+          navigateDesktop('success');
+        }
+      }, 1600);
+    }
+
+    var phone = normalizeBelarusPhone(data.phone);
+    if (!phone) {
+      console.log('[submit] телефон невалидный:', data.phone);
+      setDOrderError('Проверьте номер телефона', 'Укажите в формате +375 XX XXX-XX-XX');
+      setTimeout(function () { finish(false); }, 2000);
+      return;
+    }
+
+    Promise.allSettled([submitOrder(data, phone), minDelay])
+      .then(function (results) {
+        var r = results[0];
+        finish(r.status === 'fulfilled' && r.value && r.value.ok);
+      });
+  }
+
   var dFormSubmit = document.getElementById('d-form-submit');
   if (dFormSubmit) {
     dFormSubmit.addEventListener('click', function () {
-      submitOrder({
+      sendDOrder({
         name: getVal('input-name'),
         phone: getVal('input-phone'),
         description: getVal('input-desc'),
@@ -462,7 +521,6 @@
         files: state.files,
         source: 'Форма'
       });
-      navigateDesktop('success');
     });
   }
 

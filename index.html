@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css?v=8">
+<link rel="stylesheet" href="css/styles.css?v=9">
 </head>
 <body>
 
@@ -205,6 +205,18 @@
         <div class="d-state d-state-loading"><div class="d-spinner"></div><strong>Отправляем</strong></div>
         <div class="d-state d-state-success"><img src="assets/icons/success.svg" alt=""><strong>Отзыв принят</strong><span>Спасибо за ваше мнение</span></div>
         <div class="d-state d-state-error"><img src="assets/icons/flag.svg" alt=""><strong>Произошла ошибка</strong><span>Попробуйте ещё раз</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ДЕСКТОП: заявка отправлена -->
+  <div class="d-modal" id="d-modal-order-sent">
+    <div class="d-modal-overlay"></div>
+    <div class="d-modal-card d-modal-card-small">
+      <div class="d-message" id="d-order-message">
+        <div class="d-state d-state-loading"><div class="d-spinner"></div><strong>Отправляем</strong></div>
+        <div class="d-state d-state-success"><img src="assets/icons/success.svg" alt=""><strong>Заявка принята</strong><span>Ожидайте звонка от мастера</span></div>
+        <div class="d-state d-state-error"><img src="assets/icons/flag.svg" alt=""><strong id="d-order-error-title">Произошла ошибка</strong><span id="d-order-error-text">Попробуйте ещё раз</span></div>
       </div>
     </div>
   </div>
@@ -485,6 +497,6 @@
   <div class="m-splash" id="m-splash"><img src="assets/icons/logo-mobile-white.svg" alt="The Master Time"></div>
 </div>
 
-<script src="js/app.js?v=8"></script>
+<script src="js/app.js?v=9"></script>
 </body>
 </html>
