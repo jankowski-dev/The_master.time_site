@@ -174,14 +174,20 @@
   }
 
   function sendOrder(data) {
+    var phone = normalizeBelarusPhone(data.phone);
+    if (!phone) {
+      console.log('[submit] телефон невалидный:', data.phone);
+      return;
+    }
+
     showModal(modalSent);
     setModalState('loading');
     setErrorText('Произошла ошибка', 'Попробуйте ещё раз');
     isSending = true;
 
-    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
+    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 800); });
     var done = false;
-    var timeoutId = setTimeout(function () { finishOrderFail(); }, 10000);
+    var timeoutId = setTimeout(function () { finishOrderFail(); }, 30000);
 
     function finishOrderFail() {
       if (done) return;
@@ -204,14 +210,6 @@
       setModalState('success');
     }
 
-    var phone = normalizeBelarusPhone(data.phone);
-    if (!phone) {
-      console.log('[submit] телефон невалидный:', data.phone);
-      setErrorText('Проверьте номер телефона', 'Укажите в формате +375 XX XXX-XX-XX');
-      setTimeout(finishOrderFail, 2000);
-      return;
-    }
-
     Promise.allSettled([submitOrder(data, phone), minDelay])
       .then(function (results) {
         var r = results[0];
@@ -232,6 +230,7 @@
   var confirmShortorder = document.getElementById('m-confirm-shortorder');
   if (confirmShortorder) {
     confirmShortorder.addEventListener('click', function () {
+      if (!validateFields(ORDER_FIELDS.shortorder, VALIDATION_UI.mobile)) return;
       hideModal(modalShortorder);
       sendOrder({
         name: getVal('m-so-name'),
@@ -437,6 +436,7 @@
   var formSubmit = document.getElementById('m-form-submit');
   if (formSubmit) {
     formSubmit.addEventListener('click', function () {
+      if (!validateFields(ORDER_FIELDS.mobile, VALIDATION_UI.mobile)) return;
       navigateMobile('main', true);
       sendOrder({
         name: getVal('m-input-name'),
@@ -465,12 +465,11 @@
     var phone = normalizeBelarusPhone(data.phone);
     if (!phone) {
       console.log('[submit] телефон невалидный:', data.phone);
-      showDOrderError('Проверьте номер телефона', 'Укажите в формате +375 XX XXX-XX-XX');
       return;
     }
     dIsSending = true;
     loaderDesktop.classList.add('active');
-    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 700); });
+    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 800); });
     Promise.allSettled([submitOrder(data, phone), minDelay])
       .then(function (results) {
         dIsSending = false;
@@ -488,6 +487,7 @@
   var dFormSubmit = document.getElementById('d-form-submit');
   if (dFormSubmit) {
     dFormSubmit.addEventListener('click', function () {
+      if (!validateFields(ORDER_FIELDS.desktop, VALIDATION_UI.desktop)) return;
       sendDOrder({
         name: getVal('input-name'),
         phone: getVal('input-phone'),
@@ -816,11 +816,22 @@
       var el = document.getElementById(id);
       if (el) el.value = '';
     });
+    resetFieldStates();
   }
 
   /* ===== Backend / API ===== */
   function getVal(id) { var el = document.getElementById(id); return el ? el.value : ''; }
+
+  /* =====================================================================
+     ЕДИНАЯ СИСТЕМА ВАЛИДАЦИИ
+     Правила (RULES) общие для мобильной и десктопной версий.
+     Расходится только поведение — см. VALIDATION_UI.
+     ===================================================================== */
+
+  // Мобильные коды РБ
   var BY_CODES = ['25', '29', '33', '44'];
+
+  // Нормализация телефона РБ → +375XXXXXXXXX или null
   function normalizeBelarusPhone(phone) {
     var p = (phone || '').replace(/[^0-9]/g, '');
     var nat = null;
@@ -832,6 +843,100 @@
     if (BY_CODES.indexOf(nat.slice(0, 2)) === -1) return null;
     return '+375' + nat;
   }
+
+  // Правило: значение → состояние поля
+  // 'empty' пусто · 'typing' ещё вводится · 'valid' · 'invalid'
+  var RULES = {
+    name: function (value) {
+      return (value || '').trim() ? 'valid' : 'empty';
+    },
+    phone: function (value) {
+      var v = (value || '').trim();
+      if (!v) return 'empty';
+      if (v.replace(/[^0-9]/g, '').length < 9) return 'typing';
+      return normalizeBelarusPhone(v) ? 'valid' : 'invalid';
+    }
+  };
+
+  // Единственное место, где версии расходятся
+  var VALIDATION_UI = {
+    desktop: { live: true, shake: true },
+    mobile: { live: true, shake: true }
+  };
+
+  var STATE_CLASSES = ['is-valid', 'is-invalid'];
+
+  function applyFieldState(inputEl, state) {
+    if (!inputEl) return;
+    STATE_CLASSES.forEach(function (c) { inputEl.classList.remove(c); });
+    if (state === 'valid') inputEl.classList.add('is-valid');
+    else if (state === 'invalid') inputEl.classList.add('is-invalid');
+  }
+
+  function shakeField(inputEl) {
+    if (!inputEl) return;
+    inputEl.classList.remove('shake');
+    void inputEl.offsetWidth;
+    inputEl.classList.add('shake');
+    setTimeout(function () { inputEl.classList.remove('shake'); }, 500);
+  }
+
+  // Живая валидация одного поля
+  function bindField(inputEl, ruleName, ui) {
+    if (!inputEl) return;
+    var rule = RULES[ruleName];
+    function update() { applyFieldState(inputEl, rule(inputEl.value)); }
+    if (ui.live) {
+      inputEl.addEventListener('input', update);
+      inputEl.addEventListener('blur', update);
+    }
+    return update;
+  }
+
+  // Поля заявок по версиям
+  var ORDER_FIELDS = {
+    desktop: [
+      { input: document.getElementById('input-name'), rule: 'name' },
+      { input: document.getElementById('input-phone'), rule: 'phone', required: true }
+    ],
+    mobile: [
+      { input: document.getElementById('m-input-name'), rule: 'name' },
+      { input: document.getElementById('m-input-phone'), rule: 'phone', required: true }
+    ],
+    shortorder: [
+      { input: document.getElementById('m-so-name'), rule: 'name' },
+      { input: document.getElementById('m-so-phone'), rule: 'phone', required: true }
+    ]
+  };
+
+  function bindOrderFields() {
+    ['desktop', 'mobile', 'shortorder'].forEach(function (key) {
+      var ui = key === 'desktop' ? VALIDATION_UI.desktop : VALIDATION_UI.mobile;
+      ORDER_FIELDS[key].forEach(function (f) { bindField(f.input, f.rule, ui); });
+    });
+  }
+
+  // Проверка перед отправкой: подсвечивает поля, трясёт первое невалидное
+  function validateFields(fields, ui) {
+    var firstInvalid = null;
+    fields.forEach(function (f) {
+      if (!f.input) return;
+      var state = RULES[f.rule](f.input.value);
+      applyFieldState(f.input, state);
+      var bad = state === 'invalid' || (state === 'empty' && f.required);
+      if (bad && !firstInvalid) firstInvalid = f.input;
+    });
+    if (firstInvalid && ui.shake) shakeField(firstInvalid);
+    return !firstInvalid;
+  }
+
+  function resetFieldStates() {
+    Object.keys(ORDER_FIELDS).forEach(function (key) {
+      ORDER_FIELDS[key].forEach(function (f) { applyFieldState(f.input, 'empty'); });
+    });
+  }
+
+  bindOrderFields();
 
   function submitOrder(data, phone) {
     console.log('[submit] отправка заявки:', JSON.stringify({

@@ -1761,6 +1761,48 @@ body {
   transition: background-color 9999s ease-in-out 0s;
 }
 
+/* --- Состояния полей (общая валидация) --- */
+.field.is-valid,
+.m-field.is-valid {
+  background: #F0F7F0;
+  border-color: #A9CDA9;
+}
+
+.field.is-invalid,
+.m-field.is-invalid {
+  background: #FDF1F0;
+  border-color: #E0524A;
+}
+
+.field.shake,
+.m-field.shake {
+  animation: field-shake .4s ease;
+}
+
+@keyframes field-shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-6px);
+  }
+
+  40% {
+    transform: translateX(6px);
+  }
+
+  60% {
+    transform: translateX(-4px);
+  }
+
+  80% {
+    transform: translateX(4px);
+  }
+}
+
 .m-field-name {
   flex: 0 0 55px;
 }
