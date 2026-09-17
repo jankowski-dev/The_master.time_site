@@ -1,3 +1,23 @@
+/*
+ * Pracue — клиентская логика (мобильная и десктопная версии в одном документе).
+ *
+ * Разделы файла:
+ *   1. Утилиты          — minDelay, api / apiJson
+ *   2. Режим и масштаб  — переключение моб/десктоп, scaleStage
+ *   3. Навигация        — switchScreen / navigateDesktop / navigateMobile
+ *   4. Модалки          — showModal / hideModal
+ *   5. Отзывы           — createReview (общая логика для обеих версий)
+ *   6. Отправка заявки  — sendOrder (моб, модалка), sendDOrder (десктоп, экран)
+ *   7. Услуги и опции   — bindServiceSelection / bindToggles
+ *   8. Загрузка файлов  — setupUpload (единый конфиг для 3 блоков)
+ *   9. Сброс состояния  — resetState
+ *  10. Валидация        — RULES + VALIDATION_UI (правила общие, поведение по версиям)
+ *  11. API и контент    — submitOrder, applySettings / loadSettings
+ *  12. Заставка и старт — initSplash
+ *
+ * ВАЖНО: при изменении css/js поднимайте версию в index.html (?v=N) —
+ * Cloudflare кэширует статику, версия заставляет браузер скачать свежую.
+ */
 (function () {
   'use strict';
 
@@ -11,11 +31,31 @@
     service: null,
     options: { urgent: false, outOfTown: false },
     files: [],
-    shortorderFiles: [],
-    uploadStatus: 'empty'
+    shortorderFiles: []
   };
 
   var BREAKPOINT = 768;
+
+  /* ===== Утилиты ===== */
+  function minDelay(ms) {
+    return new Promise(function (resolve) { setTimeout(resolve, ms); });
+  }
+
+  // Обёртка над fetch: проверяет статус и возвращает JSON
+  function api(url, options) {
+    return fetch(url, options).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }
+
+  function apiJson(url, payload) {
+    return api(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  }
 
   /* ===== Переключение и масштабирование ===== */
   function isMobileMode() { return window.innerWidth < BREAKPOINT; }
@@ -68,7 +108,6 @@
     loaderDesktop.classList.add('active');
     setTimeout(function () {
       switchScreen(stageDesktop, 'screen-', id);
-      if (id === 'form') updateSummary();
       loaderDesktop.classList.remove('active');
       navigating = false;
     }, 600);
@@ -79,7 +118,6 @@
     if (!target) return;
     if (instant) {
       switchScreen(stageMobile, 'm-screen-', id);
-      if (id === 'form') updateSummary();
       return;
     }
     if (navigating) return;
@@ -87,7 +125,6 @@
     var current = stageMobile.querySelector('.m-screen.active');
     if (!current || current === target) {
       switchScreen(stageMobile, 'm-screen-', id);
-      if (id === 'form') updateSummary();
       navigating = false;
       return;
     }
@@ -95,7 +132,6 @@
     setTimeout(function () {
       current.classList.remove('active', 'm-leave');
       target.classList.add('active', 'm-enter');
-      if (id === 'form') updateSummary();
       setTimeout(function () {
         target.classList.remove('m-enter');
         navigating = false;
@@ -185,7 +221,7 @@
     setErrorText('Произошла ошибка', 'Попробуйте ещё раз');
     isSending = true;
 
-    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 800); });
+    var delay = minDelay(800);
     var done = false;
     var timeoutId = setTimeout(function () { finishOrderFail(); }, 30000);
 
@@ -210,7 +246,7 @@
       setModalState('success');
     }
 
-    Promise.allSettled([submitOrder(data, phone), minDelay])
+    Promise.allSettled([submitOrder(data, phone), delay])
       .then(function (results) {
         var r = results[0];
         if (r.status === 'fulfilled' && r.value && r.value.ok) {
@@ -245,176 +281,107 @@
     });
   }
 
-  /* ===== Отзыв ===== */
-  var modalReview = document.getElementById('m-modal-review');
-  var modalReviewSent = document.getElementById('m-modal-review-sent');
-  var rvName = document.getElementById('m-rv-name');
-  var rvText = document.getElementById('m-rv-text');
-  var rvAnon = document.getElementById('m-rv-anon');
-  var rvSentMessage = document.getElementById('m-review-sent-message');
-  var rvConfirm = document.getElementById('m-confirm-review');
-  var rvAnonymous = false;
+  /* =====================================================================
+     ОТЗЫВЫ
+     Мобильная и десктопная модалки отличаются только разметкой и
+     классами состояний — логика общая.
+     ===================================================================== */
+  function createReview(cfg) {
+    var anonymous = false;
 
-  function setReviewState(state) {
-    if (!rvSentMessage) return;
-    rvSentMessage.querySelectorAll('.m-state').forEach(function (el) {
-      el.classList.toggle('active', el.classList.contains('m-state-' + state));
-    });
-  }
+    function setState(state) {
+      if (!cfg.sentMessage) return;
+      cfg.sentMessage.querySelectorAll(cfg.stateSelector).forEach(function (el) {
+        el.classList.toggle('active', el.classList.contains(cfg.statePrefix + state));
+      });
+    }
 
-  if (rvAnon && rvName) {
-    rvAnon.addEventListener('click', function () {
-      rvAnonymous = !rvAnonymous;
-      rvAnon.classList.toggle('on', rvAnonymous);
-      if (rvAnonymous) {
-        rvName.disabled = true;
-        rvName.value = '';
-        applyFieldState(rvName, 'empty');
-      } else {
-        rvName.disabled = false;
+    function reset() {
+      anonymous = false;
+      if (cfg.anonToggle) cfg.anonToggle.classList.remove('on');
+      if (cfg.name) { cfg.name.disabled = false; cfg.name.value = ''; }
+      if (cfg.text) cfg.text.value = '';
+      resetFields(REVIEW_FIELDS[cfg.fieldsKey]);
+      if (cfg.sentMessage) {
+        cfg.sentMessage.querySelectorAll(cfg.stateSelector).forEach(function (el) { el.classList.remove('active'); });
       }
-    });
-  }
-
-  function sendReview() {
-    if (!validateFields(REVIEW_FIELDS.mobile, VALIDATION_UI.mobile)) return;
-    var review = rvText ? rvText.value.trim() : '';
-    var name = rvAnonymous ? '' : (rvName ? rvName.value.trim() : '');
-    hideModal(modalReview);
-    showModal(modalReviewSent);
-    setReviewState('loading');
-
-    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
-    var done = false;
-    var timeoutId = setTimeout(function () { finishReview(false); }, 10000);
-
-    function finishReview(success) {
-      if (done) return;
-      done = true;
-      clearTimeout(timeoutId);
-      setReviewState(success ? 'success' : 'error');
-      setTimeout(function () {
-        hideModal(modalReviewSent);
-        resetReview();
-      }, 1600);
     }
 
-    Promise.allSettled([
-      fetch('/api/review', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, review: review, anonymous: rvAnonymous })
-      })
-        .then(function (r) {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.json();
-        }),
-      minDelay
-    ]).then(function (results) {
-      var r = results[0];
-      finishReview(r.status === 'fulfilled' && r.value && r.value.ok);
-    });
-  }
+    function send() {
+      if (!validateFields(REVIEW_FIELDS[cfg.fieldsKey], VALIDATION_UI[cfg.uiKey])) return;
+      var review = cfg.text ? cfg.text.value.trim() : '';
+      var name = anonymous ? '' : (cfg.name ? cfg.name.value.trim() : '');
+      hideModal(cfg.modal);
+      showModal(cfg.modalSent);
+      setState('loading');
 
-  function resetReview() {
-    rvAnonymous = false;
-    if (rvAnon) rvAnon.classList.remove('on');
-    if (rvName) { rvName.disabled = false; rvName.value = ''; }
-    if (rvText) rvText.value = '';
-    resetFields(REVIEW_FIELDS.mobile);
-    if (rvSentMessage) {
-      rvSentMessage.querySelectorAll('.m-state').forEach(function (el) { el.classList.remove('active'); });
-    }
-  }
+      var done = false;
+      var timeoutId = setTimeout(function () { finish(false); }, 20000);
 
-  if (rvConfirm) {
-    rvConfirm.addEventListener('click', sendReview);
-  }
-
-  /* ===== Отзыв (десктоп) ===== */
-  var dModalReview = document.getElementById('d-modal-review');
-  var dModalReviewSent = document.getElementById('d-modal-review-sent');
-  var dRvName = document.getElementById('d-rv-name');
-  var dRvText = document.getElementById('d-rv-text');
-  var dRvAnon = document.getElementById('d-rv-anon');
-  var dRvSentMessage = document.getElementById('d-review-sent-message');
-  var dRvConfirm = document.getElementById('d-confirm-review');
-  var dRvAnonymous = false;
-
-  function setDReviewState(state) {
-    if (!dRvSentMessage) return;
-    dRvSentMessage.querySelectorAll('.d-state').forEach(function (el) {
-      el.classList.toggle('active', el.classList.contains('d-state-' + state));
-    });
-  }
-
-  if (dRvAnon && dRvName) {
-    dRvAnon.addEventListener('click', function () {
-      dRvAnonymous = !dRvAnonymous;
-      dRvAnon.classList.toggle('on', dRvAnonymous);
-      if (dRvAnonymous) {
-        dRvName.disabled = true;
-        dRvName.value = '';
-        applyFieldState(dRvName, 'empty');
-      } else {
-        dRvName.disabled = false;
+      function finish(success) {
+        if (done) return;
+        done = true;
+        clearTimeout(timeoutId);
+        setState(success ? 'success' : 'error');
+        setTimeout(function () {
+          hideModal(cfg.modalSent);
+          reset();
+        }, 1600);
       }
-    });
-  }
 
-  function resetDReview() {
-    dRvAnonymous = false;
-    if (dRvAnon) dRvAnon.classList.remove('on');
-    if (dRvName) { dRvName.disabled = false; dRvName.value = ''; }
-    if (dRvText) dRvText.value = '';
-    resetFields(REVIEW_FIELDS.desktop);
-    if (dRvSentMessage) {
-      dRvSentMessage.querySelectorAll('.d-state').forEach(function (el) { el.classList.remove('active'); });
-    }
-  }
-
-  function sendDReview() {
-    if (!validateFields(REVIEW_FIELDS.desktop, VALIDATION_UI.desktop)) return;
-    var review = dRvText ? dRvText.value.trim() : '';
-    var name = dRvAnonymous ? '' : (dRvName ? dRvName.value.trim() : '');
-    hideModal(dModalReview);
-    showModal(dModalReviewSent);
-    setDReviewState('loading');
-
-    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2000); });
-    var done = false;
-    var timeoutId = setTimeout(function () { finishDReview(false); }, 10000);
-
-    function finishDReview(success) {
-      if (done) return;
-      done = true;
-      clearTimeout(timeoutId);
-      setDReviewState(success ? 'success' : 'error');
-      setTimeout(function () {
-        hideModal(dModalReviewSent);
-        resetDReview();
-      }, 1600);
+      Promise.allSettled([
+        apiJson('/api/review', { name: name, review: review, anonymous: anonymous }),
+        minDelay(800)
+      ]).then(function (results) {
+        var r = results[0];
+        finish(r.status === 'fulfilled' && r.value && r.value.ok);
+      });
     }
 
-    Promise.allSettled([
-      fetch('/api/review', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, review: review, anonymous: dRvAnonymous })
-      }).then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.json();
-      }),
-      minDelay
-    ]).then(function (results) {
-      var r = results[0];
-      finishDReview(r.status === 'fulfilled' && r.value && r.value.ok);
-    });
+    if (cfg.anonToggle && cfg.name) {
+      cfg.anonToggle.addEventListener('click', function () {
+        anonymous = !anonymous;
+        cfg.anonToggle.classList.toggle('on', anonymous);
+        cfg.name.disabled = anonymous;
+        if (anonymous) {
+          cfg.name.value = '';
+          applyFieldState(cfg.name, 'empty');
+        }
+      });
+    }
+
+    if (cfg.confirm) cfg.confirm.addEventListener('click', send);
+
+    return { modal: cfg.modal, modalSent: cfg.modalSent, reset: reset };
   }
 
-  if (dRvConfirm) {
-    dRvConfirm.addEventListener('click', sendDReview);
-  }
+  var reviewMobile = createReview({
+    modal: document.getElementById('m-modal-review'),
+    modalSent: document.getElementById('m-modal-review-sent'),
+    name: document.getElementById('m-rv-name'),
+    text: document.getElementById('m-rv-text'),
+    anonToggle: document.getElementById('m-rv-anon'),
+    confirm: document.getElementById('m-confirm-review'),
+    sentMessage: document.getElementById('m-review-sent-message'),
+    stateSelector: '.m-state',
+    statePrefix: 'm-state-',
+    fieldsKey: 'mobile',
+    uiKey: 'mobile'
+  });
+
+  var reviewDesktop = createReview({
+    modal: document.getElementById('d-modal-review'),
+    modalSent: document.getElementById('d-modal-review-sent'),
+    name: document.getElementById('d-rv-name'),
+    text: document.getElementById('d-rv-text'),
+    anonToggle: document.getElementById('d-rv-anon'),
+    confirm: document.getElementById('d-confirm-review'),
+    sentMessage: document.getElementById('d-review-sent-message'),
+    stateSelector: '.d-state',
+    statePrefix: 'd-state-',
+    fieldsKey: 'desktop',
+    uiKey: 'desktop'
+  });
 
   stageDesktop.querySelectorAll('[data-modal]').forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -425,9 +392,9 @@
   document.querySelectorAll('#d-modal-review .d-modal-overlay, #d-modal-review-sent .d-modal-overlay').forEach(function (ov) {
     ov.addEventListener('click', function () {
       if (document.activeElement) document.activeElement.blur();
-      hideModal(dModalReview);
-      hideModal(dModalReviewSent);
-      resetDReview();
+      hideModal(reviewDesktop.modal);
+      hideModal(reviewDesktop.modalSent);
+      reviewDesktop.reset();
     });
   });
 
@@ -467,8 +434,8 @@
     }
     dIsSending = true;
     loaderDesktop.classList.add('active');
-    var minDelay = new Promise(function (resolve) { setTimeout(resolve, 800); });
-    Promise.allSettled([submitOrder(data, phone), minDelay])
+    var delay = minDelay(800);
+    Promise.allSettled([submitOrder(data, phone), delay])
       .then(function (results) {
         dIsSending = false;
         loaderDesktop.classList.remove('active');
@@ -527,8 +494,8 @@
   if (reviewOverlay) {
     reviewOverlay.addEventListener('click', function () {
       if (document.activeElement) document.activeElement.blur();
-      hideModal(modalReview);
-      resetReview();
+      hideModal(reviewMobile.modal);
+      reviewMobile.reset();
     });
   }
 
@@ -654,7 +621,6 @@
   }
 
   function simulateUpload(count, addFileEl, titleEl, subEl, fillEl, percentEl) {
-    state.uploadStatus = 'uploading';
     addFileEl.classList.remove('done');
     addFileEl.classList.add('uploading');
     titleEl.textContent = 'Загружаем: ' + count + ' ' + pluralFiles(count);
@@ -668,7 +634,6 @@
       setUploadProgress(addFileEl, fillEl, percentEl, p);
       if (p >= 100) {
         clearInterval(interval);
-        state.uploadStatus = 'done';
         addFileEl.classList.remove('uploading');
         addFileEl.classList.add('done');
         titleEl.textContent = 'Загружено!';
@@ -676,95 +641,66 @@
     }, 60);
   }
 
-  function setupUpload(addFileEl, inputEl, titleEl, subEl, fillEl, percentEl) {
+  // Конфиг одного блока загрузки файлов.
+  // stateKey — куда складывать выбранные файлы (state.files / state.shortorderFiles)
+  function setupUpload(cfg) {
+    var addFileEl = cfg.addFile;
+    var inputEl = cfg.input;
+    var titleEl = cfg.title;
+    var subEl = cfg.sub;
+    if (!addFileEl || !inputEl) return;
+
     addFileEl.addEventListener('click', function (e) {
       if (e.target === inputEl) return;
       inputEl.click();
     });
+
     inputEl.addEventListener('change', function (e) {
       var files = Array.prototype.slice.call(e.target.files);
       inputEl.value = '';
       if (!files.length) return;
       var err = validateFiles(files);
       if (err === 'non-image') {
-        state.files = [];
+        state[cfg.stateKey] = [];
         showFileError(addFileEl, inputEl, titleEl, subEl, 'Загружать можно только фото');
         return;
       }
       if (err === 'too-many') {
-        state.files = [];
+        state[cfg.stateKey] = [];
         showFileError(addFileEl, inputEl, titleEl, subEl, 'Не более 5 файлов');
         return;
       }
-      state.files = files;
-      simulateUpload(files.length, addFileEl, titleEl, subEl, fillEl, percentEl);
+      state[cfg.stateKey] = files;
+      simulateUpload(files.length, addFileEl, titleEl, subEl, cfg.fill, cfg.percent);
     });
   }
 
-  setupUpload(
-    document.getElementById('add-file'),
-    document.getElementById('file-input'),
-    document.getElementById('add-file-title'),
-    document.getElementById('add-file-sub'),
-    document.querySelector('#upload-progress .progress-fill'));
+  setupUpload({
+    addFile: document.getElementById('add-file'),
+    input: document.getElementById('file-input'),
+    title: document.getElementById('add-file-title'),
+    sub: document.getElementById('add-file-sub'),
+    fill: document.querySelector('#upload-progress .progress-fill'),
+    stateKey: 'files'
+  });
 
-  setupUpload(
-    document.getElementById('m-add-file'),
-    document.getElementById('m-file-input'),
-    document.getElementById('m-add-file-title'),
-    document.getElementById('m-add-file-sub'),
-    null,
-    document.getElementById('m-upload-percent'));
+  setupUpload({
+    addFile: document.getElementById('m-add-file'),
+    input: document.getElementById('m-file-input'),
+    title: document.getElementById('m-add-file-title'),
+    sub: document.getElementById('m-add-file-sub'),
+    percent: document.getElementById('m-upload-percent'),
+    stateKey: 'files'
+  });
 
-  /* ===== Загрузка файлов — быстрая заявка ===== */
-  (function () {
-    var addEl = document.getElementById('so-add-file');
-    var inputEl = document.getElementById('so-file-input');
-    var titleEl = document.getElementById('so-add-file-title');
-    var subEl = document.getElementById('so-add-file-sub');
-    var percentEl = document.getElementById('so-upload-percent');
-    if (!addEl || !inputEl) return;
-
-    addEl.addEventListener('click', function (e) {
-      if (e.target === inputEl) return;
-      inputEl.click();
-    });
-    inputEl.addEventListener('change', function (e) {
-      var files = Array.prototype.slice.call(e.target.files);
-      inputEl.value = '';
-      if (!files.length) return;
-      var err = validateFiles(files);
-      if (err === 'non-image') {
-        state.shortorderFiles = [];
-        showFileError(addEl, inputEl, titleEl, subEl, 'Загружать можно только фото');
-        return;
-      }
-      if (err === 'too-many') {
-        state.shortorderFiles = [];
-        showFileError(addEl, inputEl, titleEl, subEl, 'Не более 5 файлов');
-        return;
-      }
-      state.shortorderFiles = files;
-      simulateUpload(files.length, addEl, titleEl, subEl, null, percentEl);
-    });
-  })();
-
-  /* ===== Сводка на форме ===== */
-  function yesNo(v) { return v ? 'Да' : 'Нет'; }
-  function setText(id, text) { var el = document.getElementById(id); if (el) el.textContent = text; }
-
-  function updateSummary() {
-    setText('sum-service', state.service || '—');
-    setText('sum-urgent', yesNo(state.options.urgent));
-    setText('sum-outtown', yesNo(state.options.outOfTown));
-    setText('m-sum-service', state.service || '—');
-    setText('m-sum-urgent', yesNo(state.options.urgent));
-    setText('m-sum-outtown', yesNo(state.options.outOfTown));
-    var n = state.files.length;
-    var fileText = n === 0 ? 'Нет файлов' : n + ' ' + pluralFiles(n);
-    setText('sum-files', fileText);
-    setText('m-sum-files', fileText);
-  }
+  setupUpload({
+    addFile: document.getElementById('so-add-file'),
+    input: document.getElementById('so-file-input'),
+    title: document.getElementById('so-add-file-title'),
+    sub: document.getElementById('so-add-file-sub'),
+    percent: document.getElementById('so-upload-percent'),
+    stateKey: 'shortorderFiles'
+  });
 
   /* ===== Сброс состояния ===== */
   function resetAddFile(addFileEl, titleEl, subEl, fillEl, percentEl, inputEl) {
@@ -784,7 +720,6 @@
     state.options = { urgent: false, outOfTown: false };
     state.files = [];
     state.shortorderFiles = [];
-    state.uploadStatus = 'empty';
 
     stageDesktop.querySelectorAll('.service-item').forEach(function (i) { i.classList.remove('active'); });
     stageMobile.querySelectorAll('.m-service-item').forEach(function (i) { i.classList.remove('active'); });
@@ -981,8 +916,7 @@
     fd.append('outOfTown', data.options.outOfTown ? '1' : '0');
     (data.files || []).forEach(function (f) { fd.append('files', f); });
 
-    return fetch('/api/order', { method: 'POST', body: fd })
-      .then(function (r) { console.log('[submit] ответ статус:', r.status); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    return api('/api/order', { method: 'POST', body: fd })
       .then(function (j) { console.log('[submit] ответ:', JSON.stringify(j)); return j; });
   }
 
@@ -1013,8 +947,7 @@
   }
 
   function loadSettings() {
-    fetch('/api/settings')
-      .then(function (r) { console.log('[settings] статус:', r.status); return r.json(); })
+    api('/api/settings')
       .then(function (s) { console.log('[settings] данные:', JSON.stringify(s)); applySettings(s); })
       .catch(function (e) { console.error('[settings] ошибка:', e); });
   }

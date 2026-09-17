@@ -1,3 +1,12 @@
+/*
+ * Pracue — стили (десктоп + мобильная версия).
+ *
+ * Порядок блоков: сначала десктоп (.d-* и классы без префикса),
+ * затем мобильная версия (.m-*).
+ * Дизайн-токены (цвета) — в :root ниже.
+ * Состояния полей (общая валидация): .is-valid / .is-invalid / .shake.
+ * ВАЖНО: при правках поднимайте версию в index.html (?v=N).
+ */
 :root {
   --accent: #EA6249;
   --white: #FFFFFF;
@@ -95,19 +104,6 @@ body {
   position: relative;
   flex-shrink: 0;
   height: 49px;
-}
-
-.d-content-row {
-  flex-shrink: 0;
-  display: flex;
-  gap: 20px;
-}
-
-.d-col-right {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 
 /* ===== Шапка ===== */
@@ -735,66 +731,6 @@ body {
   resize: none;
 }
 
-.summary {
-  width: 361px;
-  flex-shrink: 0;
-}
-
-.summary-row {
-  width: 361px;
-  height: 57px;
-  border: 1px dashed var(--light-gray);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 28px;
-}
-
-.summary-row+.summary-row {
-  margin-top: 10px;
-}
-
-.summary-row span {
-  font-weight: 400;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  color: var(--gray-text);
-}
-
-.summary-row b {
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-}
-
-.add-file-summary {
-  width: 361px;
-  height: 57px;
-  flex-shrink: 0;
-  border: 1px dashed var(--light-gray);
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 28px;
-}
-
-.add-file-summary span {
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  color: var(--gray-text);
-}
-
-.add-file-summary b {
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-}
-
 /* --- Успех --- */
 .message {
   width: 540px;
@@ -874,8 +810,13 @@ body {
 /* Иконки-стрелки: цвет = цвет текста кнопки */
 .btn-back img { filter: brightness(0) invert(0.38); }
 .btn-primary img { filter: brightness(0) invert(1); }
-.btn-primary:disabled img { filter: brightness(0) invert(0.81); }
-.actions:has(.btn-primary:disabled) .btn-back img { filter: brightness(0) invert(0.81); }
+
+/* Неактивное состояние: Назад и Далее одинаковы и малозаметны */
+.btn-primary:disabled img,
+.actions:has(.btn-primary:disabled) .btn-back img {
+  filter: brightness(0) invert(0.81);
+  opacity: .45;
+}
 
 /* Contained */
 .btn-primary {
@@ -898,10 +839,6 @@ body {
   cursor: default;
 }
 
-.btn-primary:disabled img {
-  opacity: .45;
-}
-
 /* Outlined */
 .btn-back {
   background: transparent;
@@ -920,10 +857,6 @@ body {
   border-color: transparent;
   color: var(--light-gray);
   cursor: default;
-}
-
-.actions:has(.btn-primary:disabled) .btn-back img {
-  opacity: .45;
 }
 
 /* Outlined accent */
@@ -958,15 +891,6 @@ body {
 .loader.active {
   opacity: 1;
   visibility: visible;
-}
-
-.spinner {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 5px solid rgba(234, 98, 73, 0.2);
-  border-top-color: var(--accent);
-  animation: spin .8s linear infinite;
 }
 
 @keyframes spin {
@@ -1825,63 +1749,6 @@ body {
   min-height: 70px;
   padding: 16px 28px;
   resize: none;
-}
-
-.m-summary {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.m-summary-row {
-  height: 57px;
-  flex-shrink: 0;
-  border: 1px dashed var(--light-gray);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 28px;
-}
-
-.m-summary-row span {
-  font-weight: 400;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  color: var(--gray-text);
-}
-
-.m-summary-row b {
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-}
-
-.m-add-file-summary {
-  flex-shrink: 0;
-  height: 57px;
-  border: 1px dashed var(--light-gray);
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 28px;
-}
-
-.m-add-file-summary span {
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  color: var(--gray-text);
-}
-
-.m-add-file-summary b {
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-  color: var(--accent);
 }
 
 /* --- Контакты --- */

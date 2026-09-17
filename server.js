@@ -3,6 +3,14 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
+/*
+ * Pracue — backend
+ *   POST /api/order     заявка (+ файлы) → Notion «Заявки»
+ *   POST /api/review    отзыв            → Notion «Отзывы»
+ *   GET  /api/settings  контент сайта    ← Notion «Настройки»
+ * Статика: /css /js /assets /uploads и варианты /desktop-v1..v3.
+ */
+
 const PORT = process.env.PORT || 3000;
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const NOTION_ORDERS_DB = process.env.NOTION_ORDERS_DB;
@@ -28,8 +36,6 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage, limits: { fileSize: 10 * 1024 * 1024 } });
-
-app.use('/uploads', express.static(uploadDir));
 
 // --- Notion API ---
 function notionConfigured() {
@@ -127,7 +133,7 @@ app.post('/api/order', upload.array('files', 10), async function (req, res) {
       'Срочный вызов': { checkbox: toBool(b.urgent) },
       'За городом': { checkbox: toBool(b.outOfTown) }
     };
-    if (phone) properties['Телефон'] = { phone_number: phone };
+    properties['Телефон'] = { phone_number: phone };
     if (service) properties['Услуга'] = { select: { name: service } };
 
     if (files.length) {
@@ -176,7 +182,7 @@ app.post('/api/review', async function (req, res) {
 
     const properties = {
       'Имя': { title: name ? [{ text: { content: name } }] : [{ text: { content: 'Анонимный отзыв' } }] },
-      'Отзыв': { rich_text: review ? [{ text: { content: review } }] : [] },
+      'Отзыв': { rich_text: [{ text: { content: review } }] },
       'Дата добавления': { date: { start: minskNow() } },
       'Анонимно': { checkbox: anonymous }
     };
