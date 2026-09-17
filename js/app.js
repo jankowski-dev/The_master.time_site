@@ -651,7 +651,7 @@
     if (fillEl) fillEl.style.width = p + '%';
     if (percentEl) {
       percentEl.textContent = p + '%';
-      addFileEl.style.backgroundImage = 'linear-gradient(to right, rgba(234, 98, 73, 0.12) ' + p + '%, transparent ' + p + '%)';
+      addFileEl.style.backgroundImage = 'linear-gradient(to right, #F0F7F0 ' + p + '%, transparent ' + p + '%)';
     }
   }
 
@@ -679,9 +679,13 @@
   }
 
   function setupUpload(addFileEl, inputEl, titleEl, subEl, fillEl, percentEl) {
-    addFileEl.addEventListener('click', function () { inputEl.click(); });
+    addFileEl.addEventListener('click', function (e) {
+      if (e.target === inputEl) return;
+      inputEl.click();
+    });
     inputEl.addEventListener('change', function (e) {
       var files = Array.prototype.slice.call(e.target.files);
+      inputEl.value = '';
       if (!files.length) return;
       var err = validateFiles(files);
       if (err === 'non-image') {
@@ -723,9 +727,13 @@
     var percentEl = document.getElementById('so-upload-percent');
     if (!addEl || !inputEl) return;
 
-    addEl.addEventListener('click', function () { inputEl.click(); });
+    addEl.addEventListener('click', function (e) {
+      if (e.target === inputEl) return;
+      inputEl.click();
+    });
     inputEl.addEventListener('change', function (e) {
       var files = Array.prototype.slice.call(e.target.files);
+      inputEl.value = '';
       if (!files.length) return;
       var err = validateFiles(files);
       if (err === 'non-image') {

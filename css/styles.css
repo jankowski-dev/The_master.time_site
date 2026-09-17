@@ -1701,9 +1701,15 @@ body {
   display: none;
 }
 
+.m-add-file.uploading,
+.m-add-file.done {
+  border-color: #A9CDA9;
+}
+
 .m-add-file.uploading .m-upload-percent,
 .m-add-file.done .m-upload-percent {
   display: block;
+  color: #5F8F5F;
 }
 
 .m-add-file.error {
