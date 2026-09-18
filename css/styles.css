@@ -1712,6 +1712,33 @@ body {
   animation: field-shake .4s ease;
 }
 
+/* Автозаполнение браузера не должно перекрывать фон состояния (зелёный/красный) */
+.field.is-valid:-webkit-autofill,
+.field.is-valid:-webkit-autofill:hover,
+.field.is-valid:-webkit-autofill:focus,
+.m-field.is-valid:-webkit-autofill,
+.m-field.is-valid:-webkit-autofill:hover,
+.m-field.is-valid:-webkit-autofill:focus,
+.d-field.is-valid:-webkit-autofill,
+.d-field.is-valid:-webkit-autofill:hover,
+.d-field.is-valid:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #F0F7F0 inset;
+  -webkit-text-fill-color: var(--gray-text);
+}
+
+.field.is-invalid:-webkit-autofill,
+.field.is-invalid:-webkit-autofill:hover,
+.field.is-invalid:-webkit-autofill:focus,
+.m-field.is-invalid:-webkit-autofill,
+.m-field.is-invalid:-webkit-autofill:hover,
+.m-field.is-invalid:-webkit-autofill:focus,
+.d-field.is-invalid:-webkit-autofill,
+.d-field.is-invalid:-webkit-autofill:hover,
+.d-field.is-invalid:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #FDF1F0 inset;
+  -webkit-text-fill-color: var(--gray-text);
+}
+
 @keyframes field-shake {
 
   0%,
