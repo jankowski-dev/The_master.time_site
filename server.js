@@ -200,11 +200,20 @@ app.post('/api/review', async function (req, res) {
   }
 });
 
-// GET /api/settings — настройки и контент сайта
+// GET /api/settings — настройки и контент сайта.
+// Кэш на минуту: страница запрашивает настройки при каждой загрузке,
+// а у Notion лимит ~3 запроса/сек — кэш бережёт лимит.
+var SETTINGS_TTL = 60 * 1000;
+var settingsCache = { at: 0, data: null };
+
 app.get('/api/settings', async function (req, res) {
   if (!notionConfigured()) {
     log('[settings] БЕЗ КОНФИГА: NOTION_TOKEN=', !!NOTION_TOKEN, 'ORDERS_DB=', !!NOTION_ORDERS_DB, 'SETTINGS_DB=', !!NOTION_SETTINGS_DB);
     res.status(503).json({ error: 'Notion не настроен' });
+    return;
+  }
+  if (settingsCache.data && Date.now() - settingsCache.at < SETTINGS_TTL) {
+    res.json(settingsCache.data);
     return;
   }
   try {
@@ -230,10 +239,10 @@ app.get('/api/settings', async function (req, res) {
       instagram: url('Instagram'),
       viber: url('Viber'),
       intro: text('Интро'),
-      subtitle: text('Подзаголовок'),
       copyright: text('Копирайт'),
       followersCount: text('Подписчики Instagram')
     };
+    settingsCache = { at: Date.now(), data: out };
     log('[settings] ОК', JSON.stringify(out));
     res.json(out);
   } catch (e) {

@@ -483,7 +483,6 @@
         document.getElementById('so-add-file'),
         document.getElementById('so-add-file-title'),
         document.getElementById('so-add-file-sub'),
-        null,
         document.getElementById('so-upload-percent'),
         document.getElementById('so-file-input'));
       state.shortorderFiles = [];
@@ -612,26 +611,23 @@
     }, 2500);
   }
 
-  function setUploadProgress(addFileEl, fillEl, percentEl, p) {
-    if (fillEl) fillEl.style.width = p + '%';
-    if (percentEl) {
-      percentEl.textContent = p + '%';
-      addFileEl.style.backgroundImage = 'linear-gradient(to right, #F0F7F0 ' + p + '%, transparent ' + p + '%)';
-    }
+  function setUploadProgress(addFileEl, percentEl, p) {
+    percentEl.textContent = p + '%';
+    addFileEl.style.backgroundImage = 'linear-gradient(to right, #F0F7F0 ' + p + '%, transparent ' + p + '%)';
   }
 
-  function simulateUpload(count, addFileEl, titleEl, subEl, fillEl, percentEl) {
+  function simulateUpload(count, addFileEl, titleEl, subEl, percentEl) {
     addFileEl.classList.remove('done');
     addFileEl.classList.add('uploading');
     titleEl.textContent = 'Загружаем: ' + count + ' ' + pluralFiles(count);
     subEl.style.display = 'none';
-    setUploadProgress(addFileEl, fillEl, percentEl, 0);
+    setUploadProgress(addFileEl, percentEl, 0);
 
     var p = 0;
     var interval = setInterval(function () {
       p += 4;
       if (p >= 100) p = 100;
-      setUploadProgress(addFileEl, fillEl, percentEl, p);
+      setUploadProgress(addFileEl, percentEl, p);
       if (p >= 100) {
         clearInterval(interval);
         addFileEl.classList.remove('uploading');
@@ -671,7 +667,7 @@
         return;
       }
       state[cfg.stateKey] = files;
-      simulateUpload(files.length, addFileEl, titleEl, subEl, cfg.fill, cfg.percent);
+      simulateUpload(files.length, addFileEl, titleEl, subEl, cfg.percent);
     });
   }
 
@@ -680,7 +676,7 @@
     input: document.getElementById('file-input'),
     title: document.getElementById('add-file-title'),
     sub: document.getElementById('add-file-sub'),
-    fill: document.querySelector('#upload-progress .progress-fill'),
+    percent: document.getElementById('upload-percent'),
     stateKey: 'files'
   });
 
@@ -703,12 +699,11 @@
   });
 
   /* ===== Сброс состояния ===== */
-  function resetAddFile(addFileEl, titleEl, subEl, fillEl, percentEl, inputEl) {
+  function resetAddFile(addFileEl, titleEl, subEl, percentEl, inputEl) {
     addFileEl.classList.remove('uploading', 'done', 'error');
     addFileEl.style.backgroundImage = '';
     titleEl.textContent = 'Добавить фото';
     subEl.style.display = '';
-    if (fillEl) fillEl.style.width = '0%';
     if (percentEl) percentEl.textContent = '';
     inputEl.value = '';
     var key = inputEl.id;
@@ -733,15 +728,13 @@
       document.getElementById('add-file'),
       document.getElementById('add-file-title'),
       document.getElementById('add-file-sub'),
-      document.querySelector('#upload-progress .progress-fill'),
-      null,
+      document.getElementById('upload-percent'),
       document.getElementById('file-input'));
 
     resetAddFile(
       document.getElementById('m-add-file'),
       document.getElementById('m-add-file-title'),
       document.getElementById('m-add-file-sub'),
-      null,
       document.getElementById('m-upload-percent'),
       document.getElementById('m-file-input'));
 
@@ -749,7 +742,6 @@
       document.getElementById('so-add-file'),
       document.getElementById('so-add-file-title'),
       document.getElementById('so-add-file-sub'),
-      null,
       document.getElementById('so-upload-percent'),
       document.getElementById('so-file-input'));
 
@@ -935,7 +927,6 @@
     if (s.youtube) externalLinks.youtube = s.youtube;
     if (s.twitter) externalLinks.twitter = s.twitter;
     if (s.intro) document.querySelectorAll('[data-field="intro"]').forEach(function (el) { el.textContent = s.intro; });
-    if (s.subtitle) document.querySelectorAll('[data-field="subtitle"]').forEach(function (el) { el.textContent = s.subtitle; });
     if (s.copyright) document.querySelectorAll('[data-field="copyright"]').forEach(function (el) { el.textContent = s.copyright; });
     if (s.followersCount) {
       var n = parseInt(s.followersCount, 10);
