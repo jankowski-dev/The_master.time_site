@@ -103,6 +103,53 @@ test.describe('consent banner and analytics', () => {
     await expect(page.locator('script[src*="mc.yandex"]')).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem('tmt_consent'))).toBe('declined');
   });
+
+  test('accepting consent queues init/config commands in the official vendor queues', async ({
+    page
+  }) => {
+    await page.route(/mc\.yandex\.ru|googletagmanager\.com|google-analytics\.com/, (route) =>
+      route.abort()
+    );
+
+    await page.goto('/');
+    await page.locator('[data-consent-accept]').click();
+    await expect(page.locator('script[src*="mc.yandex"]')).toHaveCount(1);
+
+    const queues = await page.evaluate(() => {
+      const win = window as unknown as {
+        dataLayer: unknown[];
+        ym?: { a?: unknown[][] };
+      };
+      const ymInit = (win.ym?.a ?? []).some(
+        (cmd) => cmd[0] === '112934654' && cmd[1] === 'init'
+      );
+      const gaConfig = win.dataLayer.some(
+        (cmd) => Array.isArray(cmd) && cmd[0] === 'config' && cmd[1] === 'G-TESTGA123'
+      );
+      return { ymInit, gaConfig };
+    });
+
+    expect(queues.ymInit).toBe(true);
+    expect(queues.gaConfig).toBe(true);
+  });
+
+  test('consent banner stacks above the mobile sticky CTA', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/');
+
+    const banner = page.locator('#consent-banner');
+    const cta = page.locator('[data-sticky-cta]');
+    await expect(banner).toBeVisible();
+    await expect(cta).toBeVisible();
+
+    const bannerBox = await banner.boundingBox();
+    const ctaBox = await cta.boundingBox();
+    expect(bannerBox).not.toBeNull();
+    expect(ctaBox).not.toBeNull();
+
+    // The banner must sit entirely above the CTA (no vertical overlap).
+    expect(bannerBox!.y + bannerBox!.height).toBeLessThanOrEqual(ctaBox!.y + 1);
+  });
 });
 
 test.describe('lead attribution', () => {

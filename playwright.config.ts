@@ -13,7 +13,9 @@ export default defineConfig({
     env: {
       PORT: '4321',
       SITE_URL: 'http://localhost:4321',
-      LEAD_TEST_MODE: '1'
+      LEAD_TEST_MODE: '1',
+      PUBLIC_GA_ID: 'G-TESTGA123',
+      PUBLIC_GOOGLE_ADS_ID: 'AW-TESTADS123'
     }
   }
 });

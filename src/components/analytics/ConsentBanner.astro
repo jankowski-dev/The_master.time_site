@@ -118,6 +118,13 @@
     border-color: #ffffff;
   }
 
+  @media (max-width: 767px) {
+    .consent-banner {
+      /* Stack above the mobile sticky CTA so both remain usable. */
+      bottom: calc(var(--sticky-cta-height) + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
   @media (min-width: 768px) {
     .consent-banner {
       flex-direction: row;

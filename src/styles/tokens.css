@@ -35,6 +35,7 @@
   --container: 1200px;
   --gutter: 20px;
   --section-y: 64px;
+  --sticky-cta-height: 72px;
 
   /* Motion */
   --transition: 180ms ease;

@@ -43,7 +43,8 @@ function sitemapFilter(page) {
     const pathname = new URL(page).pathname;
     return !SITEMAP_EXCLUDED.has(pathname);
   } catch {
-    return true;
+    // Fail closed: an unparseable URL must not end up in the sitemap.
+    return false;
   }
 }
 

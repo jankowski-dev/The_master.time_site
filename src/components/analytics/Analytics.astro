@@ -18,9 +18,14 @@
 <script>
   import { getConsent } from '@/lib/consent';
 
+  type YmWithQueue = ((...args: unknown[]) => void) & {
+    a?: unknown[][];
+    l?: number;
+  };
+
   interface TrackedWindow extends Window {
-    dataLayer: Array<Record<string, unknown>>;
-    ym?: (...args: unknown[]) => void;
+    dataLayer: unknown[];
+    ym?: YmWithQueue;
     gtag?: (...args: unknown[]) => void;
     __tmtYmId?: string;
   }
@@ -34,23 +39,23 @@
 
   win.__tmtYmId = ymId;
 
-  function defineTracker(name: 'ym' | 'gtag'): (...args: unknown[]) => void {
-    const queue: unknown[][] = [];
-    const fn = (...args: unknown[]) => {
-      queue.push(args);
-    };
-    (fn as unknown as { q: unknown[][] }).q = queue;
-    (win as unknown as Record<string, unknown>)[name] = fn;
-    return fn;
-  }
-
   let loaded = false;
 
   function loadAnalytics(): void {
     if (loaded) return;
     loaded = true;
 
-    const ym = defineTracker('ym');
+    // Official Yandex Metrika stub: `mc.yandex.ru/metrika/tag.js` replays every
+    // command queued on `window.ym.a` once it loads.
+    const ym = (win.ym ??
+      (function ymStub(...args: unknown[]): void {
+        const self = ymStub as YmWithQueue;
+        self.a = self.a || [];
+        self.a.push(args);
+      }) as YmWithQueue);
+    win.ym = ym;
+    ym.l = Date.now();
+
     const ymScript = document.createElement('script');
     ymScript.src = `https://mc.yandex.ru/metrika/tag.js?id=${ymId}`;
     ymScript.async = true;
@@ -58,7 +63,14 @@
     ym(ymId, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true });
 
     if (gaId) {
-      const gtag = defineTracker('gtag');
+      // Official gtag stub: `googletagmanager.com/gtag/js` reads command arrays
+      // from `window.dataLayer`.
+      win.dataLayer = win.dataLayer || [];
+      const gtag = win.gtag ?? function gtag(...args: unknown[]): void {
+        win.dataLayer.push(args);
+      };
+      win.gtag = gtag;
+
       const gaScript = document.createElement('script');
       gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
       gaScript.async = true;
