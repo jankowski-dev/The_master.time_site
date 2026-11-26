@@ -31,9 +31,9 @@ import Button from '@/components/ui/Button.astro';
     </nav>
 
     <div class="site-header__actions">
-      <a class="site-header__phone" href={`tel:${site.phoneLink}`}>
+      <a class="site-header__phone" href={`tel:${site.phoneLink}`} aria-label={site.phoneDisplay}>
         <Icon name="phone" size={18} />
-        <span>{site.phoneDisplay}</span>
+        <span class="site-header__phone-text">{site.phoneDisplay}</span>
       </a>
       <Button href="/kalkulyator" variant="primary">Рассчитать</Button>
     </div>
@@ -260,11 +260,41 @@ import Button from '@/components/ui/Button.astro';
     .mobile-menu {
       display: none;
     }
-  }
 
-  @media (min-width: 1024px) {
     .site-header__actions {
       display: flex;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .site-header__inner {
+      gap: 16px;
+    }
+
+    .site-nav {
+      gap: 14px;
+    }
+
+    .site-nav > a,
+    .nav-dropdown > summary {
+      font-size: 14px;
+    }
+
+    .site-header__actions {
+      gap: 10px;
+    }
+
+    .site-header__phone {
+      padding: 8px;
+    }
+
+    .site-header__phone-text {
+      display: none;
+    }
+
+    .site-header :global(.btn) {
+      padding: 10px 16px;
+      font-size: 14px;
     }
   }
 

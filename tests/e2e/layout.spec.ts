@@ -46,3 +46,20 @@ test('no horizontal overflow', async ({ page }) => {
     expect(overflow).toBe(false);
   }
 });
+
+test('primary cta is visible on tablet', async ({ page }) => {
+  await page.setViewportSize({ width: 800, height: 900 });
+  await page.goto('/');
+
+  const phone = page.locator('a.site-header__phone');
+  const cta = page.locator('.site-header a.btn[href="/kalkulyator"]');
+
+  const phoneVisible = await phone.isVisible();
+  const ctaVisible = await cta.isVisible();
+  expect(phoneVisible || ctaVisible).toBe(true);
+
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+  );
+  expect(overflow).toBe(false);
+});
