@@ -12,19 +12,36 @@ import Button from '@/components/ui/Button.astro';
     </p>
 
     <div class="contacts__grid">
-      <a class="contacts__card" href={`tel:${site.phoneLink}`}>
+      <a
+        class="contacts__card"
+        href={`tel:${site.phoneLink}`}
+        data-track
+        data-track-event="phone_click"
+        data-track-params='{"placement":"contacts"}'>
         <span class="contacts__icon"><Icon name="btn-call" size={22} /></span>
         <span class="contacts__label">Телефон</span>
         <span class="contacts__value">{site.phoneDisplay}</span>
       </a>
 
-      <a class="contacts__card" href={site.viberUrl}>
+      <a
+        class="contacts__card"
+        href={site.viberUrl}
+        data-track
+        data-track-event="viber_click"
+        data-track-params='{"placement":"contacts"}'>
         <span class="contacts__icon"><Icon name="menu-viber" size={22} /></span>
         <span class="contacts__label">Viber</span>
         <span class="contacts__value">Написать в Viber</span>
       </a>
 
-      <a class="contacts__card" href={site.instagramUrl} target="_blank" rel="noopener noreferrer">
+      <a
+        class="contacts__card"
+        href={site.instagramUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-track
+        data-track-event="instagram_click"
+        data-track-params='{"placement":"contacts"}'>
         <span class="contacts__icon"><Icon name="menu-instagram" size={22} /></span>
         <span class="contacts__label">Instagram</span>
         <span class="contacts__value">Написать в директ</span>

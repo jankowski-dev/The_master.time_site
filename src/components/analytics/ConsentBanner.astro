@@ -1,0 +1,135 @@
+---
+/**
+ * Cookie/analytics consent banner. Visible only until the visitor has chosen.
+ * Accepting stores `tmt_consent=accepted` and dispatches `tmt:consent` so the
+ * analytics loader can inject its scripts; declining stores `declined`.
+ */
+---
+
+<div class="consent-banner" id="consent-banner" role="region" aria-label="Согласие на обработку данных" hidden>
+  <p class="consent-banner__text">
+    Мы используем файлы cookie и сервисы аналитики, чтобы улучшить сайт. Подробнее — в
+    <a href="/politika-konfidencialnosti">политике конфиденциальности</a>.
+  </p>
+  <div class="consent-banner__actions">
+    <button type="button" class="consent-banner__btn consent-banner__btn--accept" data-consent-accept>
+      Принять
+    </button>
+    <button type="button" class="consent-banner__btn consent-banner__btn--decline" data-consent-decline>
+      Только необходимые
+    </button>
+  </div>
+</div>
+
+<script>
+  import { getConsent, setConsent } from '@/lib/consent';
+
+  function initConsentBanner(): void {
+    const banner = document.getElementById('consent-banner');
+    if (!banner) return;
+
+    if (getConsent(window.localStorage) !== null) {
+      banner.hidden = true;
+      return;
+    }
+
+    banner.hidden = false;
+
+    const choose = (value: 'accepted' | 'declined'): void => {
+      setConsent(value, window.localStorage);
+      banner.hidden = true;
+      window.dispatchEvent(new CustomEvent('tmt:consent', { detail: value }));
+    };
+
+    banner.querySelector('[data-consent-accept]')?.addEventListener('click', () => choose('accepted'));
+    banner.querySelector('[data-consent-decline]')?.addEventListener('click', () => choose('declined'));
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initConsentBanner);
+  } else {
+    initConsentBanner();
+  }
+</script>
+
+<style>
+  .consent-banner {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px var(--gutter) calc(16px + env(safe-area-inset-bottom, 0px));
+    background: var(--color-ink);
+    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 -8px 24px rgba(22, 19, 18, 0.28);
+  }
+
+  .consent-banner[hidden] {
+    display: none;
+  }
+
+  .consent-banner__text {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .consent-banner__text a {
+    color: #ffffff;
+    text-decoration: underline;
+  }
+
+  .consent-banner__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .consent-banner__btn {
+    padding: 12px 20px;
+    border-radius: var(--radius-pill);
+    border: 2px solid transparent;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .consent-banner__btn--accept {
+    background: var(--color-accent);
+    color: #ffffff;
+  }
+
+  .consent-banner__btn--accept:hover {
+    background: var(--color-accent-strong);
+  }
+
+  .consent-banner__btn--decline {
+    background: transparent;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .consent-banner__btn--decline:hover {
+    border-color: #ffffff;
+  }
+
+  @media (min-width: 768px) {
+    .consent-banner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      max-width: var(--container);
+      margin-inline: auto;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+      width: 100%;
+    }
+  }
+</style>

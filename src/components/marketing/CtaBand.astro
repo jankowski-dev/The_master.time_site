@@ -27,7 +27,14 @@ const {
     </div>
     <div class="cta-band__actions">
       <Button href={primaryHref} variant="primary" size="lg">{primaryLabel}</Button>
-      <Button href={`tel:${site.phoneLink}`} variant="ghost" size="lg" class="cta-band__call">
+      <Button
+        href={`tel:${site.phoneLink}`}
+        variant="ghost"
+        size="lg"
+        class="cta-band__call"
+        data-track
+        data-track-event="phone_click"
+        data-track-params='{"placement":"cta"}'>
         Позвонить
       </Button>
       <a class="cta-band__lead" href="/zayavka" data-open-lead-form>Оставить заявку</a>

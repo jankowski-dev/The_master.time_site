@@ -18,7 +18,9 @@ import Button from '@/components/ui/Button.astro';
             href={site.instagramDm}
             variant="primary"
             size="lg"
-            data-track="instagram_dm"
+            data-track
+            data-track-event="instagram_click"
+            data-track-params='{"placement":"home"}'
           >
             Отправить фото
           </Button>
@@ -27,7 +29,9 @@ import Button from '@/components/ui/Button.astro';
             variant="ghost"
             size="lg"
             class="instagram-block__follow"
-            data-track="instagram_follow"
+            data-track
+            data-track-event="instagram_click"
+            data-track-params='{"placement":"home"}'
           >
             Подписаться
           </Button>

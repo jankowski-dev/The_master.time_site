@@ -26,10 +26,22 @@ const seo = {
       </p>
 
       <div class="thanks__actions">
-        <Button href={site.instagramDm} variant="primary" size="lg" data-track="instagram_dm">
+        <Button
+          href={site.instagramDm}
+          variant="primary"
+          size="lg"
+          data-track
+          data-track-event="instagram_click"
+          data-track-params='{"placement":"thanks"}'>
           Написать в Instagram
         </Button>
-        <Button href={`tel:${site.phoneLink}`} variant="ghost" size="lg">
+        <Button
+          href={`tel:${site.phoneLink}`}
+          variant="ghost"
+          size="lg"
+          data-track
+          data-track-event="phone_click"
+          data-track-params='{"placement":"thanks"}'>
           Позвонить: {site.phoneDisplay}
         </Button>
         <a class="thanks__home" href="/">Вернуться на главную</a>
@@ -42,7 +54,7 @@ const seo = {
   import { track } from '@/lib/analytics';
   import { getConsent } from '@/lib/consent';
 
-  const source = new URLSearchParams(window.location.search).get('source') ?? '';
+  const source = new URLSearchParams(window.location.search).get('source') ?? 'native';
   if (getConsent(window.localStorage) === 'accepted') {
     track('lead_submit', { source });
   }

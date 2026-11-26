@@ -5,7 +5,8 @@ import ContactBlock from '@/components/marketing/ContactBlock.astro';
 import LeadFormDialog from '@/components/forms/LeadFormDialog.astro';
 import Icon from '@/components/ui/Icon.astro';
 
-import { site } from '@/lib/content';
+import { site, categories } from '@/lib/content';
+import { localBusinessJsonLd } from '@/lib/jsonld';
 
 const seo = {
   ...site.defaultSeo,
@@ -17,11 +18,13 @@ const seo = {
 
 const breadcrumbItems = [{ label: 'Главная', href: '/' }, { label: 'Контакты' }];
 
+const jsonLd = [localBusinessJsonLd(site, categories)];
+
 // Ссылка на карту без встраивания (embed) — только внешняя ссылка. // demo
 const mapsUrl = 'https://yandex.by/maps/?text=Гродно';
 ---
 
-<BaseLayout seo={seo}>
+<BaseLayout seo={seo} jsonLd={jsonLd}>
   <section class="page-hero">
     <div class="container">
       <Breadcrumbs items={breadcrumbItems} />
@@ -40,7 +43,10 @@ const mapsUrl = 'https://yandex.by/maps/?text=Гродно';
         class="reach__card"
         href={site.instagramDm}
         target="_blank"
-        rel="noopener noreferrer">
+        rel="noopener noreferrer"
+        data-track
+        data-track-event="instagram_click"
+        data-track-params='{"placement":"contacts"}'>
         <span class="reach__icon"><Icon name="instagram" size={24} /></span>
         <span class="reach__label">Instagram</span>
         <span class="reach__value">Написать в директ</span>

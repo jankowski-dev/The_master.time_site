@@ -40,9 +40,29 @@ import Icon from '@/components/ui/Icon.astro';
 
       <div class="site-footer__col site-footer__contacts">
         <h2 class="site-footer__title">Контакты</h2>
-        <a href={`tel:${site.phoneLink}`}>{site.phoneDisplay}</a>
-        <a href={site.instagramUrl} target="_blank" rel="noopener noreferrer">Instagram</a>
-        <a href={site.viberUrl}>Viber</a>
+        <a
+          href={`tel:${site.phoneLink}`}
+          data-track
+          data-track-event="phone_click"
+          data-track-params='{"placement":"footer"}'>
+          {site.phoneDisplay}
+        </a>
+        <a
+          href={site.instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-track
+          data-track-event="instagram_click"
+          data-track-params='{"placement":"footer"}'>
+          Instagram
+        </a>
+        <a
+          href={site.viberUrl}
+          data-track
+          data-track-event="viber_click"
+          data-track-params='{"placement":"footer"}'>
+          Viber
+        </a>
       </div>
     </div>
 

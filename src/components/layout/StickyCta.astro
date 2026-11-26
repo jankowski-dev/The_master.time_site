@@ -4,7 +4,12 @@ import Icon from '@/components/ui/Icon.astro';
 ---
 
 <div class="sticky-cta" data-sticky-cta>
-  <a class="sticky-cta__call" href={`tel:${site.phoneLink}`}>
+  <a
+    class="sticky-cta__call"
+    href={`tel:${site.phoneLink}`}
+    data-track
+    data-track-event="phone_click"
+    data-track-params='{"placement":"sticky"}'>
     <Icon name="btn-call" size={20} />
     <span>Позвонить</span>
   </a>

@@ -19,7 +19,14 @@ const { title, subtitle, intro } = Astro.props;
     {intro && <p class="hero__intro">{intro}</p>}
     <div class="hero__actions">
       <Button href="/kalkulyator" variant="primary" size="lg">Рассчитать стоимость</Button>
-      <Button href={`tel:${site.phoneLink}`} variant="ghost" size="lg" class="hero__call">
+      <Button
+        href={`tel:${site.phoneLink}`}
+        variant="ghost"
+        size="lg"
+        class="hero__call"
+        data-track
+        data-track-event="phone_click"
+        data-track-params='{"placement":"home"}'>
         Позвонить
       </Button>
     </div>

@@ -28,11 +28,30 @@ function allowedDomainsFrom(siteUrl) {
   return [pattern];
 }
 
+/**
+ * Routes that must not appear in the sitemap: the no-JS thank-you page, the
+ * standalone lead page and the privacy policy.
+ */
+const SITEMAP_EXCLUDED = new Set([
+  '/spasibo/',
+  '/zayavka/',
+  '/politika-konfidencialnosti/'
+]);
+
+function sitemapFilter(page) {
+  try {
+    const pathname = new URL(page).pathname;
+    return !SITEMAP_EXCLUDED.has(pathname);
+  } catch {
+    return true;
+  }
+}
+
 export default defineConfig({
   site: SITE_URL,
   output: 'static',
   adapter: node({ mode: 'standalone' }),
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: sitemapFilter })],
   security: {
     checkOrigin: true,
     allowedDomains: allowedDomainsFrom(SITE_URL)

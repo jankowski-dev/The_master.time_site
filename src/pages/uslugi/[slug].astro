@@ -59,10 +59,24 @@ const jsonLd = [
       </p>
       <div class="category-hero__actions">
         <Button href={calculatorHref} variant="primary" size="lg">Рассчитать</Button>
-        <Button href={`tel:${site.phoneLink}`} variant="ghost" size="lg" class="category-hero__call">
+        <Button
+          href={`tel:${site.phoneLink}`}
+          variant="ghost"
+          size="lg"
+          class="category-hero__call"
+          data-track
+          data-track-event="phone_click"
+          data-track-params='{"placement":"category"}'>
           Позвонить
         </Button>
-        <Button href={site.instagramDm} variant="ghost" size="lg" class="category-hero__call">
+        <Button
+          href={site.instagramDm}
+          variant="ghost"
+          size="lg"
+          class="category-hero__call"
+          data-track
+          data-track-event="instagram_click"
+          data-track-params='{"placement":"category"}'>
           Отправить фото в Instagram
         </Button>
       </div>

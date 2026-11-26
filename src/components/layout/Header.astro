@@ -30,7 +30,13 @@ import Button from '@/components/ui/Button.astro';
     </nav>
 
     <div class="site-header__actions">
-      <a class="site-header__phone" href={`tel:${site.phoneLink}`} aria-label={site.phoneDisplay}>
+      <a
+        class="site-header__phone"
+        href={`tel:${site.phoneLink}`}
+        aria-label={site.phoneDisplay}
+        data-track
+        data-track-event="phone_click"
+        data-track-params='{"placement":"header"}'>
         <Icon name="phone" size={18} />
         <span class="site-header__phone-text">{site.phoneDisplay}</span>
       </a>
@@ -66,7 +72,14 @@ import Button from '@/components/ui/Button.astro';
       <a href="/ceny">Цены</a>
       <a href="/kalkulyator">Калькулятор</a>
       <a href="/kontakty">Контакты</a>
-      <a class="mobile-menu__phone" href={`tel:${site.phoneLink}`}>{site.phoneDisplay}</a>
+      <a
+        class="mobile-menu__phone"
+        href={`tel:${site.phoneLink}`}
+        data-track
+        data-track-event="phone_click"
+        data-track-params='{"placement":"header"}'>
+        {site.phoneDisplay}
+      </a>
     </div>
   </nav>
 </header>

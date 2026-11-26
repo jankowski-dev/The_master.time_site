@@ -13,6 +13,8 @@ import Footer from '@/components/layout/Footer.astro';
 import StickyCta from '@/components/layout/StickyCta.astro';
 import Seo from '@/components/seo/Seo.astro';
 import JsonLd from '@/components/seo/JsonLd.astro';
+import Analytics from '@/components/analytics/Analytics.astro';
+import ConsentBanner from '@/components/analytics/ConsentBanner.astro';
 
 import type { SeoProps } from '@/lib/seo';
 
@@ -33,6 +35,7 @@ const { seo, jsonLd, noindex } = Astro.props;
     <meta name="theme-color" content="#161312" />
     <Seo {...seo} noindex={noindex ?? seo.noindex} />
     <JsonLd data={jsonLd} />
+    <Analytics />
   </head>
   <body>
     <a class="skip-link" href="#main">К содержанию</a>
@@ -42,9 +45,13 @@ const { seo, jsonLd, noindex } = Astro.props;
     </main>
     <Footer />
     <StickyCta />
+    <ConsentBanner />
     <slot name="scripts" />
     <script>
       import '@/scripts/mobile-menu.ts';
+    </script>
+    <script>
+      import '@/scripts/tracking.ts';
     </script>
   </body>
 </html>

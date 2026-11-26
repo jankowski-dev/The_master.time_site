@@ -1,0 +1,79 @@
+---
+/**
+ * Consent-gated analytics loader.
+ *
+ * Initializes `window.dataLayer` synchronously (so `track()` never throws),
+ * then — only after consent is accepted — injects the Yandex Metrika and
+ * Google Analytics/Ads scripts. Consent can arrive either on page load
+ * (`tmt_consent=accepted`) or later via the `tmt:consent` event dispatched by
+ * the consent banner.
+ */
+---
+
+<script is:inline>
+  // Must run before any `track()` call so events are never dropped.
+  window.dataLayer = window.dataLayer || [];
+</script>
+
+<script>
+  import { getConsent } from '@/lib/consent';
+
+  interface TrackedWindow extends Window {
+    dataLayer: Array<Record<string, unknown>>;
+    ym?: (...args: unknown[]) => void;
+    gtag?: (...args: unknown[]) => void;
+    __tmtYmId?: string;
+  }
+
+  const win = window as unknown as TrackedWindow;
+  win.dataLayer = win.dataLayer || [];
+
+  const ymId = import.meta.env.PUBLIC_YM_ID || '112934654';
+  const gaId = import.meta.env.PUBLIC_GA_ID || '';
+  const adsId = import.meta.env.PUBLIC_GOOGLE_ADS_ID || '';
+
+  win.__tmtYmId = ymId;
+
+  function defineTracker(name: 'ym' | 'gtag'): (...args: unknown[]) => void {
+    const queue: unknown[][] = [];
+    const fn = (...args: unknown[]) => {
+      queue.push(args);
+    };
+    (fn as unknown as { q: unknown[][] }).q = queue;
+    (win as unknown as Record<string, unknown>)[name] = fn;
+    return fn;
+  }
+
+  let loaded = false;
+
+  function loadAnalytics(): void {
+    if (loaded) return;
+    loaded = true;
+
+    const ym = defineTracker('ym');
+    const ymScript = document.createElement('script');
+    ymScript.src = `https://mc.yandex.ru/metrika/tag.js?id=${ymId}`;
+    ymScript.async = true;
+    document.head.appendChild(ymScript);
+    ym(ymId, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true });
+
+    if (gaId) {
+      const gtag = defineTracker('gtag');
+      const gaScript = document.createElement('script');
+      gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+      gaScript.async = true;
+      document.head.appendChild(gaScript);
+      gtag('js', new Date());
+      gtag('config', gaId);
+      if (adsId) gtag('config', adsId);
+    }
+  }
+
+  if (getConsent(window.localStorage) === 'accepted') {
+    loadAnalytics();
+  }
+
+  window.addEventListener('tmt:consent', (event) => {
+    if ((event as CustomEvent<string>).detail === 'accepted') loadAnalytics();
+  });
+</script>
