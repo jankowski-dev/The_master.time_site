@@ -6,15 +6,17 @@ interface Props {
   work: Work;
   pricing: PricingConfig;
   category?: Category;
+  /** Lowercase search text exposed as `data-work-search` for client-side filters. */
+  searchText?: string;
 }
 
-const { work, pricing, category } = Astro.props;
+const { work, pricing, category, searchText } = Astro.props;
 
 const from = Math.max(pricing.minOrder, work.priceFrom);
 const to = work.priceTo === undefined ? undefined : Math.max(pricing.minOrder, work.priceTo);
 ---
 
-<div class="price-row">
+<div class="price-row" data-work-search={searchText}>
   <div class="price-row__main">
     {
       category ? (
@@ -41,6 +43,11 @@ const to = work.priceTo === undefined ? undefined : Math.max(pricing.minOrder, w
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-md);
+  }
+
+  /* The explicit display above would otherwise win over the hidden attribute. */
+  .price-row[hidden] {
+    display: none;
   }
 
   .price-row__main {

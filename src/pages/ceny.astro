@@ -1,0 +1,317 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
+import PriceRow from '@/components/marketing/PriceRow.astro';
+import CtaBand from '@/components/marketing/CtaBand.astro';
+
+import { site, categories, pricing } from '@/lib/content';
+import type { Work } from '@/lib/content/schemas';
+import { formatPrice } from '@/lib/pricing/format';
+
+const seo = {
+  ...site.defaultSeo,
+  title: 'Цены на услуги мастера в Гродно',
+  description:
+    'Полный прайс на услуги мастера в Гродно: сантехника, электрика, ремонт, мебель, бытовая техника и мелкие работы. Поиск по работам и фильтр по категориям.',
+  canonical: Astro.url.pathname
+};
+
+const breadcrumbItems = [{ label: 'Главная', href: '/' }, { label: 'Цены' }];
+
+const totalWorks = categories.reduce((sum, category) => sum + category.works.length, 0);
+
+const workSearchText = (work: Work): string =>
+  `${work.title} ${work.description ?? ''}`.trim().toLowerCase();
+---
+
+<BaseLayout seo={seo}>
+  <section class="prices-hero">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbItems} />
+      <h1 class="prices-hero__title">Цены</h1>
+      <p class="prices-hero__lead">
+        Полный список работ мастера в Гродно: от сантехники и электрики до мебели и мелких задач.
+        Найдите нужную работу через поиск или выберите категорию.
+      </p>
+    </div>
+  </section>
+
+  <section class="prices-section">
+    <div class="container">
+      <div class="prices-intro">
+        <p>
+          Цены ниже — ориентировочные, за работу без учёта материалов. Полные условия выезда,
+          срочности и оплаты собраны в разделе
+          <a href="/usloviya">«Условия»</a>, а предварительный расчёт можно сделать в
+          <a href="/kalkulyator">калькуляторе</a>.
+        </p>
+        <p class="prices-intro__note">
+          {pricing.disclaimer} Минимальный заказ — {formatPrice(pricing.minOrder)}.
+        </p>
+      </div>
+
+      <form class="price-filter" data-price-form role="search" aria-label="Поиск по прайсу">
+        <div class="price-filter__field">
+          <label class="price-filter__label" for="price-search">Поиск по работам</label>
+          <input
+            class="price-filter__control"
+            id="price-search"
+            type="search"
+            name="q"
+            placeholder="Например, смеситель"
+            autocomplete="off"
+            data-price-search
+          />
+        </div>
+
+        <div class="price-filter__field">
+          <label class="price-filter__label" for="price-category">Категория</label>
+          <select class="price-filter__control" id="price-category" name="category" data-price-category>
+            <option value="">Все категории</option>
+            {categories.map((category) => <option value={category.slug}>{category.title}</option>)}
+          </select>
+        </div>
+
+        <button class="price-filter__reset" type="button" data-price-reset>Сбросить</button>
+      </form>
+
+      <div class="price-filter__meta">
+        <p class="price-filter__count" aria-live="polite">
+          Показано <span data-price-count>{totalWorks}</span> из {totalWorks} работ
+        </p>
+        <p class="price-empty" data-price-empty hidden>
+          Ничего не найдено. Попробуйте изменить запрос или выбрать другую категорию.
+        </p>
+      </div>
+
+      <div class="price-groups">
+        {
+          categories.map((category) => (
+            <section
+              class="price-group"
+              data-category-group
+              data-category-slug={category.slug}
+              aria-labelledby={`price-group-${category.slug}`}
+            >
+              <div class="price-group__head">
+                <h2 class="price-group__title" id={`price-group-${category.slug}`}>
+                  {category.title}
+                </h2>
+                <a class="price-group__link" href={`/uslugi/${category.slug}`}>
+                  Все услуги категории
+                </a>
+              </div>
+              <div class="price-group__rows">
+                {category.works.map((work) => (
+                  <PriceRow
+                    work={work}
+                    category={category}
+                    pricing={pricing}
+                    searchText={workSearchText(work)}
+                  />
+                ))}
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Не нашли нужную работу?"
+    text="Позвоните или посчитайте стоимость в калькуляторе — подскажу по цене и уточню детали."
+  />
+</BaseLayout>
+
+<script>
+  import '@/scripts/price-filter.ts';
+</script>
+
+<style>
+  .prices-hero {
+    background:
+      radial-gradient(1200px 480px at 85% -10%, rgba(234, 98, 73, 0.28), transparent 60%),
+      var(--color-ink);
+    color: #ffffff;
+    padding-block: 40px 56px;
+  }
+
+  .prices-hero__title {
+    color: #ffffff;
+    font-size: clamp(30px, 5.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-block: 20px 16px;
+  }
+
+  .prices-hero__lead {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 680px;
+  }
+
+  .prices-hero :global(.breadcrumbs),
+  .prices-hero :global(.breadcrumbs a) {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .prices-hero :global(.breadcrumbs a:hover) {
+    color: var(--color-accent-soft);
+  }
+
+  .prices-hero :global(.breadcrumbs [aria-current='page']) {
+    color: #ffffff;
+  }
+
+  .prices-hero :global(.breadcrumbs__item + .breadcrumbs__item::before) {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .prices-section {
+    padding-block: var(--section-y);
+  }
+
+  .prices-intro {
+    display: grid;
+    gap: 14px;
+    max-width: 760px;
+    margin-bottom: 28px;
+    color: var(--color-text);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .prices-intro__note {
+    color: var(--color-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .price-filter {
+    display: grid;
+    gap: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+  }
+
+  .price-filter__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .price-filter__label {
+    color: var(--color-ink);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .price-filter__control {
+    width: 100%;
+    min-width: 0;
+    padding: 12px 14px;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+  }
+
+  .price-filter__control:hover {
+    border-color: var(--color-muted);
+  }
+
+  .price-filter__reset {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 24px;
+    color: var(--color-ink);
+    font-weight: 700;
+    background: transparent;
+    border: 2px solid var(--color-line);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition:
+      border-color var(--transition),
+      color var(--transition);
+  }
+
+  .price-filter__reset:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .price-filter__meta {
+    margin-block: 20px 28px;
+  }
+
+  .price-filter__count {
+    color: var(--color-muted);
+    font-size: 14px;
+  }
+
+  .price-empty {
+    margin-top: 12px;
+    padding: 20px;
+    color: var(--color-text);
+    font-size: 15px;
+    line-height: 1.5;
+    background: var(--color-accent-soft);
+    border-radius: var(--radius-md);
+  }
+
+  .price-empty[hidden] {
+    display: none;
+  }
+
+  .price-groups {
+    display: grid;
+    gap: 40px;
+  }
+
+  .price-group[hidden] {
+    display: none;
+  }
+
+  .price-group__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .price-group__title {
+    font-size: clamp(20px, 2.6vw, 26px);
+    font-weight: 900;
+  }
+
+  .price-group__link {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .price-group__rows {
+    display: grid;
+    gap: 10px;
+  }
+
+  @media (min-width: 768px) {
+    .price-filter {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 260px) auto;
+      align-items: end;
+    }
+
+    .price-filter__reset {
+      width: auto;
+    }
+  }
+</style>
