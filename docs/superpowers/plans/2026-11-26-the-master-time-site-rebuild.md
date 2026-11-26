@@ -1243,7 +1243,7 @@ Run → FAIL.
 - Read JSON; if missing, return.
 - State from URL query; validate category/task; default urgency `this_week`, location `city`; if valid task and category, start at step 3; else step 1.
 - `renderStep()` toggles steps, updates progress, focus heading.
-- `calculate()` builds `EstimateInput` from selected task/work/pricing and calls `calculateEstimate`; render `formatRange`, breakdown lines, duration, disclaimer, notice; if `requiresPhone`, show a phone CTA and hide the price? Show base + notice. For beyond, show `Уточним по телефону` instead of range, plus phone button.
+- `calculate()` builds `EstimateInput` from selected task/work/pricing and calls `calculateEstimate`. Treat `estimate.from`/`estimate.to` as authoritative. Render `formatRange`, breakdown lines, duration, disclaimer, notice. When `estimate.minOrderApplied`, show a visible «Применён минимальный заказ» note (amount from `pricing.minOrder`) and do not present the sum of `lines` as the total. If `estimate.requiresPhone`, show «Уточним по телефону» plus a phone CTA; do not present the base as a firm price. For beyond, show `Уточним по телефону` instead of a range, plus the phone button.
 - CTA `Вызвать мастера`: if `requiresPhone`, `tel:`; else dispatch `tmt:open-lead-form` with detail and `estimateFrom/To` from estimate.
 - Update URL with `history.replaceState` on state changes; use `URLSearchParams`.
 - `track('calculator_start')` on first category change; `calculator_step_N`; `calculator_result` on first result.
