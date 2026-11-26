@@ -81,7 +81,7 @@
 │  ├─ layouts/BaseLayout.astro
 │  ├─ components/
 │  │  ├─ layout/{Header,Footer,Container,Section,Breadcrumbs,StickyCta}.astro
-│  │  ├─ ui/{Button,Icon,Card,Badge,Accordion,Field,PhoneField,Checkbox,Toggle,Rating,Spinner,InlineStatus}.astro
+│  │  ├─ ui/{Button,Icon,Card,Badge,Accordion,Field,PhoneField,Checkbox,Rating,Spinner,InlineStatus}.astro
 │  │  ├─ marketing/{Hero,TrustBar,ServiceGrid,ServiceCard,PriceTable,PriceRow,HowItWorks,Reviews,ReviewCard,InstagramBlock,Faq,ContactBlock,CtaBand}.astro
 │  │  ├─ calculator/{Calculator,CalculatorStep,EstimateBreakdown}.astro
 │  │  ├─ forms/{LeadForm,LeadFormDialog,ReviewForm,ConsentField,PhotoUpload}.astro
@@ -767,7 +767,7 @@ git commit -m "feat: add transparent pricing and estimate engine"
 ### Task 6: Lead validation, formatting, email notifier
 
 **Files:**
-- Create: `src/lib/leads/types.ts`, `src/lib/leads/validate.ts`, `src/lib/leads/format.ts`, `src/lib/leads/email.ts`, `tests/unit/leads-validate.test.ts`, `tests/unit/leads-format.test.ts`, `tests/unit/leads-email.test.ts`.
+- Create: `src/lib/leads/types.ts`, `src/lib/leads/validate.ts`, `src/lib/leads/format.ts`, `src/lib/leads/email.ts`, `src/lib/photo-limits.ts`, `tests/unit/leads-validate.test.ts`, `tests/unit/leads-format.test.ts`, `tests/unit/leads-email.test.ts`, `tests/unit/photo-limits.test.ts`.
 
 **Interfaces:**
 - `LeadSource = 'form' | 'calculator' | 'callback'`.
@@ -779,14 +779,20 @@ git commit -m "feat: add transparent pricing and estimate engine"
 - `parseLeadFormData(formData: FormData, opts?: { now?: number }): Promise<LeadParseResult>`.
 - `formatLeadText(lead: Lead): string`; `formatLeadHtml(lead: Lead): string`; `escapeHtml(value: string): string`.
 - `EmailConfig { host: string; port: number; user: string; pass: string; from: string; to: string }`.
+- `createSmtpTransport(config: EmailConfig): { sendMail(message: unknown): Promise<unknown> }` — reusable by reviews.
 - `createEmailNotifier(config: EmailConfig, sendMail?: (message: unknown) => Promise<unknown>): LeadNotifier`.
+- `PhotoLimits { maxFiles: number; maxFileSize: number; maxTotalSize: number; allowedTypes: readonly string[] }`.
+- `CLIENT_PHOTO_LIMITS`: 3 files, 12 МБ each, 30 МБ total, JPEG/PNG/WebP/HEIC/HEIF.
+- `SERVER_PHOTO_LIMITS`: 3 files, 4 МБ each, 10 МБ total, JPEG/PNG/WebP.
+- `validatePhotoFiles(files: Array<{ type: string; size: number; name: string }>, limits: PhotoLimits): string | null`.
 
 - [ ] **Step 1: Write failing validation tests**
 
 `tests/unit/leads-validate.test.ts`:
 - Helper `validForm()` returns a `FormData` with `phone: '+375 29 123-45-67'`, `name: 'Иван'`, `source: 'form'`, `page: '/kalkulyator'`, `consent: '1'`, `startedAt: String(Date.now() - 5000)`, `website: ''`.
 - Cases: valid → `ok: true`, phone normalized `+375291234567`; missing phone → error `phone`; invalid code `+375111234567` → error; missing consent → error; honeypot filled → error `website`; `startedAt` 1s ago → error; 4 photos → error `photos`; non-image file → error; 5MB file → error; invalid attribution JSON → attribution `{}`; name 100 chars → error.
-- Run: `npm run test -- tests/unit/leads-validate.test.ts` → FAIL.
+- `tests/unit/photo-limits.test.ts`: server limits reject HEIC, 5MB, 4 files, total >10MB; client limits accept HEIC and 5MB (will be compressed), reject 13MB and 4 files.
+- Run: `npm run test -- tests/unit/leads-validate.test.ts tests/unit/photo-limits.test.ts` → FAIL.
 
 - [ ] **Step 2: Write failing formatting/email tests**
 
@@ -798,14 +804,15 @@ git commit -m "feat: add transparent pricing and estimate engine"
 - Read strings with helper `field(name)`.
 - Validate `name` max 80, `message` max 1000, `page` max 200, `source` enum, `consent` truthy, `website` empty, `startedAt` (if present) older than 3000ms.
 - Parse `attribution` JSON; if invalid, `{}`; cap 2000 chars.
-- Validate photos: count ≤3, each size ≤4MB, total ≤10MB, type in `image/jpeg|image/png|image/webp`; convert `File` to `LeadPhoto` with `Buffer.from(await file.arrayBuffer())`.
+- Validate photos with `validatePhotoFiles(files, SERVER_PHOTO_LIMITS)` (3 files, 4 МБ each, 10 МБ total, JPEG/PNG/WebP); convert `File` to `LeadPhoto` with `Buffer.from(await file.arrayBuffer())`.
 - Phone: `normalizeBelarusPhone`; if null, error.
 - Return errors keyed by field; no exceptions.
 
 - [ ] **Step 4: Implement formatting and email**
 
 `formatLeadText`/`formatLeadHtml` include: ID, date (Minsk), name, phone, source, page, category/task, urgency/location, estimate range, message, attribution fields, photo count. Escape all user strings in HTML.
-`createEmailNotifier`: default `sendMail` from `nodemailer.createTransport({ host, port, secure: port === 465, auth: { user, pass } }).sendMail`; `send` calls it with `from`, `to`, `subject: \`[The Master Time] Новая заявка: ${lead.phone}\``, `text`, `html`, `attachments` mapping photos `{ filename, content, contentType }`; resolve on success, throw on error.
+`createSmtpTransport`: `nodemailer.createTransport({ host, port, secure: port === 465, auth: { user, pass } })`, returns `{ sendMail: (message) => transport.sendMail(message) }`.
+`createEmailNotifier`: default `sendMail` = `createSmtpTransport(config).sendMail`; `send` calls it with `from`, `to`, `subject: \`[The Master Time] Новая заявка: ${lead.phone}\``, `text`, `html`, `attachments` mapping photos `{ filename, content, contentType }`; resolve on success, throw on error.
 
 - [ ] **Step 5: Run tests**
 
@@ -830,6 +837,7 @@ git commit -m "feat: add lead validation, formatting and email notifier"
 
 **Interfaces:**
 - `ViberConfig { token: string; adminId: string }`.
+- `sendViberText(config: ViberConfig, text: string, fetchImpl?: typeof fetch): Promise<void>` — reusable by reviews.
 - `createViberNotifier(config: ViberConfig, fetchImpl?: typeof fetch): LeadNotifier | null`.
 - `notifyLead(lead: Lead, notifiers: LeadNotifier[]): Promise<{ delivered: boolean; results: Array<{ name: string; ok: boolean; error?: string }> }>`.
 - `createRateLimiter(options: { windowMs: number; max: number; now?: () => number }): { check(key: string): boolean }`.
@@ -1114,25 +1122,25 @@ git commit -m "feat: add searchable price page"
 - Hidden fields: `source`, `page`, `attribution`, `startedAt`, `website` (honeypot), `categorySlug`, `taskId`, `urgency`, `location`, `estimateFrom`, `estimateTo`.
 - `LeadFormDialog.astro`: native `<dialog id="lead-form-dialog">` with close button, `LeadForm source="form"`, `noscript` link to `/zayavka`; listens for clicks on `[data-open-lead-form]` (anchors to `/zayavka`) and `window` event `tmt:open-lead-form` with detail `{ source?, categorySlug?, taskId?, urgency?, location?, estimateFrom?, estimateTo?, message? }`; on click, `preventDefault()`, sets hidden fields, `showModal()`, focuses phone; closes on backdrop/Escape, restores focus. Without JS the anchor navigates to `/zayavka`.
 - `PhotoUpload.astro`: input `name="photos"` multiple accept `image/jpeg,image/png,image/webp,image/heic,image/heif`; previews; remove; updates `input.files` via `DataTransfer`.
-- `src/lib/photo.ts`: `MAX_PHOTOS = 3`, `MAX_FILE_SIZE = 4 * 1024 * 1024`, `MAX_TOTAL_SIZE = 10 * 1024 * 1024`, `ALLOWED_TYPES`, `validatePhotoFiles(files: Array<{ type: string; size: number; name: string }>): string | null`, `compressImage(file: File): Promise<File>`, `preparePhotos(files: File[]): Promise<File[]>`.
+- `src/lib/photo.ts`: `compressImage(file: File): Promise<File>`, `preparePhotos(files: File[], compress?: (file: File) => Promise<File>): Promise<File[]>`; imports `CLIENT_PHOTO_LIMITS`/`validatePhotoFiles` from `@/lib/photo-limits`. No duplicated limits.
 - `src/scripts/lead-form.ts`: intercepts submit, client validation, `FormData`, attribution, fetch, success/error states; tracks `lead_submit`/`lead_error` via `track`.
 
 - [ ] **Step 1: Write failing photo unit tests**
 
 `tests/unit/photo.test.ts`:
-- `validatePhotoFiles([])` → null.
-- 4 files → `'Не более 3 фото'`.
-- non-image → `'Только фото'`.
-- 5MB file → `'Файл больше 4 МБ'`.
-- 3×4MB → total error.
-- 3 JPEGs 1MB → null.
+- `preparePhotos([], fakeCompress)` → `[]`.
+- 4 files → rejects with `'Не более 3 фото'`.
+- 3 JPEGs 1MB with a fake compressor returning 1MB files → returns 3 files.
+- A 5MB JPEG with a fake compressor returning a 1.5MB JPEG → output is 1.5MB (compression was used).
+- A compressor that rejects → rejects with `'Не удалось обработать фото. Отправьте его в Instagram или Viber.'`.
 Run → FAIL.
 
 - [ ] **Step 2: Write failing lead form E2E**
 
 `tests/e2e/lead-form.spec.ts`:
 - Home: click `[data-open-lead-form]`; dialog visible; submit empty → phone/consent errors; invalid phone `+375 11 123-45-67` → error; valid `+375 29 123-45-67` + consent → success text «Заявка принята» (test mode).
-- Intercept `page.route('**/api/lead', ...)` to inspect `FormData`: phone normalized, source, `utm_source` from localStorage (set via `page.addInitScript`), `files` count 1 after selecting a fixture.
+- Intercept `page.route('**/api/lead', ...)` to inspect `FormData`: phone normalized, source, attribution JSON contains `utmSource` from localStorage (set via `page.addInitScript`), `files` count 1 after selecting a fixture.
+- Use a ~3MB JPEG fixture; after selection, the submitted `File.size` is ≤2MB (client compression actually ran).
 - Error: route fulfill 500 → error text with `tel:+375257076793` and `viber://chat`.
 - No-JS: `browser.newContext({ javaScriptEnabled: false })`, go to `/zayavka`, fill phone/consent, submit → URL `/spasibo`.
 Run → FAIL.
@@ -1156,7 +1164,7 @@ Add `<LeadFormDialog />` to home, category, contacts, calculator pages (calculat
 - [ ] **Step 5: Implement photo compression**
 
 `compressImage`: if `file.type === 'image/jpeg' && file.size <= 2MB`, return file. Else load via `createImageBitmap` or `<img>`; draw to canvas with max dimension 1600; `toBlob('image/jpeg', 0.82)`; return `new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' })`. If decode/encode fails, throw `new Error('Не удалось обработать фото. Отправьте его в Instagram или Viber.')`.
-`preparePhotos`: validate first; `Promise.all(files.map(compressImage))`; re-validate total; return.
+`preparePhotos`: validate first with `CLIENT_PHOTO_LIMITS`; `Promise.all(files.map(compress))` where `compress` defaults to `compressImage`; re-validate total; return. Tests inject a fake compressor so canvas is not needed in unit tests.
 
 - [ ] **Step 6: Run tests**
 
@@ -1266,7 +1274,7 @@ git commit -m "feat: add 3-step estimate calculator with lead prefill"
 ### Task 13: Reviews page, review form, review API
 
 **Files:**
-- Create: `src/pages/otzyvy.astro`, `src/components/forms/ReviewForm.astro`, `src/lib/reviews/validate.ts`, `src/lib/reviews/notify.ts`, `src/lib/reviews/handle.ts`, `src/pages/api/review.ts`, `tests/unit/reviews-validate.test.ts`, `tests/unit/reviews-notify.test.ts`, `tests/unit/reviews-handle.test.ts`, `tests/e2e/reviews.spec.ts`.
+- Create: `src/pages/otzyvy.astro`, `src/components/forms/ReviewForm.astro`, `src/components/ui/Rating.astro`, `src/lib/reviews/validate.ts`, `src/lib/reviews/notify.ts`, `src/lib/reviews/handle.ts`, `src/pages/api/review.ts`, `tests/unit/reviews-validate.test.ts`, `tests/unit/reviews-notify.test.ts`, `tests/unit/reviews-handle.test.ts`, `tests/e2e/reviews.spec.ts`.
 - Modify: `src/components/marketing/Reviews.astro` if needed to use real data/empty state.
 
 **Interfaces:**
@@ -1278,7 +1286,7 @@ git commit -m "feat: add 3-step estimate calculator with lead prefill"
 - `createReviewNotifiers(config: { testMode: boolean; email: EmailConfig | null; viber: ViberConfig | null }): ReviewNotifier[]`.
 - `handleReview(input: ReviewInput, deps: { notifiers: ReviewNotifier[]; rateLimiter: ReturnType<typeof createRateLimiter>; ip: string; now?: () => Date }): Promise<{ status: number; body: unknown }>`.
 - `POST /api/review` JSON `{ ok: true }` / `{ ok:false, error, fields? }`.
-- Refactor Task 6/7 to export reusable transports: `createSmtpTransport(config)` from `email.ts` and `sendViberText(config, text, fetchImpl?)` from `viber.ts`. Review notifiers use them; no duplicated SMTP/Viber setup.
+- Reuse `createSmtpTransport(config)` from `email.ts` and `sendViberText(config, text, fetchImpl?)` from `viber.ts` (both exported in Tasks 6/7). No duplicated SMTP/Viber setup and no refactor of earlier tasks.
 
 - [ ] **Step 1: Write failing review tests**
 
@@ -1290,7 +1298,7 @@ E2E `reviews.spec.ts`: `/otzyvy` H1 «Отзывы»; if no reviews, empty messa
 - [ ] **Step 2: Implement validation, notifiers, handler, API**
 
 Validation: no photos; text max 1000; rating integer 1–5; consent required; anonymous clears name. `handleReview` rate-limits by IP, creates `{ id: crypto.randomUUID(), createdAt }`, calls `notifyReview`, returns 200 if delivered else 502. `notifyReview` uses `Promise.allSettled`.
-`createReviewNotifiers`: if `LEAD_TEST_MODE=1`, return a memory notifier; else email (subject `[The Master Time] Новый отзыв`, text/html with name/rating/text/anonymous) and Viber text. Use the extracted `createSmtpTransport`/`sendViberText` helpers.
+`createReviewNotifiers`: if `LEAD_TEST_MODE=1`, return a memory notifier; else email (subject `[The Master Time] Новый отзыв`, text/html with name/rating/text/anonymous) and Viber text. Use the exported `createSmtpTransport`/`sendViberText` helpers.
 
 - [ ] **Step 3: Implement page/form**
 
@@ -1341,7 +1349,7 @@ Run → FAIL.
 - `/usloviya`: H1 «Условия работы», sections from `conditions`, CtaBand, FAQ? Maybe.
 - `/o-mastere`: H1 «О мастере», text about experience/principles (placeholder copy marked demo), photo placeholder/logo, CTA, Instagram link.
 - `/kontakty`: H1 «Контакты», `ContactBlock`, Viber/Instagram cards, area/hours, link to Yandex Maps (optional), `LeadFormDialog` + button.
-- `/politika-konfidencialnosti`: H1, operator details from `site`, sections: what data, why, storage, cookies, rights, contact. Include a `TODO: legal review` comment in the source. Link from footer/forms.
+- `/politika-konfidencialnosti`: `noindex: true`, H1, operator details from `site`, sections: what data, why, storage, cookies, rights, contact. Include a `TODO: legal review` comment in the source. Link from footer/forms.
 - `/spasibo`: H1 «Заявка принята», text, Instagram CTA, phone, link home. `noindex`.
 - `/404`: H1, helpful links, phone.
 
