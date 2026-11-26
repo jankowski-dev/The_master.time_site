@@ -29,4 +29,20 @@ describe('analytics', () => {
   it('is a no-op without a window', () => {
     expect(() => track('phone_click')).not.toThrow();
   });
+
+  it('uses the global window when win is omitted', () => {
+    const dataLayer: Array<Record<string, unknown>> = [];
+    const ym = vi.fn();
+    const gtag = vi.fn();
+    const fake = { dataLayer, ym, gtag, __tmtYmId: '112934654' };
+    vi.stubGlobal('window', fake);
+    try {
+      track('phone_click', { placement: 'header' });
+      expect(dataLayer).toEqual([{ event: 'phone_click', placement: 'header' }]);
+      expect(ym).toHaveBeenCalledWith('112934654', 'reachGoal', 'phone_click', { placement: 'header' });
+      expect(gtag).toHaveBeenCalledWith('event', 'phone_click', { placement: 'header' });
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });

@@ -14,15 +14,17 @@ export function track(
   params: Record<string, unknown> = {},
   win?: AnalyticsWindow
 ): void {
-  if (!win) return;
+  const target =
+    win ?? (typeof window !== 'undefined' ? (window as unknown as AnalyticsWindow) : undefined);
+  if (!target) return;
   try {
-    win.dataLayer.push({ event, ...params });
+    target.dataLayer.push({ event, ...params });
 
-    if (typeof win.ym === 'function') {
-      win.ym(win.__tmtYmId, 'reachGoal', event, params);
+    if (typeof target.ym === 'function') {
+      target.ym(target.__tmtYmId, 'reachGoal', event, params);
     }
-    if (typeof win.gtag === 'function') {
-      win.gtag('event', event, params);
+    if (typeof target.gtag === 'function') {
+      target.gtag('event', event, params);
     }
   } catch {
     // analytics must never break the app
