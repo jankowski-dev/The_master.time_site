@@ -1,0 +1,96 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import LeadForm from '@/components/forms/LeadForm.astro';
+import { site } from '@/lib/content';
+
+const seo = {
+  ...site.defaultSeo,
+  title: 'Оставить заявку',
+  description:
+    'Оставьте заявку мастеру на час в Гродно: сантехника, электрика, ремонт, мебель, техника. Перезвоню и назову цену.',
+  canonical: Astro.url.pathname
+};
+---
+
+<BaseLayout seo={seo} noindex>
+  <section class="zayavka">
+    <div class="container zayavka__inner">
+      <div class="zayavka__intro">
+        <h1 class="zayavka__title">Оставить заявку</h1>
+        <p class="zayavka__lead">
+          Оставьте номер — перезвоню, уточню детали и назову цену до начала работ.
+          Фото можно прикрепить.
+        </p>
+
+        <ul class="zayavka__alternatives">
+          <li>
+            <a href={`tel:${site.phoneLink}`}>Позвонить: {site.phoneDisplay}</a>
+          </li>
+          <li>
+            <a href={site.viberUrl}>Написать в Viber</a>
+          </li>
+          <li>
+            <a href={site.instagramDm} target="_blank" rel="noopener noreferrer">Написать в Instagram</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="zayavka__form">
+        <LeadForm source="form" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .zayavka {
+    padding-block: var(--section-y);
+    background: var(--color-surface-alt);
+  }
+
+  .zayavka__inner {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 1fr;
+  }
+
+  .zayavka__title {
+    font-size: clamp(28px, 4.5vw, 40px);
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+
+  .zayavka__lead {
+    color: var(--color-muted);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 520px;
+    margin-bottom: 24px;
+  }
+
+  .zayavka__alternatives {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  .zayavka__alternatives a {
+    font-weight: 600;
+  }
+
+  .zayavka__form {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px;
+  }
+
+  @media (min-width: 768px) {
+    .zayavka__inner {
+      grid-template-columns: 1fr 1.2fr;
+      align-items: start;
+    }
+  }
+</style>

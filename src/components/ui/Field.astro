@@ -1,0 +1,120 @@
+---
+interface Props {
+  name: string;
+  label: string;
+  hint?: string;
+  error?: string;
+  required?: boolean;
+  multiline?: boolean;
+  value?: string;
+  placeholder?: string;
+  maxlength?: number;
+  autocomplete?: string;
+  rows?: number;
+}
+
+const {
+  name,
+  label,
+  hint,
+  error,
+  required = false,
+  multiline = false,
+  value = '',
+  placeholder,
+  maxlength,
+  autocomplete,
+  rows = 4
+} = Astro.props;
+
+const id = `field-${name}`;
+const errorId = `${id}-error`;
+const hintId = `${id}-hint`;
+const describedBy = [hint ? hintId : '', error ? errorId : ''].filter(Boolean).join(' ') || undefined;
+---
+
+<div class="field" data-field={name}>
+  <label class="field__label" for={id}>
+    {label}
+    {required && <span class="field__req" aria-hidden="true"> *</span>}
+  </label>
+  {
+    multiline ? (
+      <textarea
+        id={id}
+        name={name}
+        class="field__control"
+        rows={rows}
+        placeholder={placeholder}
+        maxlength={maxlength}
+        aria-describedby={describedBy}
+        aria-invalid={error ? 'true' : undefined}>{value}</textarea>
+    ) : (
+      <input
+        id={id}
+        name={name}
+        class="field__control"
+        type="text"
+        value={value}
+        placeholder={placeholder}
+        maxlength={maxlength}
+        autocomplete={autocomplete}
+        aria-describedby={describedBy}
+        aria-invalid={error ? 'true' : undefined}
+        required={required} />
+    )
+  }
+  {hint && <p class="field__hint" id={hintId}>{hint}</p>}
+  {error && (
+    <p class="field__error" id={errorId} role="alert">{error}</p>
+  )}
+</div>
+
+<style>
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .field__label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color-ink);
+  }
+
+  .field__req {
+    color: var(--color-accent);
+  }
+
+  .field__control {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 16px;
+    resize: vertical;
+    transition: border-color var(--transition);
+  }
+
+  .field__control:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .field__control[aria-invalid='true'] {
+    border-color: var(--color-error);
+  }
+
+  .field__hint {
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  .field__error {
+    font-size: 13px;
+    color: var(--color-error);
+  }
+</style>

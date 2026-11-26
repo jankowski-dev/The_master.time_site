@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
 import ServiceGrid from '@/components/marketing/ServiceGrid.astro';
 import CtaBand from '@/components/marketing/CtaBand.astro';
+import LeadFormDialog from '@/components/forms/LeadFormDialog.astro';
 
 import { site, categories, pricing } from '@/lib/content';
 
@@ -31,6 +32,8 @@ const seo = {
     title="Не знаете, что выбрать?"
     text="Позвоните или посчитайте в калькуляторе — подскажу направление и назову цену."
   />
+
+  <LeadFormDialog />
 </BaseLayout>
 
 <style>

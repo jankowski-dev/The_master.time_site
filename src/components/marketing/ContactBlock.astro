@@ -40,6 +40,7 @@ import Button from '@/components/ui/Button.astro';
 
     <div class="contacts__cta">
       <Button href="/kalkulyator" variant="primary" size="lg">Рассчитать стоимость</Button>
+      <a class="contacts__lead" href="/zayavka" data-open-lead-form>Оставить заявку</a>
     </div>
   </div>
 </section>
@@ -113,6 +114,32 @@ import Button from '@/components/ui/Button.astro';
   .contacts__sub {
     color: var(--color-muted);
     font-size: 14px;
+  }
+
+  .contacts__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .contacts__lead {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    border: 2px solid var(--color-line);
+    border-radius: var(--radius-pill);
+    color: var(--color-ink);
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1;
+    transition: border-color var(--transition), color var(--transition);
+  }
+
+  .contacts__lead:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
   @media (min-width: 640px) {

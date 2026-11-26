@@ -1,0 +1,246 @@
+---
+interface Props {
+  error?: string;
+}
+
+const { error } = Astro.props;
+const inputId = 'field-photos';
+const errorId = `${inputId}-error`;
+---
+
+<div class="photo-upload" data-photo-upload data-field="photos">
+  <input
+    id={inputId}
+    class="photo-upload__input"
+    type="file"
+    name="photos"
+    accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+    multiple
+    data-photo-input
+    aria-describedby={error ? errorId : undefined}
+    aria-invalid={error ? 'true' : undefined} />
+
+  <label class="photo-upload__label" for={inputId} data-photo-trigger>
+    <span class="photo-upload__plus" aria-hidden="true">+</span>
+    <span>
+      Добавить фото
+      <span class="photo-upload__meta">до 3, JPEG / PNG / WebP / HEIC</span>
+    </span>
+  </label>
+
+  <ul class="photo-upload__list" data-photo-list></ul>
+  <p class="photo-upload__count" data-photo-count aria-live="polite"></p>
+
+  {error && (
+    <p class="photo-upload__error" id={errorId} role="alert">{error}</p>
+  )}
+  <p class="photo-upload__error" data-photo-error role="alert" hidden></p>
+</div>
+
+<script>
+  import { preparePhotos } from '@/lib/photo';
+
+  function formatBytes(size: number): string {
+    if (size < 1024) return `${size} Б`;
+    if (size < 1024 * 1024) return `${Math.round(size / 1024)} КБ`;
+    return `${(size / (1024 * 1024)).toFixed(1)} МБ`;
+  }
+
+  function initPhotoUpload(): void {
+    for (const root of document.querySelectorAll<HTMLElement>('[data-photo-upload]')) {
+      if (root.dataset.photoBound) continue;
+      root.dataset.photoBound = '1';
+
+      const input = root.querySelector<HTMLInputElement>('[data-photo-input]');
+      const list = root.querySelector<HTMLElement>('[data-photo-list]');
+      const count = root.querySelector<HTMLElement>('[data-photo-count]');
+      const errorEl = root.querySelector<HTMLElement>('[data-photo-error]');
+      if (!input || !list || !count || !errorEl) continue;
+
+      const currentFiles = (): File[] => Array.from(input.files ?? []);
+
+      const render = (files: File[]): void => {
+        list.textContent = '';
+        for (const file of files) {
+          const item = document.createElement('li');
+          item.className = 'photo-upload__item';
+
+          const name = document.createElement('span');
+          name.className = 'photo-upload__name';
+          name.textContent = file.name;
+
+          const size = document.createElement('span');
+          size.className = 'photo-upload__size';
+          size.textContent = formatBytes(file.size);
+
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'photo-upload__remove';
+          remove.textContent = 'Удалить';
+          remove.setAttribute('aria-label', `Удалить фото ${file.name}`);
+
+          item.append(name, size, remove);
+          list.append(item);
+        }
+        count.textContent = files.length ? `Фото: ${files.length} из 3` : '';
+
+        // Keep `input.files` in sync so `new FormData(form)` includes the
+        // compressed photos.
+        const transfer = new DataTransfer();
+        for (const file of files) transfer.items.add(file);
+        input.files = transfer.files;
+      };
+
+      input.addEventListener('change', async () => {
+        errorEl.hidden = true;
+        errorEl.textContent = '';
+        const files = currentFiles();
+        if (files.length === 0) {
+          render([]);
+          return;
+        }
+        try {
+          const prepared = await preparePhotos(files);
+          render(prepared);
+        } catch (err) {
+          render([]);
+          errorEl.textContent =
+            err instanceof Error ? err.message : 'Не удалось обработать фото';
+          errorEl.hidden = false;
+        }
+      });
+
+      list.addEventListener('click', (event) => {
+        const target = event.target as Element;
+        const button = target.closest<HTMLButtonElement>('.photo-upload__remove');
+        if (!button) return;
+        const item = button.closest<HTMLLIElement>('.photo-upload__item');
+        if (!item) return;
+        const index = Array.from(list.children).indexOf(item);
+        const files = currentFiles();
+        if (index >= 0 && index < files.length) {
+          files.splice(index, 1);
+          render(files);
+        }
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPhotoUpload);
+  } else {
+    initPhotoUpload();
+  }
+</script>
+
+<style>
+  .photo-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .photo-upload__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .photo-upload__label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px dashed var(--color-line);
+    border-radius: var(--radius-md);
+    color: var(--color-ink);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color var(--transition), background-color var(--transition);
+  }
+
+  .photo-upload__label:hover {
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+
+  .photo-upload__plus {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .photo-upload__meta {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-muted);
+  }
+
+  .photo-upload__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .photo-upload__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--color-surface-alt);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+  }
+
+  .photo-upload__name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .photo-upload__size {
+    color: var(--color-muted);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .photo-upload__remove {
+    border: 0;
+    background: transparent;
+    color: var(--color-accent);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .photo-upload__remove:hover {
+    color: var(--color-accent-strong);
+  }
+
+  .photo-upload__count {
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  .photo-upload__error {
+    font-size: 13px;
+    color: var(--color-error);
+  }
+</style>

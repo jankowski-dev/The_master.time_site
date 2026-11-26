@@ -12,6 +12,7 @@ import Faq from '@/components/marketing/Faq.astro';
 import ContactBlock from '@/components/marketing/ContactBlock.astro';
 import CtaBand from '@/components/marketing/CtaBand.astro';
 import Button from '@/components/ui/Button.astro';
+import LeadFormDialog from '@/components/forms/LeadFormDialog.astro';
 
 import { loadContent, getPopularWorks, getPublishedReviews } from '@/lib/content';
 import { localBusinessJsonLd, faqJsonLd } from '@/lib/jsonld';
@@ -71,6 +72,8 @@ const jsonLd = [localBusinessJsonLd(site, categories), faqJsonLd(faqs)];
     title="Не знаете, сколько будет стоить?"
     text="Посчитайте в калькуляторе или позвоните — уточню детали и назову точную цену."
   />
+
+  <LeadFormDialog />
 </BaseLayout>
 
 <style>

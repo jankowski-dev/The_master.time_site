@@ -4,7 +4,7 @@ test('header and footer render', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('link', { name: /The Master Time/i }).first()).toBeVisible();
   await expect(page.locator('a[href="tel:+375257076793"]').first()).toBeVisible();
-  await expect(page.locator('a[href="/politika-konfidencialnosti"]').first()).toBeVisible();
+  await expect(page.locator('footer a[href="/politika-konfidencialnosti"]')).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
 });
 

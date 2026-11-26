@@ -1,0 +1,163 @@
+---
+import type { LeadSource } from '@/lib/leads/types';
+import type { Location, Urgency } from '@/lib/pricing/types';
+import { site } from '@/lib/content';
+import Field from '@/components/ui/Field.astro';
+import PhoneField from '@/components/ui/PhoneField.astro';
+import ConsentField from '@/components/forms/ConsentField.astro';
+import PhotoUpload from '@/components/forms/PhotoUpload.astro';
+import Spinner from '@/components/ui/Spinner.astro';
+
+interface Props {
+  source: LeadSource;
+  preset?: {
+    categorySlug?: string;
+    taskId?: string;
+    urgency?: Urgency;
+    location?: Location;
+    estimateFrom?: number;
+    estimateTo?: number;
+    message?: string;
+  };
+  compact?: boolean;
+  title?: string;
+  inDialog?: boolean;
+}
+
+const {
+  source,
+  preset = {},
+  compact = false,
+  title,
+  inDialog = false
+} = Astro.props;
+---
+
+<form
+  class:list={['lead-form', { 'lead-form--compact': compact }]}
+  method="post"
+  action="/api/lead"
+  enctype="multipart/form-data"
+  data-lead-form
+  novalidate>
+  <input type="hidden" name="source" value={source} />
+  <input type="hidden" name="page" value="" data-lead-page />
+  <input type="hidden" name="attribution" value="" data-lead-attribution />
+  <input type="hidden" name="startedAt" value="" data-lead-started-at />
+  <input type="hidden" name="website" value="" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <input type="hidden" name="categorySlug" value={preset.categorySlug ?? ''} />
+  <input type="hidden" name="taskId" value={preset.taskId ?? ''} />
+  <input type="hidden" name="urgency" value={preset.urgency ?? ''} />
+  <input type="hidden" name="location" value={preset.location ?? ''} />
+  <input type="hidden" name="estimateFrom" value={preset.estimateFrom ?? ''} />
+  <input type="hidden" name="estimateTo" value={preset.estimateTo ?? ''} />
+
+  <div class="lead-form__body" data-lead-fields>
+    {title && <p class="lead-form__title">{title}</p>}
+
+    <Field name="name" label="Имя" autocomplete="name" />
+
+    <PhoneField />
+
+    <Field
+      name="message"
+      label="Комментарий"
+      multiline
+      rows={3}
+      maxlength={1000}
+      hint="Опишите задачу — так я быстрее назову цену"
+      value={preset.message ?? ''} />
+
+    <PhotoUpload />
+
+    <ConsentField />
+
+    <div class="lead-form__actions">
+      <button class="lead-form__submit" type="submit" data-lead-submit>
+        <span data-lead-submit-label>Отправить заявку</span>
+        <span data-lead-spinner hidden><Spinner /></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="lead-form__status" data-lead-status hidden></div>
+
+  {
+    inDialog && (
+      <noscript>
+        <p class="lead-form__noscript">
+          Включите JavaScript или <a href="/zayavka">оставьте заявку на отдельной странице</a>,
+          либо позвоните <a href={`tel:${site.phoneLink}`}>{site.phoneDisplay}</a>.
+        </p>
+      </noscript>
+    )
+  }
+</form>
+
+<script>
+  import '@/scripts/lead-form.ts';
+</script>
+
+<style>
+  .lead-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .lead-form__body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .lead-form__body[hidden],
+  .lead-form__status[hidden] {
+    display: none;
+  }
+
+  .lead-form__title {
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+
+  .lead-form__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px 32px;
+    border: 2px solid transparent;
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color var(--transition);
+  }
+
+  .lead-form__submit:hover {
+    background: var(--color-accent-strong);
+    color: #fff;
+  }
+
+  .lead-form__submit[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .lead-form__noscript {
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+
+  .lead-form__status {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+</style>

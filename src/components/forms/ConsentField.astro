@@ -1,0 +1,13 @@
+---
+import Checkbox from '@/components/ui/Checkbox.astro';
+
+interface Props {
+  error?: string;
+}
+
+const { error } = Astro.props;
+---
+
+<Checkbox name="consent" error={error} required>
+  Я согласен(на) на <a href="/politika-konfidencialnosti" target="_blank" rel="noopener noreferrer">обработку персональных данных</a>
+</Checkbox>

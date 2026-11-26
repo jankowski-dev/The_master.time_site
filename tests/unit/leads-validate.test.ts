@@ -158,4 +158,13 @@ describe('parseLeadFormData', () => {
     expect(photo.size).toBe(3);
     expect(Buffer.from(photo.content).toString()).toBe('abc');
   });
+
+  it('ignores zero-byte files from empty file inputs', async () => {
+    const form = validForm();
+    form.append('photos', new File([], '', { type: 'application/octet-stream' }));
+    const result = await parseLeadFormData(form);
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error('expected ok');
+    expect(result.input.photos).toEqual([]);
+  });
 });

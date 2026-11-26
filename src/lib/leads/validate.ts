@@ -94,7 +94,9 @@ export async function parseLeadFormData(
   const photos: LeadPhoto[] = [];
   const fileEntries = form
     .getAll('photos')
-    .filter((entry): entry is File => entry instanceof File);
+    .filter(
+      (entry): entry is File => entry instanceof File && entry.size > 0
+    );
   const photoError = validatePhotoFiles(
     fileEntries.map((file) => ({ type: file.type, size: file.size, name: file.name })),
     SERVER_PHOTO_LIMITS

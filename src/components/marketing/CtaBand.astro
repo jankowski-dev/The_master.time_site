@@ -30,6 +30,7 @@ const {
       <Button href={`tel:${site.phoneLink}`} variant="ghost" size="lg" class="cta-band__call">
         Позвонить
       </Button>
+      <a class="cta-band__lead" href="/zayavka" data-open-lead-form>Оставить заявку</a>
     </div>
   </div>
 </section>
@@ -76,6 +77,25 @@ const {
   }
 
   .cta-band__call:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+  }
+
+  .cta-band__lead {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: var(--radius-pill);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 1;
+    transition: border-color var(--transition);
+  }
+
+  .cta-band__lead:hover {
     border-color: #ffffff;
     color: #ffffff;
   }

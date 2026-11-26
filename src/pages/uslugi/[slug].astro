@@ -7,6 +7,7 @@ import PriceTable from '@/components/marketing/PriceTable.astro';
 import Faq from '@/components/marketing/Faq.astro';
 import CtaBand from '@/components/marketing/CtaBand.astro';
 import Button from '@/components/ui/Button.astro';
+import LeadFormDialog from '@/components/forms/LeadFormDialog.astro';
 
 import { site, categories, pricing } from '@/lib/content';
 import type { Category } from '@/lib/content/schemas';
@@ -89,6 +90,8 @@ const jsonLd = [
     text="Посчитайте в калькуляторе или позвоните — уточню детали и назову точную цену."
     primaryHref={calculatorHref}
   />
+
+  <LeadFormDialog />
 </BaseLayout>
 
 <style>

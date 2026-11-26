@@ -1,0 +1,46 @@
+---
+interface Props {
+  variant?: 'info' | 'success' | 'error';
+  live?: boolean;
+}
+
+const { variant = 'info', live = true } = Astro.props;
+---
+
+<div
+  class:list={['inline-status', `inline-status--${variant}`]}
+  role={live ? 'status' : undefined}
+  aria-live={live ? 'polite' : undefined}>
+  <slot />
+</div>
+
+<style>
+  .inline-status {
+    padding: 16px;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .inline-status--info {
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+    border: 1px solid var(--color-line);
+  }
+
+  .inline-status--success {
+    background: var(--color-accent-soft);
+    color: var(--color-ink);
+    border: 1px solid var(--color-accent);
+  }
+
+  .inline-status--error {
+    background: var(--color-accent-soft);
+    color: var(--color-ink);
+    border: 1px solid var(--color-error);
+  }
+
+  .inline-status :global(a) {
+    font-weight: 700;
+  }
+</style>
