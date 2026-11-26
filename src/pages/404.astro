@@ -1,0 +1,93 @@
+---
+// The 404 page must be server-rendered so the Node adapter returns it with a
+// real 404 status (a prerendered 404.html would be served with HTTP 200).
+export const prerender = false;
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/ui/Button.astro';
+
+import { site } from '@/lib/content';
+
+const seo = {
+  ...site.defaultSeo,
+  title: 'Страница не найдена',
+  description: 'Страница не найдена. Вернитесь на главную или выберите нужный раздел.',
+  canonical: Astro.url.pathname
+};
+---
+
+<BaseLayout seo={seo}>
+  <section class="not-found">
+    <div class="container not-found__inner">
+      <p class="not-found__code">404</p>
+      <h1 class="not-found__title">Страница не найдена</h1>
+      <p class="not-found__text">
+        Такой страницы нет. Возможно, она была перемещена или вы ввели неверный адрес.
+      </p>
+
+      <div class="not-found__links">
+        <Button href="/" variant="primary" size="lg">На главную</Button>
+        <Button href="/uslugi" variant="ghost" size="lg">Услуги</Button>
+        <Button href="/kalkulyator" variant="ghost" size="lg">Калькулятор</Button>
+      </div>
+
+      <p class="not-found__phone">
+        Или позвоните: <a href={`tel:${site.phoneLink}`}>{site.phoneDisplay}</a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding-block: var(--section-y);
+    background: var(--color-surface-alt);
+  }
+
+  .not-found__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 640px;
+  }
+
+  .not-found__code {
+    font-size: clamp(72px, 14vw, 120px);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--color-accent);
+    margin-bottom: 8px;
+  }
+
+  .not-found__title {
+    font-size: clamp(28px, 4.5vw, 40px);
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+
+  .not-found__text {
+    color: var(--color-muted);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 440px;
+    margin-bottom: 32px;
+  }
+
+  .not-found__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .not-found__phone {
+    color: var(--color-muted);
+    font-size: 15px;
+  }
+
+  .not-found__phone a {
+    font-weight: 600;
+  }
+</style>

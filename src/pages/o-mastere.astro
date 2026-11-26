@@ -1,0 +1,229 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
+import CtaBand from '@/components/marketing/CtaBand.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { site } from '@/lib/content';
+
+const seo = {
+  ...site.defaultSeo,
+  title: 'О мастере',
+  description:
+    'О мастере на час в Гродно: как работаю, каких принципов придерживаюсь и как связаться.',
+  canonical: Astro.url.pathname
+};
+
+const breadcrumbItems = [{ label: 'Главная', href: '/' }, { label: 'О мастере' }];
+
+// Принципы работы — честные, без не подтверждённых гарантий и выдуманного опыта.
+// Демо-текст: перед публикацией заказчик заменяет формулировки реальными данными. // demo
+const principles = [
+  {
+    title: 'Честная цена до начала работ',
+    body: 'Называю ориентир до выезда и подтверждаю точную цену после уточнения деталей.'
+  },
+  {
+    title: 'Работаю один',
+    body: 'Выезжаю сам, без бригады — поэтому проще согласовать время и держать цену под контролем.'
+  },
+  {
+    title: 'Прозрачные условия',
+    body: 'Порядок выезда, срочности и оплаты описан на странице «Условия работы».'
+  }
+];
+---
+
+<BaseLayout seo={seo}>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbItems} />
+      <h1 class="page-hero__title">О мастере</h1>
+      <p class="page-hero__lead">
+        The Master Time — мастер на час в Гродно. Помогаю с сантехникой, электрикой, ремонтом,
+        мебелью, техникой и мелкими работами по дому.
+      </p>
+    </div>
+  </section>
+
+  <section class="about">
+    <div class="container about__grid">
+      <div class="about__graphic" aria-hidden="true">
+        <!-- Нет реального фото: используем фирменную графику, без выдуманных снимков. -->
+        <span class="about__logo"><Icon name="logo-mobile-new" size={180} /></span>
+        <span class="about__badge">Мастер на час · Гродно</span>
+      </div>
+
+      <div class="about__content">
+        <h2 class="about__title">Как я работаю</h2>
+        <p class="about__text">
+          Выезжаю по Гродно и до 20 км. Цену называю до начала работ, чтобы в счёте не было
+          сюрпризов. Если задачу нельзя сделать качественно — честно скажу об этом, а не возьму
+          лишнее.
+        </p>
+        <p class="about__text">
+          Сфотографируйте проблему и пришлите в Instagram — назову примерную цену и срок ещё до
+          выезда.
+        </p>
+
+        <ul class="about__principles">
+          {
+            principles.map((principle) => (
+              <li class="about__principle">
+                <strong>{principle.title}</strong>
+                <span>{principle.body}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="about__actions">
+          <Button href={site.instagramDm} variant="primary" size="lg">
+            Написать в Instagram
+          </Button>
+          <Button href="/usloviya" variant="ghost" size="lg">
+            Условия работы
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Нужна помощь по дому?"
+    text="Позвоните или оставьте заявку — уточню детали и назову точную цену."
+  />
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background:
+      radial-gradient(1200px 480px at 85% -10%, rgba(234, 98, 73, 0.28), transparent 60%),
+      var(--color-ink);
+    color: #ffffff;
+    padding-block: 40px 56px;
+  }
+
+  .page-hero__title {
+    color: #ffffff;
+    font-size: clamp(30px, 5.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-block: 20px 16px;
+  }
+
+  .page-hero__lead {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 680px;
+  }
+
+  .page-hero :global(.breadcrumbs),
+  .page-hero :global(.breadcrumbs a) {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .page-hero :global(.breadcrumbs a:hover) {
+    color: var(--color-accent-soft);
+  }
+
+  .page-hero :global(.breadcrumbs [aria-current='page']) {
+    color: #ffffff;
+  }
+
+  .page-hero :global(.breadcrumbs__item + .breadcrumbs__item::before) {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .about {
+    padding-block: var(--section-y);
+  }
+
+  .about__grid {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .about__graphic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 40px 24px;
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+  }
+
+  .about__logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90px;
+  }
+
+  .about__badge {
+    color: var(--color-muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .about__title {
+    font-size: clamp(24px, 3.5vw, 34px);
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+
+  .about__text {
+    color: var(--color-text);
+    font-size: 16px;
+    line-height: 1.65;
+    margin-bottom: 16px;
+    max-width: 640px;
+  }
+
+  .about__principles {
+    list-style: none;
+    margin: 24px 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+
+  .about__principle {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+  }
+
+  .about__principle strong {
+    color: var(--color-ink);
+  }
+
+  .about__principle span {
+    color: var(--color-muted);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .about__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  @media (min-width: 768px) {
+    .about__grid {
+      grid-template-columns: 1fr 1.4fr;
+    }
+  }
+</style>

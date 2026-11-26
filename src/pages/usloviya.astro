@@ -1,0 +1,120 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
+import CtaBand from '@/components/marketing/CtaBand.astro';
+
+import { site, conditions } from '@/lib/content';
+
+const seo = {
+  ...site.defaultSeo,
+  title: 'Условия работы',
+  description:
+    'Условия работы мастера на час в Гродно: выезд и диагностика, минимальный заказ, срочность, выезд за город, материалы, оплата и гарантия.',
+  canonical: Astro.url.pathname
+};
+
+const breadcrumbItems = [{ label: 'Главная', href: '/' }, { label: 'Условия работы' }];
+---
+
+<BaseLayout seo={seo}>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbItems} />
+      <h1 class="page-hero__title">Условия работы</h1>
+      <p class="page-hero__lead">
+        Прозрачные условия выезда, срочности и оплаты — чтобы в счёте не было сюрпризов.
+      </p>
+    </div>
+  </section>
+
+  <section class="conditions">
+    <div class="container">
+      <div class="conditions__list">
+        {
+          conditions.map((condition) => (
+            <article class="condition">
+              <h2 class="condition__title">{condition.title}</h2>
+              <p class="condition__body">{condition.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Остались вопросы по условиям?"
+    text="Позвоните или оставьте заявку — уточню детали и назову точную цену вашей работы."
+  />
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background:
+      radial-gradient(1200px 480px at 85% -10%, rgba(234, 98, 73, 0.28), transparent 60%),
+      var(--color-ink);
+    color: #ffffff;
+    padding-block: 40px 56px;
+  }
+
+  .page-hero__title {
+    color: #ffffff;
+    font-size: clamp(30px, 5.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-block: 20px 16px;
+  }
+
+  .page-hero__lead {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 680px;
+  }
+
+  .page-hero :global(.breadcrumbs),
+  .page-hero :global(.breadcrumbs a) {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .page-hero :global(.breadcrumbs a:hover) {
+    color: var(--color-accent-soft);
+  }
+
+  .page-hero :global(.breadcrumbs [aria-current='page']) {
+    color: #ffffff;
+  }
+
+  .page-hero :global(.breadcrumbs__item + .breadcrumbs__item::before) {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .conditions {
+    padding-block: var(--section-y);
+  }
+
+  .conditions__list {
+    display: grid;
+    gap: 14px;
+    max-width: 760px;
+  }
+
+  .condition {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+  }
+
+  .condition__title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .condition__body {
+    color: var(--color-muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+</style>

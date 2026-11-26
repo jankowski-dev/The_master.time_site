@@ -1,0 +1,163 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
+import ContactBlock from '@/components/marketing/ContactBlock.astro';
+import LeadFormDialog from '@/components/forms/LeadFormDialog.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { site } from '@/lib/content';
+
+const seo = {
+  ...site.defaultSeo,
+  title: 'Контакты',
+  description:
+    'Контакты мастера на час в Гродно: телефон, Viber, Instagram. Оставьте заявку или рассчитайте стоимость в калькуляторе.',
+  canonical: Astro.url.pathname
+};
+
+const breadcrumbItems = [{ label: 'Главная', href: '/' }, { label: 'Контакты' }];
+
+// Ссылка на карту без встраивания (embed) — только внешняя ссылка. // demo
+const mapsUrl = 'https://yandex.by/maps/?text=Гродно';
+---
+
+<BaseLayout seo={seo}>
+  <section class="page-hero">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbItems} />
+      <h1 class="page-hero__title">Контакты</h1>
+      <p class="page-hero__lead">
+        Позвоните или напишите — уточню детали, назову цену и подберу удобное время выезда.
+      </p>
+    </div>
+  </section>
+
+  <ContactBlock />
+
+  <section class="reach">
+    <div class="container reach__grid">
+      <a
+        class="reach__card"
+        href={site.instagramDm}
+        target="_blank"
+        rel="noopener noreferrer">
+        <span class="reach__icon"><Icon name="instagram" size={24} /></span>
+        <span class="reach__label">Instagram</span>
+        <span class="reach__value">Написать в директ</span>
+        <span class="reach__sub">Отправьте фото — назову цену до выезда</span>
+      </a>
+
+      <a class="reach__card" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+        <span class="reach__icon"><Icon name="flag" size={24} /></span>
+        <span class="reach__label">Зона выезда</span>
+        <span class="reach__value">{site.areaServed}</span>
+        <span class="reach__sub">Открыть на карте</span>
+      </a>
+    </div>
+  </section>
+
+  <LeadFormDialog />
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background:
+      radial-gradient(1200px 480px at 85% -10%, rgba(234, 98, 73, 0.28), transparent 60%),
+      var(--color-ink);
+    color: #ffffff;
+    padding-block: 40px 56px;
+  }
+
+  .page-hero__title {
+    color: #ffffff;
+    font-size: clamp(30px, 5.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-block: 20px 16px;
+  }
+
+  .page-hero__lead {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 680px;
+  }
+
+  .page-hero :global(.breadcrumbs),
+  .page-hero :global(.breadcrumbs a) {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .page-hero :global(.breadcrumbs a:hover) {
+    color: var(--color-accent-soft);
+  }
+
+  .page-hero :global(.breadcrumbs [aria-current='page']) {
+    color: #ffffff;
+  }
+
+  .page-hero :global(.breadcrumbs__item + .breadcrumbs__item::before) {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .reach {
+    background: var(--color-surface-alt);
+  }
+
+  .reach__grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .reach__card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    color: var(--color-text);
+    transition: border-color var(--transition);
+  }
+
+  .reach__card:hover {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  .reach__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--color-accent-soft);
+    margin-bottom: 6px;
+  }
+
+  .reach__label {
+    color: var(--color-muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .reach__value {
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  .reach__sub {
+    color: var(--color-muted);
+    font-size: 14px;
+  }
+
+  @media (min-width: 640px) {
+    .reach__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

@@ -1,0 +1,112 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { site } from '@/lib/content';
+
+const seo = {
+  ...site.defaultSeo,
+  title: 'Заявка принята',
+  description: 'Спасибо! Ваша заявка принята. Мастер на час в Гродно скоро свяжется с вами.',
+  canonical: Astro.url.pathname
+};
+---
+
+<BaseLayout seo={seo} noindex>
+  <section class="thanks">
+    <div class="container thanks__inner">
+      <div class="thanks__mark" aria-hidden="true">
+        <span class="thanks__icon"><Icon name="success" size={48} /></span>
+      </div>
+
+      <h1 class="thanks__title">Заявка принята</h1>
+      <p class="thanks__text">
+        Спасибо! Скоро свяжусь с вами, чтобы уточнить детали и назвать цену.
+      </p>
+
+      <div class="thanks__actions">
+        <Button href={site.instagramDm} variant="primary" size="lg" data-track="instagram_dm">
+          Написать в Instagram
+        </Button>
+        <Button href={`tel:${site.phoneLink}`} variant="ghost" size="lg">
+          Позвонить: {site.phoneDisplay}
+        </Button>
+        <a class="thanks__home" href="/">Вернуться на главную</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { track } from '@/lib/analytics';
+  import { getConsent } from '@/lib/consent';
+
+  const source = new URLSearchParams(window.location.search).get('source') ?? '';
+  if (getConsent(window.localStorage) === 'accepted') {
+    track('lead_submit', { source });
+  }
+</script>
+
+<style>
+  .thanks {
+    padding-block: var(--section-y);
+    background: var(--color-surface-alt);
+  }
+
+  .thanks__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 640px;
+  }
+
+  .thanks__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--color-accent-soft);
+    margin-bottom: 24px;
+  }
+
+  .thanks__icon {
+    color: var(--color-success);
+    display: inline-flex;
+  }
+
+  .thanks__title {
+    font-size: clamp(28px, 4.5vw, 40px);
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+
+  .thanks__text {
+    color: var(--color-muted);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 440px;
+    margin-bottom: 32px;
+  }
+
+  .thanks__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .thanks__actions :global(.btn) {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .thanks__home {
+    font-weight: 600;
+    margin-top: 8px;
+  }
+</style>
