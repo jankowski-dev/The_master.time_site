@@ -1041,7 +1041,7 @@ Run → FAIL.
 
 `src/pages/uslugi/[slug].astro`:
 - `getStaticPaths` from categories.
-- `BaseLayout` with `seo: category.seo`; `jsonLd = [serviceJsonLd(category, site, pricing), breadcrumbJsonLd([...], site), faqJsonLd(category.faq)]`.
+- `BaseLayout` with `seo: category.seo`; `jsonLd = [serviceJsonLd(category, site, pricing), breadcrumbJsonLd([...], Astro.site?.toString() ?? ''), faqJsonLd(category.faq)]`. (`breadcrumbJsonLd` takes a string origin, not the `SiteConfig` object.)
 - Hero with H1, description, CTA `Рассчитать`, `Позвонить` and `Отправить фото в Instagram` (`site.instagramDm`).
 - `PriceTable` with `category.works`.
 - «Что влияет на цену» list (materials, complexity, urgency, out-of-town).
