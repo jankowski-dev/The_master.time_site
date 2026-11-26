@@ -34,8 +34,31 @@ function initTracking(): void {
   });
 }
 
+/**
+ * Delegated FAQ-open tracking. The native `<details>` `toggle` event does not
+ * bubble, so this listener is registered in the capture phase and scoped to
+ * `details[data-faq-item]` to avoid firing for the header's nav dropdown.
+ */
+function initFaqTracking(): void {
+  document.addEventListener(
+    'toggle',
+    (event) => {
+      const details = event.target;
+      if (!(details instanceof HTMLDetailsElement) || !details.open) return;
+      if (!details.closest('[data-faq-item]')) return;
+      const question = details.querySelector('summary')?.textContent?.trim() ?? '';
+      track('faq_open', { question });
+    },
+    true
+  );
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initTracking);
+  document.addEventListener('DOMContentLoaded', () => {
+    initTracking();
+    initFaqTracking();
+  });
 } else {
   initTracking();
+  initFaqTracking();
 }

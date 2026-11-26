@@ -1,3 +1,5 @@
+import { track } from '@/lib/analytics';
+
 type FilterElements = {
   search: HTMLInputElement;
   category: HTMLSelectElement;
@@ -40,8 +42,7 @@ function matchesQuery(text: string, query: string): boolean {
 }
 
 function filterWorks({ search, category, count, empty, groups }: FilterElements): void {
-  const query = search.value;
-  const slug = category.value;
+  const query = search.value;  const slug = category.value;
   let visibleWorks = 0;
 
   for (const group of groups) {
@@ -72,6 +73,16 @@ function filterWorks({ search, category, count, empty, groups }: FilterElements)
   }
 }
 
+/** Debounced `price_filter` event; collapses rapid keystrokes into one call. */
+let priceTrackTimer: number | null = null;
+function scheduleTrack(query: string, category: string): void {
+  if (priceTrackTimer !== null) window.clearTimeout(priceTrackTimer);
+  priceTrackTimer = window.setTimeout(() => {
+    priceTrackTimer = null;
+    track('price_filter', { query, category });
+  }, 400);
+}
+
 function initPriceFilter(): void {
   const form = document.querySelector<HTMLFormElement>('[data-price-form]');
   const search = document.querySelector<HTMLInputElement>('[data-price-search]');
@@ -88,7 +99,10 @@ function initPriceFilter(): void {
     groups: Array.from(document.querySelectorAll<HTMLElement>('[data-category-group]'))
   };
 
-  const applyFilter = (): void => filterWorks(elements);
+  const applyFilter = (): void => {
+    filterWorks(elements);
+    scheduleTrack(elements.search.value, elements.category.value);
+  };
 
   search.addEventListener('input', applyFilter);
   category.addEventListener('change', applyFilter);

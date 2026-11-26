@@ -2,6 +2,7 @@
   "name": "the-master-time",
   "version": "1.0.0",
   "private": true,
+  "description": "The Master Time — handyman-on-call service site for Grodno (Astro 5 + Node adapter).",
   "type": "module",
   "engines": {
     "node": ">=22"

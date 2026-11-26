@@ -16,6 +16,11 @@ test('faq opens', async ({ page }) => {
   const faq = page.getByText('Сколько стоит выезд?');
   await faq.click();
   await expect(page.getByText(/выезд/i).first()).toBeVisible();
+
+  const events = await page.evaluate(() =>
+    (window as unknown as { dataLayer: Array<{ event: string }> }).dataLayer.map((e) => e.event)
+  );
+  expect(events).toContain('faq_open');
 });
 
 test('home has json-ld and no overflow', async ({ page }) => {

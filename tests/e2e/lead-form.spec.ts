@@ -50,6 +50,11 @@ test('home CTA opens the lead form dialog', async ({ page }) => {
   const dialog = page.locator('#lead-form-dialog');
   await expect(dialog).toBeVisible();
   await expect(dialog.locator('input[name="phone"]')).toBeVisible();
+
+  const events = await page.evaluate(() =>
+    (window as unknown as { dataLayer: Array<{ event: string }> }).dataLayer.map((e) => e.event)
+  );
+  expect(events).toContain('lead_form_open');
 });
 
 test('validates required phone and consent before submitting', async ({ page }) => {

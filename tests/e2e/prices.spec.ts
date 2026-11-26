@@ -58,6 +58,15 @@ test('category filter shows only the selected category', async ({ page }) => {
     await expect(page.getByText(title)).toBeVisible();
   }
 
+  // `price_filter` is debounced (400ms), so wait past the debounce window.
+  await page.waitForTimeout(500);
+  const events = await page.evaluate(() =>
+    (window as unknown as { dataLayer: Array<{ event: string; category?: string }> }).dataLayer
+  );
+  const priceFilter = events.find((e) => e.event === 'price_filter');
+  expect(priceFilter).toBeDefined();
+  expect(priceFilter!.category).toBe('elektrika');
+
   await page.locator('[data-price-reset]').click();
 
   await expect(select).toHaveValue('');

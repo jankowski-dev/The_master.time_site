@@ -10,10 +10,7 @@ export default [
       'dist/',
       '.astro/',
       'test-results/',
-      'playwright-report/',
-      // Legacy Express site: removed in Task 16.
-      'js/',
-      'server.js'
+      'playwright-report/'
     ]
   },
   js.configs.recommended,

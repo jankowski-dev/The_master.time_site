@@ -18,8 +18,11 @@ import LeadForm from '@/components/forms/LeadForm.astro';
 </dialog>
 
 <script>
+  import { track } from '@/lib/analytics';
+
   interface OpenLeadFormDetail {
     source?: string;
+    placement?: string;
     categorySlug?: string;
     taskId?: string;
     urgency?: string;
@@ -64,6 +67,7 @@ import LeadForm from '@/components/forms/LeadForm.astro';
       } else {
         dialog.setAttribute('open', '');
       }
+      track('lead_form_open', { placement: detail?.placement ?? detail?.source ?? 'form' });
       phone?.focus();
     };
 
@@ -79,7 +83,7 @@ import LeadForm from '@/components/forms/LeadForm.astro';
     for (const trigger of document.querySelectorAll<HTMLElement>('[data-open-lead-form]')) {
       trigger.addEventListener('click', (event) => {
         event.preventDefault();
-        open();
+        open({ placement: trigger.getAttribute('data-lead-placement') ?? undefined });
       });
     }
 

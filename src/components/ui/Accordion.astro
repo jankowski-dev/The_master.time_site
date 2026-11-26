@@ -11,7 +11,7 @@ const { items } = Astro.props;
 <div class="accordion">
   {
     items.map((item) => (
-      <details class="accordion__item">
+      <details class="accordion__item" data-faq-item>
         <summary>{item.question}</summary>
         <div class="accordion__body">{item.answer}</div>
       </details>
