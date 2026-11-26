@@ -31,6 +31,17 @@ describe('content', () => {
     expect(getPopularWorks(6)).toHaveLength(6);
   });
 
+  it('uses SVG icon names for categories', () => {
+    expect(loadContent().categories.map((c) => c.icon)).toEqual([
+      'service-plumbing',
+      'service-electric',
+      'service-renovation',
+      'service-furniture',
+      'service-appliances',
+      'service-misc'
+    ]);
+  });
+
   it('rejects a bad slug', () => {
     const result = CategorySchema.safeParse({
       slug: 'Bad Slug',

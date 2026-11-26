@@ -6,7 +6,7 @@ export const categoriesData: CategoryInput[] = [
     slug: 'santehnika',
     title: 'Сантехника',
     shortTitle: 'Сантехника',
-    icon: '🔧',
+    icon: 'service-plumbing',
     description: 'Замена смесителей, устранение течей, установка сантехники.',
     seo: {
       title: 'Сантехника в Гродно — The Master Time',
@@ -42,7 +42,7 @@ export const categoriesData: CategoryInput[] = [
     slug: 'elektrika',
     title: 'Электрика',
     shortTitle: 'Электрика',
-    icon: '⚡',
+    icon: 'service-electric',
     description: 'Розетки, светильники, автоматы — мелкий электромонтаж.',
     seo: {
       title: 'Электрика в Гродно — The Master Time',
@@ -78,7 +78,7 @@ export const categoriesData: CategoryInput[] = [
     slug: 'remont-otdelka',
     title: 'Ремонт и отделка',
     shortTitle: 'Ремонт',
-    icon: '🎨',
+    icon: 'service-renovation',
     description: 'Мелкий ремонт стен, гипсокартон, укладка плитки.',
     seo: {
       title: 'Ремонт и отделка в Гродно — The Master Time',
@@ -115,7 +115,7 @@ export const categoriesData: CategoryInput[] = [
     slug: 'mebel',
     title: 'Мебельные работы',
     shortTitle: 'Мебель',
-    icon: '🪑',
+    icon: 'service-furniture',
     description: 'Сборка и ремонт мебели, установка фурнитуры.',
     seo: {
       title: 'Мебельные работы в Гродно — The Master Time',
@@ -151,7 +151,7 @@ export const categoriesData: CategoryInput[] = [
     slug: 'bytovaya-tehnika',
     title: 'Бытовая техника',
     shortTitle: 'Техника',
-    icon: '🔌',
+    icon: 'service-appliances',
     description: 'Ремонт и установка бытовой техники.',
     seo: {
       title: 'Ремонт бытовой техники в Гродно — The Master Time',
@@ -187,7 +187,7 @@ export const categoriesData: CategoryInput[] = [
     slug: 'melkie-raboty',
     title: 'Мелкие работы',
     shortTitle: 'Мелкие работы',
-    icon: '🛠️',
+    icon: 'service-misc',
     description: 'Повесить полку, карниз, собрать комод и другие мелочи.',
     seo: {
       title: 'Мелкие работы по дому в Гродно — The Master Time',
