@@ -1331,7 +1331,7 @@ git commit -m "feat: add 3-step estimate calculator with lead prefill"
 
 **Interfaces:**
 - `/usloviya` uses `conditions` from `src/data/conditions.ts`.
-- `/kontakty` uses `ContactBlock` + map link (no embed).
+- `/kontakty` uses `ContactBlock` + map link (no embed); include `<LeadFormDialog />` so the `data-open-lead-form` triggers open the dialog instead of navigating to `/zayavka`.
 - `/spasibo` `noindex: true`, success copy, Instagram CTA, phone; script tracks `lead_submit` only if consent accepted, source from `?source=`.
 - `/404` status 404, links to home/services/calculator.
 
