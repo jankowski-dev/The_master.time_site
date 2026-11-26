@@ -89,6 +89,13 @@ The repo includes `railway.json` (`npm run build` → `npm run start`, health ch
 5. Keep the legacy site on `main` live until the new deployment is verified; see
    `docs/deployment.md` for cutover and rollback.
 
+Railway deprecated Config-as-Code (`railway.json`) after 2026-12-01. A
+`.railway/railway.ts` IaC file is prepared (source `main`, build/start,
+healthcheck, custom domain). It is not cut over yet, so `railway.json` remains
+active. After the PR is merged to `main`, run `railway config migrate cutover
+--service The_master.time_site --yes`, then `railway config plan` /
+`railway config apply`, and remove `railway.json`; see `docs/deployment.md`.
+
 ## Routes
 
 | Path                            | Description                                        |

@@ -58,6 +58,30 @@ time. Railway makes service variables available to both build and runtime.
 5. Open `https://master-time.pro/`, confirm canonical URLs use the apex, then
    submit `/sitemap-index.xml` to Google Search Console and Yandex Webmaster.
 
+### Config-as-Code → IaC migration
+
+Railway deprecated `railway.json`/`railway.toml` after **2026-12-01**. The
+repository now contains `.railway/railway.ts` (source `main`, `npm run build` /
+`npm run start`, `/api/health`, `master-time.pro`) and the `railway` dev
+dependency it needs.
+
+`railway.json` is still the active config until cutover. Cutover **redeploys the
+service from its source branch**, so do it only after the PR is merged to
+`main`:
+
+```bash
+railway config migrate cutover --service The_master.time_site --yes
+railway config plan
+railway config apply
+```
+
+Then remove `railway.json`, redeploy, and confirm `/api/health`. The generated
+IaC file manages only this service (`partial = "The_master.time_site"`) and
+leaves environment variables unmanaged — set secrets in the Railway dashboard
+as before. If the local CLI reports an SDK/CLI version mismatch, use the Railway
+dashboard or update the `railway` CLI; the live deployment is unaffected until
+cutover.
+
 ## Email (SMTP) setup
 
 1. Create a sending mailbox on `master-time.pro` (e.g. `site@master-time.pro`)

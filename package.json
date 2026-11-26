@@ -39,6 +39,7 @@
     "eslint-plugin-astro": "^3.2.2",
     "prettier": "^3.10.1",
     "prettier-plugin-astro": "^1.1.2",
+    "railway": "^3.19.0",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.74.0",
