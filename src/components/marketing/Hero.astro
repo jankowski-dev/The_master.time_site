@@ -1,0 +1,100 @@
+---
+import { site } from '@/lib/content';
+import Button from '@/components/ui/Button.astro';
+
+interface Props {
+  title: string;
+  subtitle: string;
+  intro?: string;
+}
+
+const { title, subtitle, intro } = Astro.props;
+---
+
+<section class="hero" id="hero">
+  <div class="container hero__inner">
+    <p class="hero__eyebrow">Мастер на час · Гродно</p>
+    <h1 class="hero__title">{title}</h1>
+    <p class="hero__subtitle">{subtitle}</p>
+    {intro && <p class="hero__intro">{intro}</p>}
+    <div class="hero__actions">
+      <Button href="/kalkulyator" variant="primary" size="lg">Рассчитать стоимость</Button>
+      <Button href={`tel:${site.phoneLink}`} variant="ghost" size="lg" class="hero__call">
+        Позвонить
+      </Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(1200px 480px at 85% -10%, rgba(234, 98, 73, 0.28), transparent 60%),
+      var(--color-ink);
+    color: #ffffff;
+    padding-block: 72px 32px;
+  }
+
+  .hero__inner {
+    max-width: 760px;
+  }
+
+  .hero__eyebrow {
+    margin-bottom: 16px;
+    color: var(--color-accent-soft);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero__title {
+    color: #ffffff;
+    font-size: clamp(30px, 5.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .hero__subtitle {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: clamp(18px, 2.6vw, 22px);
+    font-weight: 500;
+    line-height: 1.45;
+    margin-bottom: 16px;
+  }
+
+  .hero__intro {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero__call {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .hero__call:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+  }
+
+  @media (max-width: 767px) {
+    .hero {
+      padding-block: 48px 24px;
+    }
+
+    .hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

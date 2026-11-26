@@ -1,0 +1,55 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+
+interface Props {
+  items?: string[];
+}
+
+const defaultItems = ['Прозрачные цены', 'Быстрый выезд', 'Цена до начала работ'];
+const { items = defaultItems } = Astro.props;
+---
+
+<div class="trustbar" aria-label="Почему выбирают нас">
+  <div class="container trustbar__inner">
+    {
+      items.map((item) => (
+        <div class="trustbar__item">
+          <span class="trustbar__check"><Icon name="check" size={16} /></span>
+          <span>{item}</span>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .trustbar {
+    background: var(--color-ink);
+    color: rgba(255, 255, 255, 0.88);
+    padding-block: 8px 32px;
+  }
+
+  .trustbar__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+  }
+
+  .trustbar__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .trustbar__check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(234, 98, 73, 0.18);
+  }
+</style>

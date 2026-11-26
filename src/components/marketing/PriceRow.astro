@@ -1,0 +1,99 @@
+---
+import { formatPrice } from '@/lib/pricing/format';
+import type { Category, PricingConfig, Work } from '@/lib/content/schemas';
+
+interface Props {
+  work: Work;
+  pricing: PricingConfig;
+  category?: Category;
+}
+
+const { work, pricing, category } = Astro.props;
+
+const from = Math.max(pricing.minOrder, work.priceFrom);
+const to = work.priceTo === undefined ? undefined : Math.max(pricing.minOrder, work.priceTo);
+---
+
+<div class="price-row">
+  <div class="price-row__main">
+    {
+      category ? (
+        <a class="price-row__title" href={`/uslugi/${category.slug}`}>{work.title}</a>
+      ) : (
+        <span class="price-row__title">{work.title}</span>
+      )
+    }
+    {work.duration && <span class="price-row__duration">{work.duration}</span>}
+  </div>
+  <div class="price-row__price" data-currency={pricing.currency}>
+    <span class="price-row__from">от {formatPrice(from)}</span>
+    {to !== undefined && <span class="price-row__to">до {formatPrice(to)}</span>}
+  </div>
+</div>
+
+<style>
+  .price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+  }
+
+  .price-row__main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .price-row__title {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--color-text);
+  }
+
+  a.price-row__title:hover {
+    color: var(--color-accent-strong);
+  }
+
+  .price-row__duration {
+    color: var(--color-muted);
+    font-size: 13px;
+  }
+
+  .price-row__price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+    gap: 2px;
+  }
+
+  .price-row__from {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--color-accent-strong);
+  }
+
+  .price-row__to {
+    color: var(--color-muted);
+    font-size: 14px;
+  }
+
+  @media (max-width: 479px) {
+    .price-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .price-row__price {
+      align-items: flex-start;
+      flex-direction: row;
+      gap: 8px;
+    }
+  }
+</style>

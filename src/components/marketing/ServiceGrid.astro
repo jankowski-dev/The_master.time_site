@@ -1,0 +1,74 @@
+---
+import ServiceCard from './ServiceCard.astro';
+import { getCategoryPriceFrom } from '@/lib/pricing/format';
+import type { Category, PricingConfig } from '@/lib/content/schemas';
+
+interface Props {
+  categories: Category[];
+  pricing: PricingConfig;
+  title?: string;
+  lead?: string;
+  id?: string;
+}
+
+const {
+  categories,
+  pricing,
+  title = 'Услуги мастера на час в Гродно',
+  lead = 'Выберите направление — цены ориентировочные, точную сумму подтвердим после уточнения деталей.',
+  id = 'services'
+} = Astro.props;
+---
+
+<section class="service-grid-section" id={id}>
+  <div class="container">
+    <div class="service-grid-section__head">
+      <h2 class="service-grid-section__title">{title}</h2>
+      <p class="service-grid-section__lead">{lead}</p>
+    </div>
+    <div class="service-grid">
+      {
+        categories.map((category) => (
+          <ServiceCard category={category} priceFrom={getCategoryPriceFrom(category, pricing)} />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .service-grid-section__head {
+    max-width: 640px;
+    margin-bottom: 32px;
+  }
+
+  .service-grid-section__title {
+    font-size: clamp(24px, 3.5vw, 34px);
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+
+  .service-grid-section__lead {
+    color: var(--color-muted);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .service-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .service-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .service-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+import type { Review } from '@/lib/content/schemas';
+
+interface Props {
+  review: Review;
+}
+
+const { review } = Astro.props;
+
+const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+
+const dateLabel = new Intl.DateTimeFormat('ru-RU', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+}).format(new Date(review.date));
+---
+
+<article class="review-card">
+  <div class="review-card__head">
+    <div>
+      <p class="review-card__name">{review.name}</p>
+      <p class="review-card__service">{review.service}</p>
+    </div>
+    <div class="review-card__meta">
+      <span class="review-card__stars" aria-label={`Оценка ${review.rating} из 5`}>{stars}</span>
+      <time class="review-card__date" datetime={review.date}>{dateLabel}</time>
+    </div>
+  </div>
+  <p class="review-card__text">{review.text}</p>
+</article>
+
+<style>
+  .review-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .review-card__head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .review-card__name {
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .review-card__service {
+    color: var(--color-muted);
+    font-size: 13px;
+  }
+
+  .review-card__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .review-card__stars {
+    color: var(--color-accent);
+    letter-spacing: 2px;
+  }
+
+  .review-card__date {
+    color: var(--color-muted);
+    font-size: 13px;
+  }
+
+  .review-card__text {
+    color: var(--color-text);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+</style>

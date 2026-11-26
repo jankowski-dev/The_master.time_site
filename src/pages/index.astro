@@ -1,13 +1,142 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { site } from '@/lib/content';
+
+import Hero from '@/components/marketing/Hero.astro';
+import TrustBar from '@/components/marketing/TrustBar.astro';
+import ServiceGrid from '@/components/marketing/ServiceGrid.astro';
+import PriceTable from '@/components/marketing/PriceTable.astro';
+import HowItWorks from '@/components/marketing/HowItWorks.astro';
+import Reviews from '@/components/marketing/Reviews.astro';
+import InstagramBlock from '@/components/marketing/InstagramBlock.astro';
+import Faq from '@/components/marketing/Faq.astro';
+import ContactBlock from '@/components/marketing/ContactBlock.astro';
+import CtaBand from '@/components/marketing/CtaBand.astro';
+import Button from '@/components/ui/Button.astro';
+
+import { loadContent, getPopularWorks, getPublishedReviews } from '@/lib/content';
+import { localBusinessJsonLd, faqJsonLd } from '@/lib/jsonld';
+
+const { site, categories, pricing, faqs } = loadContent();
+const popular = getPopularWorks(6);
+const reviews = getPublishedReviews();
 
 const seo = {
   ...site.defaultSeo,
   canonical: Astro.url.pathname
 };
+
+const jsonLd = [localBusinessJsonLd(site, categories), faqJsonLd(faqs)];
 ---
 
-<BaseLayout seo={seo}>
-  <h1>The Master Time</h1>
+<BaseLayout seo={seo} jsonLd={jsonLd}>
+  <Hero
+    title="Мастер на час в Гродно"
+    subtitle="Сантехника, электрика, ремонт и мелкие работы по дому — быстро и по честной цене."
+    intro="Выезжаю по Гродно и до 20 км. Цену называю до начала работ, чтобы в счёте не было сюрпризов."
+  />
+  <TrustBar />
+
+  <ServiceGrid categories={categories} pricing={pricing} />
+
+  <section class="calc-cta" id="calculator">
+    <div class="container calc-cta__inner">
+      <div class="calc-cta__content">
+        <h2 class="calc-cta__title">Рассчитайте стоимость онлайн</h2>
+        <p class="calc-cta__text">
+          Калькулятор покажет ориентировочную цену за пару кликов — без звонка.
+        </p>
+        <Button href="/kalkulyator" variant="primary" size="lg">Рассчитать</Button>
+      </div>
+      <ol class="calc-cta__steps">
+        <li class="calc-cta__step"><span class="calc-cta__num">1</span> Выберите работу</li>
+        <li class="calc-cta__step"><span class="calc-cta__num">2</span> Укажите срочность и район</li>
+        <li class="calc-cta__step"><span class="calc-cta__num">3</span> Получите расчёт</li>
+      </ol>
+    </div>
+  </section>
+
+  <PriceTable works={popular} pricing={pricing} />
+
+  <HowItWorks />
+
+  <Reviews reviews={reviews} />
+
+  <InstagramBlock />
+
+  <Faq items={faqs} />
+
+  <ContactBlock />
+
+  <CtaBand
+    title="Не знаете, сколько будет стоить?"
+    text="Посчитайте в калькуляторе или позвоните — уточню детали и назову точную цену."
+  />
 </BaseLayout>
+
+<style>
+  .calc-cta {
+    background: var(--color-accent-soft);
+  }
+
+  .calc-cta__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .calc-cta__title {
+    font-size: clamp(22px, 3.5vw, 30px);
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+
+  .calc-cta__text {
+    color: var(--color-muted);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 520px;
+    margin-bottom: 20px;
+  }
+
+  .calc-cta__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+
+  .calc-cta__step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 16px;
+  }
+
+  .calc-cta__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  @media (min-width: 768px) {
+    .calc-cta__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .calc-cta__content {
+      max-width: 55%;
+    }
+  }
+</style>

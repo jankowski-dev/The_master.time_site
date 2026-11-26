@@ -1,0 +1,73 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import { formatPrice } from '@/lib/pricing/format';
+import type { Category } from '@/lib/content/schemas';
+
+interface Props {
+  category: Category;
+  priceFrom: number;
+}
+
+const { category, priceFrom } = Astro.props;
+---
+
+<a class="service-card" href={`/uslugi/${category.slug}`} data-service-card>
+  <span class="service-card__icon"><Icon name={category.icon} size={28} /></span>
+  <h3 class="service-card__title">{category.title}</h3>
+  <p class="service-card__desc">{category.description}</p>
+  <span class="service-card__price">от {formatPrice(priceFrom)}</span>
+</a>
+
+<style>
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    color: var(--color-text);
+    transition:
+      transform var(--transition),
+      border-color var(--transition),
+      box-shadow var(--transition);
+  }
+
+  .service-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+    color: var(--color-text);
+  }
+
+  .service-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    background: var(--color-accent-soft);
+  }
+
+  .service-card__title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .service-card__desc {
+    flex: 1;
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .service-card__price {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--color-accent-strong);
+  }
+</style>
