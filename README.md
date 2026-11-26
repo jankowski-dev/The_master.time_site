@@ -54,8 +54,9 @@ via `import.meta.env`; server secrets are read from `process.env`.
 
 | Variable                 | Purpose                                              |
 | ------------------------ | ---------------------------------------------------- |
-| `SITE_URL`               | Canonical origin (canonical, sitemap, robots)        |
-| `PORT`                   | Server port (default `4321`)                         |
+| `SITE_URL`               | Canonical origin; production `https://master-time.pro` |
+| `PORT`                   | Server port (default `4321`; Railway injects it)     |
+| `HOST`                   | Bind address (Railway: `0.0.0.0`)                   |
 | `PUBLIC_YM_ID`           | Yandex Metrika counter id (default `112934654`)      |
 | `PUBLIC_GA_ID`           | Google Analytics id (optional)                       |
 | `PUBLIC_GOOGLE_ADS_ID`   | Google Ads id (optional)                             |
@@ -69,6 +70,24 @@ via `import.meta.env`; server secrets are read from `process.env`.
 signature with `VIBER_AUTH_TOKEN` (there is no separate webhook secret).
 
 Never commit `.env` or secrets — `.env.example` holds placeholders only.
+
+## Deploy (Railway)
+
+The repo includes `railway.json` (`npm run build` → `npm run start`, health check
+`/api/health`). Production domain: **https://master-time.pro**.
+
+1. Create the Railway service from this GitHub repo/branch, or run
+   `railway up` from the project root after linking it.
+2. Set `SITE_URL=https://master-time.pro` (required at **build time** for
+   canonical/sitemap/robots/CSRF allowlist), plus `HOST=0.0.0.0`, SMTP, Viber
+   and analytics variables. Do not set `PORT`; Railway injects it.
+3. Add `master-time.pro` (and optionally `www`) as a custom domain in Railway;
+   point the DNS CNAME at Railway (Cloudflare: CNAME flattening at apex, proxy
+   on, SSL Full strict). Redirect `www` to the apex at the edge.
+4. Verify `https://master-time.pro/api/health`, canonical/robots/sitemap, a
+   same-origin lead POST, and a real email/Viber test lead before switching DNS.
+5. Keep the legacy site on `main` live until the new deployment is verified; see
+   `docs/deployment.md` for cutover and rollback.
 
 ## Routes
 

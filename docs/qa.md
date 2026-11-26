@@ -61,7 +61,7 @@ site, review it with the owner before deleting (do not delete real data).
 - [ ] Real prices replace demo values; `npm run validate:content` passes.
 - [ ] Real photos added, or photo sections hidden / empty state (no reviews — cancelled).
 - [ ] Working hours, warranty, payment, min order, urgent/out-of-town values confirmed.
-- [ ] Domain, `SITE_URL`, email, SMTP credentials, SPF/DKIM/DMARC.
+- [ ] Domain `master-time.pro`, `SITE_URL=https://master-time.pro`, mailbox/email, SMTP credentials, SPF/DKIM/DMARC.
 - [ ] Viber bot token/admin ID configured, or email-only launch confirmed.
 - [ ] Legal review of privacy/consent text.
 - [ ] GA4 / Google Ads IDs set; Yandex Metrika goals configured.

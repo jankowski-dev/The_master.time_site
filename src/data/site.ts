@@ -6,7 +6,7 @@ export const siteData: SiteConfigInput = {
   unp: '56723984',
   phoneDisplay: '+375 25 707-67-93',
   phoneLink: '+375257076793',
-  email: 'site@example.com', // demo
+  email: 'site@master-time.pro', // demo — create this mailbox or replace before launch
   instagramUrl: 'https://www.instagram.com/the_master.time/',
   instagramDm: 'https://ig.me/m/the_master.time',
   viberUrl: 'viber://chat?number=%2B375257076793',

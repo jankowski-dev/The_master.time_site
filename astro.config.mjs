@@ -25,7 +25,15 @@ function allowedDomainsFrom(siteUrl) {
     hostname: url.hostname
   };
   if (url.port) pattern.port = url.port;
-  return [pattern];
+
+  // The canonical origin is SITE_URL, but the app may also be reached at www.
+  // Allow both so the CSRF guard keeps working if the www redirect is not in
+  // front of the Node process yet.
+  const patterns = [pattern];
+  if (!url.hostname.startsWith('www.')) {
+    patterns.push({ ...pattern, hostname: `www.${url.hostname}` });
+  }
+  return patterns;
 }
 
 /**

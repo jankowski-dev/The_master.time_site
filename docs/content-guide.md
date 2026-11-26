@@ -25,7 +25,8 @@ grep -RIn "demo" src/data
 ```
 
 The current demo values include prices (`priceFrom` / `priceTo`), working hours,
-the contact email (`site@example.com`), the map link, and several conditions.
+the contact email (`site@master-time.pro` — create the mailbox or replace it),
+the map link, and several conditions.
 
 ## Validation
 
@@ -64,7 +65,7 @@ selectable in the calculator, add a `CalculatorTask` in
 
 - [ ] Replace all `// demo` values with real prices, hours, warranty/payment terms,
       min order, urgent and out-of-town values.
-- [ ] Replace `site@example.com` with the real contact email.
+- [ ] Create `site@master-time.pro` (or replace it with the real contact email).
 - [ ] Confirm the phone number and UNP in `src/data/site.ts`.
 - [ ] `npm run validate:content` passes.
 - [ ] Legal review of the privacy policy text (currently a template).
