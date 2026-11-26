@@ -34,6 +34,13 @@ test('updates URL query params without reloading', async ({ page }) => {
   await expect(page).toHaveURL(/task=zamena-smesitelya/);
 });
 
+test('static price breakdown shows a single-currency range', async ({ page }) => {
+  await page.goto('/kalkulyator');
+  const breakdown = page.locator('#how-price-works');
+  await expect(breakdown).toContainText('40–60 BYN');
+  await expect(breakdown).not.toContainText('40 BYN–60 BYN');
+});
+
 test('calculator page has no horizontal overflow', async ({ page }) => {
   for (const width of [375, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });

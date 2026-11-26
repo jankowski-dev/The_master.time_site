@@ -1,5 +1,5 @@
 ---
-import { formatPrice } from '@/lib/pricing/format';
+import { formatRange } from '@/lib/pricing/format';
 import type { Estimate } from '@/lib/pricing/types';
 
 interface Props {
@@ -10,13 +10,6 @@ const { estimate } = Astro.props;
 
 // Base example: the work line plus the surcharge rules that apply on top.
 const workLine = estimate.lines[0];
-
-const lineAmount = (line: { label: string; from: number; to?: number }): string => {
-  if (line.to !== undefined && line.to !== line.from) {
-    return `${formatPrice(line.from)}–${formatPrice(line.to)}`;
-  }
-  return formatPrice(line.from);
-};
 ---
 
 <section class="estimate-breakdown" id="how-price-works">
@@ -31,7 +24,7 @@ const lineAmount = (line: { label: string; from: number; to?: number }): string 
       {workLine && (
         <li class="estimate-breakdown__item">
           <span class="estimate-breakdown__label">{workLine.label}</span>
-          <strong class="estimate-breakdown__value">{lineAmount(workLine)}</strong>
+          <strong class="estimate-breakdown__value">{formatRange(workLine.from, workLine.to)}</strong>
         </li>
       )}
       <li class="estimate-breakdown__item">
