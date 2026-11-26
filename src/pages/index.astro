@@ -6,7 +6,6 @@ import TrustBar from '@/components/marketing/TrustBar.astro';
 import ServiceGrid from '@/components/marketing/ServiceGrid.astro';
 import PriceTable from '@/components/marketing/PriceTable.astro';
 import HowItWorks from '@/components/marketing/HowItWorks.astro';
-import Reviews from '@/components/marketing/Reviews.astro';
 import InstagramBlock from '@/components/marketing/InstagramBlock.astro';
 import Faq from '@/components/marketing/Faq.astro';
 import ContactBlock from '@/components/marketing/ContactBlock.astro';
@@ -14,12 +13,11 @@ import CtaBand from '@/components/marketing/CtaBand.astro';
 import Button from '@/components/ui/Button.astro';
 import LeadFormDialog from '@/components/forms/LeadFormDialog.astro';
 
-import { loadContent, getPopularWorks, getPublishedReviews } from '@/lib/content';
+import { loadContent, getPopularWorks } from '@/lib/content';
 import { localBusinessJsonLd, faqJsonLd } from '@/lib/jsonld';
 
 const { site, categories, pricing, faqs } = loadContent();
 const popular = getPopularWorks(6);
-const reviews = getPublishedReviews();
 
 const seo = {
   ...site.defaultSeo,
@@ -59,8 +57,6 @@ const jsonLd = [localBusinessJsonLd(site, categories), faqJsonLd(faqs)];
   <PriceTable works={popular} pricing={pricing} />
 
   <HowItWorks />
-
-  <Reviews reviews={reviews} />
 
   <InstagramBlock />
 

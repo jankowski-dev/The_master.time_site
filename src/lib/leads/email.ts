@@ -5,8 +5,7 @@ import { formatLeadHtml, formatLeadText } from './format';
 import type { EmailConfig, Lead, LeadNotifier, SendMail } from './types';
 
 /**
- * Builds a lazy SMTP transport. Does not connect until the first `sendMail`;
- * reused by reviews (Task 13).
+ * Builds a lazy SMTP transport. Does not connect until the first `sendMail`.
  */
 export function createSmtpTransport(config: EmailConfig): { sendMail: SendMail } {
   const transport = nodemailer.createTransport({

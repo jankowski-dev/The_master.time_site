@@ -3,8 +3,7 @@ import {
   localBusinessJsonLd,
   serviceJsonLd,
   faqJsonLd,
-  breadcrumbJsonLd,
-  reviewJsonLd
+  breadcrumbJsonLd
 } from '@/lib/jsonld';
 import { site, pricing, categories } from '@/lib/content';
 import type { Category } from '@/lib/content/schemas';
@@ -82,18 +81,5 @@ describe('jsonld', () => {
     expect(ld.itemListElement[0].item).toBe('https://x.by/');
     expect(ld.itemListElement[1].item).toBe('https://x.by/uslugi');
     expect(ld.itemListElement[2].item).toBeUndefined();
-  });
-
-  it('builds Review objects', () => {
-    const ld = reviewJsonLd([
-      { id: 'r1', name: 'Иван', date: '2026-01-01', service: 'Сантехника', rating: 5, text: 'Отлично', published: true }
-    ]);
-    expect(ld).toHaveLength(1);
-    expect(ld[0]['@type']).toBe('Review');
-    expect(ld[0].reviewRating.ratingValue).toBe(5);
-  });
-
-  it('returns an empty array for no reviews', () => {
-    expect(reviewJsonLd([])).toEqual([]);
   });
 });

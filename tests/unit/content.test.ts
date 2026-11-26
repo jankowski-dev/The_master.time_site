@@ -73,7 +73,6 @@ describe('content', () => {
       calculatorTasks: [],
       pricing: pricingData,
       faqs: [],
-      reviews: [],
       conditions: []
     };
     expect(() => parseContent(raw)).toThrow(ContentValidationError);

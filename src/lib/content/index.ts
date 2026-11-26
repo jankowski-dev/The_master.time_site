@@ -6,7 +6,6 @@ import {
   ConditionSchema,
   FaqItemSchema,
   PricingConfigSchema,
-  ReviewSchema,
   SiteConfigSchema
 } from './schemas';
 import type {
@@ -15,7 +14,6 @@ import type {
   Condition,
   FaqItem,
   PricingConfig,
-  Review,
   SiteConfig,
   Work
 } from './schemas';
@@ -25,7 +23,6 @@ import { categoriesData } from '../../data/categories';
 import { calculatorTasksData } from '../../data/calculator';
 import { pricingData } from '../../data/pricing';
 import { faqsData } from '../../data/faq';
-import { reviewsData } from '../../data/reviews';
 import { conditionsData } from '../../data/conditions';
 
 export interface Content {
@@ -34,7 +31,6 @@ export interface Content {
   calculatorTasks: CalculatorTask[];
   pricing: PricingConfig;
   faqs: FaqItem[];
-  reviews: Review[];
   conditions: Condition[];
 }
 
@@ -44,7 +40,6 @@ const ContentSchema = z.object({
   calculatorTasks: z.array(CalculatorTaskSchema),
   pricing: PricingConfigSchema,
   faqs: z.array(FaqItemSchema),
-  reviews: z.array(ReviewSchema),
   conditions: z.array(ConditionSchema)
 });
 
@@ -131,7 +126,6 @@ export function loadContent(): Content {
     calculatorTasks: calculatorTasksData,
     pricing: pricingData,
     faqs: faqsData,
-    reviews: reviewsData,
     conditions: conditionsData
   });
 }
@@ -143,7 +137,6 @@ export const categories = content.categories;
 export const calculatorTasks = content.calculatorTasks;
 export const pricing = content.pricing;
 export const faqs = content.faqs;
-export const reviews = content.reviews;
 export const conditions = content.conditions;
 
 export function getCategoryBySlug(slug: string): Category | undefined {
@@ -170,8 +163,4 @@ export function getPopularWorks(limit = 6): PopularWork[] {
   const popular = all.filter(({ work }) => work.popular);
   const rest = all.filter(({ work }) => !work.popular);
   return [...popular, ...rest].slice(0, limit);
-}
-
-export function getPublishedReviews(): Review[] {
-  return content.reviews.filter((review) => review.published);
 }

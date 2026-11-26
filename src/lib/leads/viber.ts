@@ -26,7 +26,7 @@ function formatViberText(lead: Lead): string {
 
 /**
  * Sends a plain text message to the Viber Bot API. Throws on a non-2xx
- * response. Exported for reuse by review notifications (Task 13).
+ * response.
  */
 export async function sendViberText(
   config: ViberConfig,

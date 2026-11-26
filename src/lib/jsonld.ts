@@ -1,4 +1,4 @@
-import type { SiteConfig, Category, PricingConfig, FaqItem, Review } from '@/lib/content/schemas';
+import type { SiteConfig, Category, PricingConfig, FaqItem } from '@/lib/content/schemas';
 import { absoluteUrl } from './seo';
 
 interface BreadcrumbItem {
@@ -80,17 +80,4 @@ export function breadcrumbJsonLd(items: BreadcrumbItem[], siteUrl: string) {
       item: item.href ? absoluteUrl(item.href, siteUrl) : undefined
     }))
   };
-}
-
-/** Builds `Review` objects for real published reviews. */
-export function reviewJsonLd(reviews: Review[]) {
-  return reviews.map((review) => ({
-    '@context': 'https://schema.org',
-    '@type': 'Review',
-    author: { '@type': 'Person', name: review.name },
-    datePublished: review.date,
-    reviewRating: { '@type': 'Rating', ratingValue: review.rating, bestRating: 5 },
-    itemReviewed: { '@type': 'Service', name: review.service },
-    reviewBody: review.text
-  }));
 }

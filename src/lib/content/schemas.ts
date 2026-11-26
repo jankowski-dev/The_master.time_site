@@ -56,17 +56,6 @@ export const PricingConfigSchema = z.object({
   disclaimer: z.string().min(1)
 });
 
-export const ReviewSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  service: z.string().min(1),
-  rating: z.number().int().min(1).max(5),
-  text: z.string().min(1),
-  photo: z.string().optional(),
-  published: z.boolean().default(true)
-});
-
 export const ConditionSchema = z.object({
   title: z.string().min(1),
   body: z.string().min(1)
@@ -94,7 +83,6 @@ export type Seo = z.infer<typeof SeoSchema>;
 export type Category = z.infer<typeof CategorySchema>;
 export type CalculatorTask = z.infer<typeof CalculatorTaskSchema>;
 export type PricingConfig = z.infer<typeof PricingConfigSchema>;
-export type Review = z.infer<typeof ReviewSchema>;
 export type Condition = z.infer<typeof ConditionSchema>;
 export type SiteConfig = z.infer<typeof SiteConfigSchema>;
 
@@ -104,6 +92,5 @@ export type SeoInput = z.input<typeof SeoSchema>;
 export type CategoryInput = z.input<typeof CategorySchema>;
 export type CalculatorTaskInput = z.input<typeof CalculatorTaskSchema>;
 export type PricingConfigInput = z.input<typeof PricingConfigSchema>;
-export type ReviewInput = z.input<typeof ReviewSchema>;
 export type ConditionInput = z.input<typeof ConditionSchema>;
 export type SiteConfigInput = z.input<typeof SiteConfigSchema>;
