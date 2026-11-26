@@ -1378,7 +1378,7 @@ git commit -m "feat: add conditions, about, contacts, privacy, thank-you and 404
 - Modify: pages to add JSON-LD where missing.
 
 **Interfaces:**
-- `Analytics.astro`: reads `PUBLIC_YM_ID` (default `112934654`), `PUBLIC_GA_ID`, `PUBLIC_GOOGLE_ADS_ID`; on `getConsent() === 'accepted'` or `tmt:consent` accepted, injects Yandex/GA scripts once; sets `window.__tmtYmId`.
+- `Analytics.astro`: reads `PUBLIC_YM_ID` (default `112934654`), `PUBLIC_GA_ID`, `PUBLIC_GOOGLE_ADS_ID`; initializes `window.dataLayer = window.dataLayer || []` before any `track()` can run; on `getConsent() === 'accepted'` or `tmt:consent` accepted, injects Yandex/GA scripts once; sets `window.__tmtYmId`.
 - `ConsentBanner.astro`: visible only when `getConsent() === null`; buttons «Принять» and «Только необходимые»; sets consent, dispatches `tmt:consent`; link to privacy.
 - `src/scripts/tracking.ts`: delegated click handler for `[data-track]`; reads `data-track-event` and optional `data-track-params` JSON; calls `track`.
 - `robots.txt.ts`: `User-agent: *`, `Allow: /`, `Disallow: /spasibo`, `Disallow: /zayavka`, `Sitemap: ${Astro.site}sitemap-index.xml`.
