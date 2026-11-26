@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+package-lock.json
+test-results/
+playwright-report/
+
+# Legacy Express site: removed in Task 16.
+index.html
+css/
+js/
+server.js
+docs/
+.superpowers/

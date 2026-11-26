@@ -1,6 +1,9 @@
-.DS_Store
-Thumbs.db
 node_modules/
-*.log
+dist/
+.astro/
 .env
+test-results/
+playwright-report/
 uploads/
+server.log
+server-err.log
