@@ -53,9 +53,10 @@ const seo = {
 <script>
   import { track } from '@/lib/analytics';
   import { getConsent } from '@/lib/consent';
+  import { getSafeStorage } from '@/lib/safe-storage';
 
   const source = new URLSearchParams(window.location.search).get('source') ?? 'native';
-  if (getConsent(window.localStorage) === 'accepted') {
+  if (getConsent(getSafeStorage()) === 'accepted') {
     track('lead_submit', { source });
   }
 </script>

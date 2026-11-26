@@ -13,7 +13,6 @@ const THANK_YOU_URL = '/spasibo?source=form';
 export interface HandleInput {
   formData: FormData;
   ip: string;
-  userAgent: string;
   referer: string;
   wantsJson: boolean;
 }
@@ -95,6 +94,8 @@ export async function handleLead(input: HandleInput, deps: HandleDeps): Promise<
 
   const lead: Lead = {
     ...parsed.input,
+    // Fall back to the referer when the form did not carry an explicit page.
+    page: parsed.input.page || input.referer,
     id: randomUUID(),
     createdAt: nowDate.toISOString()
   };

@@ -5,7 +5,7 @@ import { verifyViberSignature } from '@/lib/leads/viber';
 export const prerender = false;
 
 interface ViberEvent {
-  sender?: { id?: string; name?: string };
+  sender?: { id?: string };
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -22,8 +22,8 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const event = JSON.parse(rawBody) as ViberEvent;
-    // Log the sender id so the owner can set VIBER_ADMIN_ID.
-    console.log('[viber] sender', event.sender?.id, event.sender?.name);
+    // Log only the sender id (no PII) so the owner can set VIBER_ADMIN_ID.
+    console.log('[viber] sender', event.sender?.id);
   } catch {
     // Signature verified but the body was not JSON; nothing to log.
   }

@@ -3,6 +3,9 @@ import { parseLeadFormData } from '@/lib/leads/validate';
 
 const MB = 1024 * 1024;
 
+const JPEG = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00]);
+const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d]);
+
 function validForm(): FormData {
   const form = new FormData();
   form.set('phone', '+375 29 123-45-67');
@@ -147,7 +150,7 @@ describe('parseLeadFormData', () => {
 
   it('converts photos to LeadPhoto buffers', async () => {
     const form = validForm();
-    form.append('photos', new File(['abc'], 'photo.jpg', { type: 'image/jpeg' }));
+    form.append('photos', new File([JPEG], 'photo.jpg', { type: 'image/jpeg' }));
     const result = await parseLeadFormData(form);
     expect(result.ok).toBe(true);
     if (!result.ok) throw new Error('expected ok');
@@ -155,8 +158,26 @@ describe('parseLeadFormData', () => {
     const photo = result.input.photos[0];
     expect(photo.filename).toBe('photo.jpg');
     expect(photo.contentType).toBe('image/jpeg');
-    expect(photo.size).toBe(3);
-    expect(Buffer.from(photo.content).toString()).toBe('abc');
+    expect(photo.size).toBe(JPEG.length);
+    expect(Buffer.from(photo.content)).toEqual(JPEG);
+  });
+
+  it('rejects a PNG buffer declared as image/jpeg', async () => {
+    const form = validForm();
+    form.append('photos', new File([PNG], 'fake.jpg', { type: 'image/jpeg' }));
+    const result = await parseLeadFormData(form);
+    expect(result.ok).toBe(false);
+    if (result.ok) throw new Error('expected error');
+    expect(result.errors.photos).toBe('Только фото');
+  });
+
+  it('rejects a truncated buffer declared as image/jpeg', async () => {
+    const form = validForm();
+    form.append('photos', new File([Buffer.from([0xff, 0xd8])], 'trunc.jpg', { type: 'image/jpeg' }));
+    const result = await parseLeadFormData(form);
+    expect(result.ok).toBe(false);
+    if (result.ok) throw new Error('expected error');
+    expect(result.errors.photos).toBe('Только фото');
   });
 
   it('ignores zero-byte files from empty file inputs', async () => {

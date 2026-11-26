@@ -23,12 +23,13 @@
 
 <script>
   import { getConsent, setConsent } from '@/lib/consent';
+  import { getSafeStorage } from '@/lib/safe-storage';
 
   function initConsentBanner(): void {
     const banner = document.getElementById('consent-banner');
     if (!banner) return;
 
-    if (getConsent(window.localStorage) !== null) {
+    if (getConsent(getSafeStorage()) !== null) {
       banner.hidden = true;
       return;
     }
@@ -36,7 +37,7 @@
     banner.hidden = false;
 
     const choose = (value: 'accepted' | 'declined'): void => {
-      setConsent(value, window.localStorage);
+      setConsent(value, getSafeStorage());
       banner.hidden = true;
       window.dispatchEvent(new CustomEvent('tmt:consent', { detail: value }));
     };

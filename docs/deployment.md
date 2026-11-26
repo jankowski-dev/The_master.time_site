@@ -43,8 +43,9 @@ Set these in the hosting provider (never commit `.env`):
 ## Viber Bot setup
 
 1. Create a bot and obtain `VIBER_AUTH_TOKEN`.
-2. Point the bot webhook at `https://<domain>/api/viber/webhook` (the endpoint
-   verifies `x-viber-content-signature` with `VIBER_AUTH_TOKEN`).
+2. Point the bot webhook at `https://<domain>/api/viber/webhook`. The endpoint
+   verifies `x-viber-content-signature` (HMAC-SHA256) using `VIBER_AUTH_TOKEN`
+   as the key — there is **no separate webhook secret** to provision.
 3. Send the bot a message once; the webhook logs `sender.id` to the server logs
    — copy that id into `VIBER_ADMIN_ID`.
 4. Leads then arrive as plain-text Viber messages to that admin chat.
@@ -78,3 +79,12 @@ empty — leads are delivered by email only (email is the required channel).
   for uptime checks.
 - Watch server logs for lead-delivery errors (email/Viber failures are logged).
 - Keep the rate limiter in mind: 10 leads/minute/IP (in-memory, per process).
+
+## Proxy & rate limiting
+
+The lead endpoint derives the client IP from `X-Forwarded-For` (then falls back
+to the adapter's `clientAddress`). This is safe only because Railway/Cloudflare
+overwrite `X-Forwarded-For` with the true client IP at the edge. **The app must
+run behind a proxy that overwrites `X-Forwarded-For`** — do not expose the Node
+server directly, otherwise a client could spoof the header and bypass the rate
+limit.

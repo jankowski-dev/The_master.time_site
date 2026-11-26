@@ -64,8 +64,9 @@ via `import.meta.env`; server secrets are read from `process.env`.
 | `VIBER_ADMIN_ID`         | Viber admin chat id (lead notifications go here)     |
 | `LEAD_TEST_MODE`         | `1` short-circuits delivery (in-memory notifier)     |
 
-`CRM_WEBHOOK_URL` and `VIBER_WEBHOOK_SECRET` are reserved placeholders for
-future work (see `docs/ai-roadmap.md`); they are not wired yet.
+`CRM_WEBHOOK_URL` is a reserved placeholder for future work (see
+`docs/ai-roadmap.md`); it is not wired yet. The Viber webhook verifies its
+signature with `VIBER_AUTH_TOKEN` (there is no separate webhook secret).
 
 Never commit `.env` or secrets — `.env.example` holds placeholders only.
 

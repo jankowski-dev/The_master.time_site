@@ -42,12 +42,13 @@ select {
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--color-accent-strong);
   text-decoration: none;
 }
 
 a:hover {
   color: var(--color-accent-strong);
+  text-decoration: underline;
 }
 
 h1,

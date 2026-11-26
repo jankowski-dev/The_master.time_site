@@ -9,6 +9,14 @@ export const prerender = false;
 
 const rateLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
+/**
+ * Resolves the client IP for rate limiting. Prefers `X-Forwarded-For` because
+ * the production proxy (Railway/Cloudflare) overwrites that header with the
+ * true client IP at the edge. The app must therefore run behind a proxy that
+ * overwrites `X-Forwarded-For`; if it were ever exposed directly, a client
+ * could spoof the header and bypass the limit — in that case fall back to the
+ * adapter's `clientAddress`.
+ */
 function clientIp(request: Request, clientAddress: string): string {
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
@@ -29,7 +37,6 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     {
       formData,
       ip: clientIp(request, clientAddress),
-      userAgent: request.headers.get('user-agent') ?? '',
       referer: request.headers.get('referer') ?? '',
       wantsJson
     },

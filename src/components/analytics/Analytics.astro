@@ -17,6 +17,7 @@
 
 <script>
   import { getConsent } from '@/lib/consent';
+  import { getSafeStorage } from '@/lib/safe-storage';
 
   type YmWithQueue = ((...args: unknown[]) => void) & {
     a?: unknown[][];
@@ -81,7 +82,7 @@
     }
   }
 
-  if (getConsent(window.localStorage) === 'accepted') {
+  if (getConsent(getSafeStorage()) === 'accepted') {
     loadAnalytics();
   }
 

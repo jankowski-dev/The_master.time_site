@@ -1,6 +1,7 @@
 import { track } from '@/lib/analytics';
 import { captureAttribution, getAttribution } from '@/lib/attribution';
 import { normalizeBelarusPhone } from '@/lib/phone';
+import { getSafeStorage } from '@/lib/safe-storage';
 
 const PHONE_LINK = 'tel:+375257076793';
 const PHONE_DISPLAY = '+375 25 707-67-93';
@@ -132,7 +133,7 @@ function bindSubmit(form: HTMLFormElement): void {
     const formData = new FormData(form);
     formData.set('phone', phone as string);
     formData.set('page', window.location.pathname);
-    formData.set('attribution', JSON.stringify(getAttribution(window.localStorage, window.location.pathname, device())));
+    formData.set('attribution', JSON.stringify(getAttribution(getSafeStorage(), window.location.pathname, device())));
 
     const source = String(formData.get('source') ?? 'form');
     track('lead_submit', { source });
@@ -166,7 +167,7 @@ function initLeadForms(): void {
     window.location.search,
     document.referrer,
     window.location.pathname,
-    window.localStorage
+    getSafeStorage()
   );
 
   for (const form of document.querySelectorAll<HTMLFormElement>('[data-lead-form]')) {

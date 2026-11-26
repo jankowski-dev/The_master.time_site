@@ -1,6 +1,6 @@
 import type { Attribution } from '@/lib/attribution';
 import { normalizeBelarusPhone } from '@/lib/phone';
-import { SERVER_PHOTO_LIMITS, validatePhotoFiles } from '@/lib/photo-limits';
+import { SERVER_PHOTO_LIMITS, validatePhotoFiles, verifyImageSignature } from '@/lib/photo-limits';
 import type { Location, Urgency } from '@/lib/pricing/types';
 import type { LeadInput, LeadParseResult, LeadPhoto, LeadSource } from './types';
 
@@ -105,11 +105,17 @@ export async function parseLeadFormData(
     errors.photos = photoError;
   } else {
     for (const file of fileEntries) {
+      const content = Buffer.from(await file.arrayBuffer());
+      // Verify the actual bytes match the declared type, not just the MIME.
+      if (!verifyImageSignature(content, file.type)) {
+        errors.photos = 'Только фото';
+        break;
+      }
       photos.push({
         filename: file.name,
         contentType: file.type,
         size: file.size,
-        content: Buffer.from(await file.arrayBuffer())
+        content
       });
     }
   }

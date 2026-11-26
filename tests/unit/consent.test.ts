@@ -30,4 +30,9 @@ describe('consent', () => {
     expect(getConsent(throwingStorage())).toBeNull();
     expect(() => setConsent('accepted', throwingStorage())).not.toThrow();
   });
+
+  it('tolerates a null storage', () => {
+    expect(getConsent(null)).toBeNull();
+    expect(() => setConsent('accepted', null)).not.toThrow();
+  });
 });

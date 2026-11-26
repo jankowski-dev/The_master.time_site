@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 
 import { handleLead } from '@/lib/leads/handle';
 import { createRateLimiter } from '@/lib/leads/rate-limit';
-import type { LeadNotifier } from '@/lib/leads/types';
+import type { Lead, LeadNotifier } from '@/lib/leads/types';
 
 function validForm(): FormData {
   const form = new FormData();
@@ -26,7 +26,6 @@ const failNotifier: LeadNotifier = {
 
 const baseInput = {
   ip: '1.2.3.4',
-  userAgent: 'test-agent',
   referer: '',
   wantsJson: true
 };
@@ -108,5 +107,23 @@ describe('handleLead', () => {
     const body = result.body as { error: string; fields: Record<string, string> };
     expect(body.error).toBe('validation');
     expect(body.fields.taskId).toBeTruthy();
+  });
+
+  it('falls back to the referer when the form page is empty', async () => {
+    const form = validForm();
+    form.set('page', '');
+    const captured: Lead[] = [];
+    const captureNotifier: LeadNotifier = {
+      name: 'email',
+      send: vi.fn(async (lead: Lead) => {
+        captured.push(lead);
+      })
+    };
+    const result = await handleLead(
+      { ...baseInput, referer: 'https://google.com', formData: form },
+      deps([captureNotifier])
+    );
+    expect(result.status).toBe(200);
+    expect(captured[0].page).toBe('https://google.com');
   });
 });

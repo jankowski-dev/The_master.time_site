@@ -69,9 +69,11 @@ export function captureAttribution(
   search: string,
   referrer: string,
   landingPage: string,
-  storage: Storage,
+  storage: Storage | null,
   now: number = Date.now()
 ): Attribution {
+  if (!storage) return {};
+
   const attribution = parseAttribution(search);
 
   if (hasAttribution(attribution)) {
@@ -95,11 +97,12 @@ export function captureAttribution(
  * empty object when the entry is missing, expired or invalid.
  */
 export function getAttribution(
-  storage: Storage,
+  storage: Storage | null,
   page: string,
   device: 'mobile' | 'desktop',
   now: number = Date.now()
 ): Attribution {
+  if (!storage) return {};
   const stored = readStored(storage, now);
   if (!hasAttribution(stored)) return {};
   return { ...stored, page, device };

@@ -75,4 +75,9 @@ describe('attribution', () => {
     const result = captureAttribution('?utm_source=x', '', '/', throwingStorage());
     expect(result).toEqual({});
   });
+
+  it('tolerates a null storage', () => {
+    expect(captureAttribution('?utm_source=x', '', '/', null)).toEqual({});
+    expect(getAttribution(null, '/ceny', 'mobile')).toEqual({});
+  });
 });

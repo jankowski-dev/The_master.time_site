@@ -19,6 +19,13 @@ function readEnv(name: string): string | null {
 export function getLeadConfig(): LeadConfig {
   const testMode = readEnv('LEAD_TEST_MODE') === '1';
 
+  if (testMode && process.env.NODE_ENV === 'production' && !process.env.CI) {
+    // A forgotten flag must not silently discard real leads.
+    console.warn(
+      '[lead] LEAD_TEST_MODE=1 is active in production — leads will NOT be delivered.'
+    );
+  }
+
   const host = readEnv('SMTP_HOST');
   const portRaw = readEnv('SMTP_PORT');
   const user = readEnv('SMTP_USER');
