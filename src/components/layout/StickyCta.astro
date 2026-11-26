@@ -1,0 +1,63 @@
+---
+import { site } from '@/lib/content';
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<div class="sticky-cta" data-sticky-cta>
+  <a class="sticky-cta__call" href={`tel:${site.phoneLink}`}>
+    <Icon name="btn-call" size={20} />
+    <span>Позвонить</span>
+  </a>
+  <a class="sticky-cta__calc" href="/kalkulyator">Рассчитать</a>
+</div>
+
+<style>
+  .sticky-cta {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    display: flex;
+    gap: 8px;
+    padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom, 0px));
+    background: var(--color-ink);
+  }
+
+  .sticky-cta a {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .sticky-cta__call {
+    background: var(--color-surface);
+    color: var(--color-ink);
+  }
+
+  .sticky-cta__call:hover {
+    color: var(--color-accent-strong);
+  }
+
+  .sticky-cta__calc {
+    background: var(--color-accent);
+    color: #ffffff;
+  }
+
+  .sticky-cta__calc:hover {
+    background: var(--color-accent-strong);
+    color: #ffffff;
+  }
+
+  @media (min-width: 768px) {
+    .sticky-cta {
+      display: none;
+    }
+  }
+</style>

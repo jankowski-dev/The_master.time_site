@@ -1,0 +1,296 @@
+---
+import { site, categories } from '@/lib/content';
+import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-header__logo" href="/">
+      <Icon name="logo-mobile-white" size={147} />
+      <span class="sr-only">The Master Time</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Основная навигация">
+      <details class="nav-dropdown">
+        <summary>Услуги</summary>
+        <ul class="nav-dropdown__list">
+          {
+            categories.map((category) => (
+              <li>
+                <a href={`/uslugi/${category.slug}`}>{category.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+      <a href="/tseny">Цены</a>
+      <a href="/kalkulyator">Калькулятор</a>
+      <a href="/otzyvy">Отзывы</a>
+      <a href="/kontakty">Контакты</a>
+    </nav>
+
+    <div class="site-header__actions">
+      <a class="site-header__phone" href={`tel:${site.phoneLink}`}>
+        <Icon name="phone" size={18} />
+        <span>{site.phoneDisplay}</span>
+      </a>
+      <Button href="/kalkulyator" variant="primary">Рассчитать</Button>
+    </div>
+
+    <button
+      class="menu-toggle"
+      type="button"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Открыть меню"
+    >
+      <span class="menu-toggle__icon" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <nav id="mobile-menu" class="mobile-menu" data-menu aria-label="Мобильная навигация" hidden>
+    <div class="container mobile-menu__inner">
+      <details class="nav-dropdown">
+        <summary>Услуги</summary>
+        <ul class="nav-dropdown__list">
+          {
+            categories.map((category) => (
+              <li>
+                <a href={`/uslugi/${category.slug}`}>{category.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+      <a href="/tseny">Цены</a>
+      <a href="/kalkulyator">Калькулятор</a>
+      <a href="/otzyvy">Отзывы</a>
+      <a href="/kontakty">Контакты</a>
+      <a class="mobile-menu__phone" href={`tel:${site.phoneLink}`}>{site.phoneDisplay}</a>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    background: var(--color-ink);
+    color: #ffffff;
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-height: 72px;
+  }
+
+  .site-header__logo {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: #ffffff;
+  }
+
+  .site-nav {
+    display: none;
+    align-items: center;
+    gap: 24px;
+    margin-left: auto;
+  }
+
+  .site-nav > a,
+  .nav-dropdown > summary {
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  .site-nav > a:hover,
+  .nav-dropdown > summary:hover {
+    color: var(--color-accent-soft);
+  }
+
+  .site-header__actions {
+    display: none;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .site-header__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .site-header__phone:hover {
+    color: var(--color-accent-soft);
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .menu-toggle__icon {
+    position: relative;
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #ffffff;
+  }
+
+  .menu-toggle__icon::before,
+  .menu-toggle__icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 24px;
+    height: 2px;
+    background: #ffffff;
+  }
+
+  .menu-toggle__icon::before {
+    top: -7px;
+  }
+
+  .menu-toggle__icon::after {
+    top: 7px;
+  }
+
+  .mobile-menu {
+    background: var(--color-ink);
+    padding: 8px 0 24px;
+  }
+
+  .mobile-menu[hidden] {
+    display: none;
+  }
+
+  .mobile-menu__inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-menu__inner > a,
+  .mobile-menu .nav-dropdown > summary {
+    padding: 14px 0;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 17px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .mobile-menu__inner > a:hover,
+  .mobile-menu .nav-dropdown > summary:hover {
+    color: var(--color-accent-soft);
+  }
+
+  .mobile-menu__phone {
+    font-weight: 700;
+    border-bottom: 0;
+  }
+
+  /* Dropdown shared */
+  .nav-dropdown {
+    position: relative;
+  }
+
+  .nav-dropdown > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .nav-dropdown > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-dropdown > summary::after {
+    content: '▾';
+    font-size: 12px;
+    transition: transform var(--transition);
+  }
+
+  .nav-dropdown[open] > summary::after {
+    transform: rotate(180deg);
+  }
+
+  .nav-dropdown__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-dropdown__list a {
+    display: block;
+    padding: 10px 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 400;
+    font-size: 15px;
+  }
+
+  .nav-dropdown__list a:hover {
+    color: var(--color-accent-soft);
+  }
+
+  @media (min-width: 768px) {
+    .menu-toggle {
+      display: none;
+    }
+
+    .site-nav {
+      display: flex;
+    }
+
+    .mobile-menu {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .site-header__actions {
+      display: flex;
+    }
+  }
+
+  /* Desktop dropdown surface */
+  @media (min-width: 768px) {
+    .nav-dropdown__list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 240px;
+      margin-top: 12px;
+      padding: 8px 0;
+      background: var(--color-surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: 30;
+    }
+
+    .nav-dropdown__list a {
+      padding: 10px 20px;
+      color: var(--color-text);
+    }
+
+    .nav-dropdown__list a:hover {
+      background: var(--color-surface-alt);
+      color: var(--color-accent);
+    }
+  }
+</style>

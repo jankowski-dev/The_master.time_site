@@ -1,0 +1,40 @@
+---
+const icons = import.meta.glob('/src/assets/icons/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true
+}) as Record<string, string>;
+
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+  title?: string;
+}
+
+const { name, size = 24, class: className, title } = Astro.props;
+
+const raw = icons[`/src/assets/icons/${name}.svg`];
+
+if (!raw) {
+  throw new Error(`Unknown icon: ${name}`);
+}
+
+// Strip a UTF-8 BOM / XML prolog so `set:html` renders cleanly.
+const svg = raw.replace(/^\uFEFF/, '').replace(/^<\?xml[^>]*\?>\s*/i, '');
+
+// Preserve the icon's intrinsic aspect ratio when scaling by width.
+const viewBox = svg.match(/viewBox="([\d.]+) ([\d.]+) ([\d.]+) ([\d.]+)"/);
+const vbWidth = viewBox ? parseFloat(viewBox[3]) : size;
+const vbHeight = viewBox ? parseFloat(viewBox[4]) : size;
+const height = vbWidth > 0 ? Math.round((size * vbHeight) / vbWidth) : size;
+---
+
+<span
+  class:list={['icon', className]}
+  style={`width:${size}px;height:${height}px`}
+  role={title ? 'img' : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : 'true'}
+  set:html={svg}
+/>

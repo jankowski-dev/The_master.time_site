@@ -1,0 +1,41 @@
+:root {
+  /* Brand palette */
+  --color-accent: #ea6249;
+  --color-accent-strong: #c94a34;
+  --color-accent-soft: #f9ece7;
+  --color-ink: #161312;
+  --color-ink-soft: rgba(67, 59, 56, 0.95);
+  --color-text: #2b2523;
+  --color-muted: #606060;
+  --color-line: #e7e1dd;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f6f6f6;
+
+  /* Status */
+  --color-success: #2e7d32;
+  --color-error: #c62828;
+  --color-warning: #b26a00;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(22, 19, 18, 0.06), 0 1px 3px rgba(22, 19, 18, 0.08);
+  --shadow-md: 0 4px 12px rgba(22, 19, 18, 0.1);
+  --shadow-lg: 0 12px 32px rgba(22, 19, 18, 0.16);
+
+  /* Typography */
+  --font-sans: 'Montserrat', Arial, sans-serif;
+
+  /* Layout */
+  --container: 1200px;
+  --gutter: 20px;
+  --section-y: 64px;
+
+  /* Motion */
+  --transition: 180ms ease;
+}

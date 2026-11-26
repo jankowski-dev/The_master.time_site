@@ -1,15 +1,13 @@
 ---
-// Temporary placeholder. Replaced by the real homepage in a later task.
-const title = 'The Master Time';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { site } from '@/lib/content';
+
+const seo = {
+  ...site.defaultSeo,
+  canonical: Astro.url.pathname
+};
 ---
 
-<html lang="ru">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <h1>{title}</h1>
-  </body>
-</html>
+<BaseLayout seo={seo}>
+  <h1>The Master Time</h1>
+</BaseLayout>

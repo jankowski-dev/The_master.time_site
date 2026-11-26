@@ -1,0 +1,129 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'dark';
+  size?: 'md' | 'lg';
+  type?: 'button' | 'submit';
+  disabled?: boolean;
+  icon?: string;
+  iconPosition?: 'left' | 'right';
+  ariaLabel?: string;
+  class?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  disabled = false,
+  icon,
+  iconPosition = 'left',
+  ariaLabel,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = ['btn', `btn--${variant}`, `btn--${size}`, className];
+const iconSize = size === 'lg' ? 20 : 18;
+---
+
+{
+  href ? (
+    <a href={href} class:list={classes} aria-label={ariaLabel} {...rest}>
+      {icon && iconPosition === 'left' && <Icon name={icon} size={iconSize} />}
+      <span class="btn__label"><slot /></span>
+      {icon && iconPosition === 'right' && <Icon name={icon} size={iconSize} />}
+    </a>
+  ) : (
+    <button type={type} disabled={disabled} class:list={classes} aria-label={ariaLabel} {...rest}>
+      {icon && iconPosition === 'left' && <Icon name={icon} size={iconSize} />}
+      <span class="btn__label"><slot /></span>
+      {icon && iconPosition === 'right' && <Icon name={icon} size={iconSize} />}
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 2px solid transparent;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-sans);
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--transition),
+      color var(--transition),
+      border-color var(--transition);
+  }
+
+  .btn__label {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .btn--md {
+    padding: 12px 24px;
+    font-size: 15px;
+  }
+
+  .btn--lg {
+    padding: 16px 32px;
+    font-size: 17px;
+  }
+
+  .btn--primary {
+    background: var(--color-accent);
+    color: #ffffff;
+  }
+
+  .btn--primary:hover {
+    background: var(--color-accent-strong);
+    color: #ffffff;
+  }
+
+  .btn--secondary {
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+  }
+
+  .btn--secondary:hover {
+    background: var(--color-accent);
+    color: #ffffff;
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-line);
+  }
+
+  .btn--ghost:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .btn--dark {
+    background: var(--color-ink);
+    color: #ffffff;
+  }
+
+  .btn--dark:hover {
+    background: var(--color-accent-strong);
+    color: #ffffff;
+  }
+
+  .btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>

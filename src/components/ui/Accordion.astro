@@ -1,0 +1,66 @@
+---
+import type { FaqItem } from '@/lib/content/schemas';
+
+interface Props {
+  items: FaqItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="accordion">
+  {
+    items.map((item) => (
+      <details class="accordion__item">
+        <summary>{item.question}</summary>
+        <div class="accordion__body">{item.answer}</div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .accordion {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .accordion__item {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .accordion__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 4px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--color-ink);
+  }
+
+  .accordion__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .accordion__item summary::after {
+    content: '+';
+    flex-shrink: 0;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--color-accent);
+    transition: transform var(--transition);
+  }
+
+  .accordion__item[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  .accordion__body {
+    padding: 0 4px 20px;
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+</style>
