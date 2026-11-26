@@ -1,0 +1,76 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
+import ServiceGrid from '@/components/marketing/ServiceGrid.astro';
+import CtaBand from '@/components/marketing/CtaBand.astro';
+
+import { site, categories, pricing } from '@/lib/content';
+
+const seo = {
+  ...site.defaultSeo,
+  title: 'Услуги мастера на час в Гродно',
+  canonical: Astro.url.pathname
+};
+---
+
+<BaseLayout seo={seo}>
+  <section class="catalog-hero">
+    <div class="container">
+      <Breadcrumbs items={[{ label: 'Главная', href: '/' }, { label: 'Услуги' }]} />
+      <h1 class="catalog-hero__title">Услуги</h1>
+      <p class="catalog-hero__lead">
+        Сантехника, электрика, ремонт, мебель, техника и мелкие работы по дому — всё в одном месте.
+        Выберите направление и рассчитайте стоимость в калькуляторе.
+      </p>
+    </div>
+  </section>
+
+  <ServiceGrid categories={categories} pricing={pricing} />
+
+  <CtaBand
+    title="Не знаете, что выбрать?"
+    text="Позвоните или посчитайте в калькуляторе — подскажу направление и назову цену."
+  />
+</BaseLayout>
+
+<style>
+  .catalog-hero {
+    background:
+      radial-gradient(1200px 480px at 85% -10%, rgba(234, 98, 73, 0.28), transparent 60%),
+      var(--color-ink);
+    color: #ffffff;
+    padding-block: 40px 56px;
+  }
+
+  .catalog-hero__title {
+    color: #ffffff;
+    font-size: clamp(30px, 5.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-block: 20px 16px;
+  }
+
+  .catalog-hero__lead {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 640px;
+  }
+
+  .catalog-hero :global(.breadcrumbs),
+  .catalog-hero :global(.breadcrumbs a) {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .catalog-hero :global(.breadcrumbs a:hover) {
+    color: var(--color-accent-soft);
+  }
+
+  .catalog-hero :global(.breadcrumbs [aria-current='page']) {
+    color: #ffffff;
+  }
+
+  .catalog-hero :global(.breadcrumbs__item + .breadcrumbs__item::before) {
+    color: rgba(255, 255, 255, 0.4);
+  }
+</style>

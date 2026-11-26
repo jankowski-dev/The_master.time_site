@@ -1,0 +1,210 @@
+---
+import type { GetStaticPaths } from 'astro';
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
+import PriceTable from '@/components/marketing/PriceTable.astro';
+import Faq from '@/components/marketing/Faq.astro';
+import CtaBand from '@/components/marketing/CtaBand.astro';
+import Button from '@/components/ui/Button.astro';
+
+import { site, categories, pricing } from '@/lib/content';
+import type { Category } from '@/lib/content/schemas';
+import { serviceJsonLd, breadcrumbJsonLd, faqJsonLd } from '@/lib/jsonld';
+import { formatPrice, getCategoryPriceFrom } from '@/lib/pricing/format';
+
+interface Props {
+  category: Category;
+}
+
+export const getStaticPaths = (() =>
+  categories.map((category) => ({
+    params: { slug: category.slug },
+    props: { category }
+  }))) satisfies GetStaticPaths;
+
+const { category } = Astro.props;
+
+const seo = {
+  ...category.seo,
+  canonical: Astro.url.pathname
+};
+
+const priceFrom = getCategoryPriceFrom(category, pricing);
+const calculatorHref = `/kalkulyator?category=${category.slug}`;
+
+const breadcrumbItems = [
+  { label: 'Главная', href: '/' },
+  { label: 'Услуги', href: '/uslugi' },
+  { label: category.title }
+];
+
+const jsonLd = [
+  serviceJsonLd(category, site, pricing),
+  breadcrumbJsonLd(breadcrumbItems, Astro.site?.toString() ?? ''),
+  ...(category.faq.length > 0 ? [faqJsonLd(category.faq)] : [])
+];
+---
+
+<BaseLayout seo={seo} jsonLd={jsonLd}>
+  <section class="category-hero">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbItems} />
+      <h1 class="category-hero__title">{category.title} в Гродно</h1>
+      <p class="category-hero__desc">{category.description}</p>
+      <p class="category-hero__price">
+        <span class="category-hero__price-label">Цены от</span>
+        <span class="category-hero__price-value">{formatPrice(priceFrom)}</span>
+      </p>
+      <div class="category-hero__actions">
+        <Button href={calculatorHref} variant="primary" size="lg">Рассчитать</Button>
+        <Button href={`tel:${site.phoneLink}`} variant="ghost" size="lg" class="category-hero__call">
+          Позвонить
+        </Button>
+        <Button href={site.instagramDm} variant="ghost" size="lg" class="category-hero__call">
+          Отправить фото в Instagram
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <PriceTable works={category.works} pricing={pricing} title="Цены на работы" />
+
+  <section class="price-factors">
+    <div class="container">
+      <h2 class="price-factors__title">Что влияет на цену</h2>
+      <ul class="price-factors__list">
+        <li><strong>Материалы</strong> — не входят в цену работы и считаются отдельно.</li>
+        <li><strong>Сложность работы</strong> — точную цену назову после уточнения деталей.</li>
+        <li><strong>Срочность</strong> — срочный выезд с наценкой 20%.</li>
+        <li><strong>Выезд за город</strong> — до 20 км с доплатой 20 BYN, дальше по телефону.</li>
+      </ul>
+    </div>
+  </section>
+
+  {category.faq.length > 0 && <Faq items={category.faq} />}
+
+  <CtaBand
+    title="Не знаете, сколько будет стоить?"
+    text="Посчитайте в калькуляторе или позвоните — уточню детали и назову точную цену."
+    primaryHref={calculatorHref}
+  />
+</BaseLayout>
+
+<style>
+  .category-hero {
+    background:
+      radial-gradient(1200px 480px at 85% -10%, rgba(234, 98, 73, 0.28), transparent 60%),
+      var(--color-ink);
+    color: #ffffff;
+    padding-block: 40px 56px;
+  }
+
+  .category-hero__title {
+    color: #ffffff;
+    font-size: clamp(30px, 5.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-block: 20px 16px;
+  }
+
+  .category-hero__desc {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(17px, 2.4vw, 20px);
+    font-weight: 500;
+    line-height: 1.5;
+    max-width: 640px;
+    margin-bottom: 16px;
+  }
+
+  .category-hero__price {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .category-hero__price-label {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 15px;
+  }
+
+  .category-hero__price-value {
+    color: var(--color-accent-soft);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 900;
+  }
+
+  .category-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .category-hero__call {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .category-hero__call:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+  }
+
+  .category-hero :global(.breadcrumbs),
+  .category-hero :global(.breadcrumbs a) {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .category-hero :global(.breadcrumbs a:hover) {
+    color: var(--color-accent-soft);
+  }
+
+  .category-hero :global(.breadcrumbs [aria-current='page']) {
+    color: #ffffff;
+  }
+
+  .category-hero :global(.breadcrumbs__item + .breadcrumbs__item::before) {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .price-factors {
+    background: var(--color-surface-alt);
+  }
+
+  .price-factors__title {
+    font-size: clamp(24px, 3.5vw, 34px);
+    font-weight: 900;
+    margin-bottom: 24px;
+  }
+
+  .price-factors__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+    max-width: 760px;
+  }
+
+  .price-factors__list li {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    color: var(--color-text);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .price-factors__list strong {
+    color: var(--color-ink);
+  }
+
+  @media (max-width: 767px) {
+    .category-hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>
