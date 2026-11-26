@@ -51,7 +51,8 @@
 - Перед каждым коммитом: `npm run check && npm run lint && npm run test && npm run build`.
 - E2E запускать после задач, меняющих страницы/формы; в CI — всегда.
 - Все пути импортов — через alias `@/` → `src/`.
-- Демо-данные (цены, отзывы, часы) явно помечать `// demo` и не считать финальными.
+- Демо-данные (цены, часы) явно помечать `// demo` и не считать финальными.
+- **Отзывы полностью исключены из объёма (решение владельца 2026-11-26):** нет страницы `/otzyvy`, формы отзыва, API, блока на главной, ссылок в навигации, схемы `Review` и JSON-LD отзывов.
 
 ## File Structure
 
@@ -67,7 +68,6 @@
 │  │  ├─ zayavka.astro
 │  │  ├─ usloviya.astro
 │  │  ├─ o-mastere.astro
-│  │  ├─ otzyvy.astro
 │  │  ├─ kontakty.astro
 │  │  ├─ spasibo.astro
 │  │  ├─ politika-konfidencialnosti.astro
@@ -75,16 +75,15 @@
 │  │  ├─ robots.txt.ts
 │  │  └─ api/
 │  │     ├─ lead.ts
-│  │     ├─ review.ts
 │  │     ├─ health.ts
 │  │     └─ viber/webhook.ts
 │  ├─ layouts/BaseLayout.astro
 │  ├─ components/
 │  │  ├─ layout/{Header,Footer,Container,Section,Breadcrumbs,StickyCta}.astro
-│  │  ├─ ui/{Button,Icon,Card,Badge,Accordion,Field,PhoneField,Checkbox,Rating,Spinner,InlineStatus}.astro
-│  │  ├─ marketing/{Hero,TrustBar,ServiceGrid,ServiceCard,PriceTable,PriceRow,HowItWorks,Reviews,ReviewCard,InstagramBlock,Faq,ContactBlock,CtaBand}.astro
+│  │  ├─ ui/{Button,Icon,Card,Badge,Accordion,Field,PhoneField,Checkbox,Spinner,InlineStatus}.astro
+│  │  ├─ marketing/{Hero,TrustBar,ServiceGrid,ServiceCard,PriceTable,PriceRow,HowItWorks,InstagramBlock,Faq,ContactBlock,CtaBand}.astro
 │  │  ├─ calculator/{Calculator,CalculatorStep,EstimateBreakdown}.astro
-│  │  ├─ forms/{LeadForm,LeadFormDialog,ReviewForm,ConsentField,PhotoUpload}.astro
+│  │  ├─ forms/{LeadForm,LeadFormDialog,ConsentField,PhotoUpload}.astro
 │  │  ├─ analytics/{Analytics,ConsentBanner}.astro
 │  │  └─ seo/{Seo,JsonLd}.astro
 │  ├─ data/
@@ -93,13 +92,11 @@
 │  │  ├─ calculator.ts
 │  │  ├─ pricing.ts
 │  │  ├─ faq.ts
-│  │  ├─ reviews.ts
 │  │  └─ conditions.ts
 │  ├─ lib/
 │  │  ├─ content/{schemas.ts,index.ts}
 │  │  ├─ pricing/{types.ts,calculate.ts,format.ts}
 │  │  ├─ leads/{types.ts,validate.ts,format.ts,email.ts,viber.ts,notify.ts,rate-limit.ts,handle.ts,test-notifier.ts}
-│  │  ├─ reviews/{validate.ts,notify.ts,handle.ts}
 │  │  ├─ phone.ts
 │  │  ├─ attribution.ts
 │  │  ├─ consent.ts
@@ -241,13 +238,13 @@ git commit -m "chore: scaffold astro app, tests and ci"
 ### Task 2: Content data, Zod schemas, validation
 
 **Files:**
-- Create: `src/lib/content/schemas.ts`, `src/lib/content/index.ts`, `src/data/site.ts`, `src/data/categories.ts`, `src/data/calculator.ts`, `src/data/pricing.ts`, `src/data/faq.ts`, `src/data/reviews.ts`, `src/data/conditions.ts`, `scripts/validate-content.ts`, `tests/unit/content.test.ts`.
+- Create: `src/lib/content/schemas.ts`, `src/lib/content/index.ts`, `src/data/site.ts`, `src/data/categories.ts`, `src/data/calculator.ts`, `src/data/pricing.ts`, `src/data/faq.ts`, `src/data/conditions.ts`, `scripts/validate-content.ts`, `tests/unit/content.test.ts`.
 - Modify: `package.json` — `build` becomes `npm run validate:content && astro build`; add `"validate:content": "tsx scripts/validate-content.ts"`.
 
 **Interfaces:**
-- Produces types: `SiteConfig`, `Category`, `Work`, `CalculatorTask`, `PricingConfig`, `FaqItem`, `Review`, `Condition`.
-- Produces constants: `site`, `categories`, `calculatorTasks`, `pricing`, `faqs`, `reviews`, `conditions`.
-- Produces functions: `loadContent()`, `parseContent(raw)`, `getCategoryBySlug(slug)`, `getWorkById(category, workId)`, `getCalculatorTasksByCategory(slug)`, `getPopularWorks(limit?)`, `getPublishedReviews()`.
+- Produces types: `SiteConfig`, `Category`, `Work`, `CalculatorTask`, `PricingConfig`, `FaqItem`, `Condition`.
+- Produces constants: `site`, `categories`, `calculatorTasks`, `pricing`, `faqs`, `conditions`.
+- Produces functions: `loadContent()`, `parseContent(raw)`, `getCategoryBySlug(slug)`, `getWorkById(category, workId)`, `getCalculatorTasksByCategory(slug)`, `getPopularWorks(limit?)`.
 - Produces `ContentValidationError` with `issues: string[]`.
 
 - [ ] **Step 1: Write failing schema tests**
@@ -295,7 +292,7 @@ describe('content', () => {
     const raw = {
       site: siteData,
       categories: [category, { ...category, slug: 'b', title: 'B', shortTitle: 'B' }],
-      calculatorTasks: [], pricing: pricingData, faqs: [], reviews: []
+      calculatorTasks: [], pricing: pricingData, faqs: [], conditions: []
     };
     expect(() => parseContent(raw)).toThrow(ContentValidationError);
   });
@@ -315,7 +312,6 @@ Expected: FAIL (modules missing).
 - `CategorySchema`: `slug` regex `/^[a-z0-9-]+$/`, `title`, `shortTitle`, `icon`, `description`, `seo`, `works` min 1, `faq` default `[]`.
 - `CalculatorTaskSchema`: `id`, `categorySlug`, `label`, `workId`, optional `priceFrom`/`priceTo`/`duration`/`hint`.
 - `PricingConfigSchema`: `currency` literal `'BYN'`, `minOrder`, `urgentSurchargePercent`, `outOfTownFee`, `outOfTownRadiusKm`, `diagnosticsFee`, `diagnosticsWaivedOnWork` default true, `disclaimer`.
-- `ReviewSchema`: `id`, `name`, `date` regex `/^\d{4}-\d{2}-\d{2}$/`, `service`, `rating` int 1–5, `text`, `photo?`, `published` default true.
 - `ConditionSchema`: `title`, `body`.
 - `SiteConfigSchema`: `brand` literal `'The Master Time'`, `legalName`, `unp`, `phoneDisplay`, `phoneLink` regex `/^\+375\d{9}$/`, `email` email, `instagramUrl` url, `instagramDm` url, `viberUrl` min 1, `areaServed`, `workingHours`, `copyright`, `defaultSeo`.
 
@@ -392,7 +388,6 @@ export const pricingData = {
 ```
 
 `src/data/faq.ts` — 6 общих вопросов (выезд, цена, гарантия, оплата, срочность, загород). Первый вопрос — ровно `Сколько стоит выезд?` (на него опирается home E2E). Ответы без выдуманных гарантий: где нет данных — «уточним при заявке».
-`src/data/reviews.ts` — `export const reviewsData = [];` с комментарием: реальные отзывы добавляет владелец, фейки запрещены.
 `src/data/conditions.ts` — 6–8 секций: выезд/диагностика, минимальный заказ, срочность, загород, материалы, оплата, гарантия, часы. Неизвестное — «уточняется».
 
 - [ ] **Step 4: Implement loader and validation**
@@ -446,7 +441,7 @@ git commit -m "feat: add typed content data and build-time validation"
 - `AnalyticsWindow` includes `dataLayer`, `ym?`, `gtag?`, `__tmtYmId?`.
 - `SeoProps`: `title`, `description`, `canonical`, `image?`, `noindex?`, `type?`.
 - `buildTitle(title: string): string`; `absoluteUrl(path: string, site: string): string`.
-- `localBusinessJsonLd(site, categories)`, `serviceJsonLd(category, site, pricing)`, `faqJsonLd(items)`, `breadcrumbJsonLd(items, siteUrl)`, `reviewJsonLd(reviews)`.
+- `localBusinessJsonLd(site, categories)`, `serviceJsonLd(category, site, pricing)`, `faqJsonLd(items)`, `breadcrumbJsonLd(items, siteUrl)`.
 
 - [ ] **Step 1: Write failing phone tests**
 
@@ -778,7 +773,7 @@ git commit -m "feat: add transparent pricing and estimate engine"
 - `parseLeadFormData(formData: FormData, opts?: { now?: number }): Promise<LeadParseResult>`.
 - `formatLeadText(lead: Lead): string`; `formatLeadHtml(lead: Lead): string`; `escapeHtml(value: string): string`.
 - `EmailConfig { host: string; port: number; user: string; pass: string; from: string; to: string }`.
-- `createSmtpTransport(config: EmailConfig): { sendMail(message: unknown): Promise<unknown> }` — reusable by reviews.
+- `createSmtpTransport(config: EmailConfig): { sendMail(message: unknown): Promise<unknown> }` — reusable by future notification channels.
 - `createEmailNotifier(config: EmailConfig, sendMail?: (message: unknown) => Promise<unknown>): LeadNotifier`.
 - `PhotoLimits { maxFiles: number; maxFileSize: number; maxTotalSize: number; allowedTypes: readonly string[] }`.
 - `CLIENT_PHOTO_LIMITS`: 3 files, 12 МБ each, 30 МБ total, JPEG/PNG/WebP/HEIC/HEIF.
@@ -836,7 +831,7 @@ git commit -m "feat: add lead validation, formatting and email notifier"
 
 **Interfaces:**
 - `ViberConfig { token: string; adminId: string }`.
-- `sendViberText(config: ViberConfig, text: string, fetchImpl?: typeof fetch): Promise<void>` — reusable by reviews.
+- `sendViberText(config: ViberConfig, text: string, fetchImpl?: typeof fetch): Promise<void>` — reusable by future notification channels.
 - `createViberNotifier(config: ViberConfig, fetchImpl?: typeof fetch): LeadNotifier | null`.
 - `notifyLead(lead: Lead, notifiers: LeadNotifier[]): Promise<{ delivered: boolean; results: Array<{ name: string; ok: boolean; error?: string }> }>`.
 - `createRateLimiter(options: { windowMs: number; max: number; now?: () => number }): { check(key: string): boolean }`.
@@ -921,7 +916,7 @@ git commit -m "feat: add lead api with email and viber delivery"
 ### Task 8: Home page
 
 **Files:**
-- Create: `src/components/marketing/Hero.astro`, `TrustBar.astro`, `ServiceGrid.astro`, `ServiceCard.astro`, `PriceTable.astro`, `PriceRow.astro`, `HowItWorks.astro`, `Reviews.astro`, `ReviewCard.astro`, `InstagramBlock.astro`, `Faq.astro`, `ContactBlock.astro`, `CtaBand.astro`; `tests/e2e/home.spec.ts`.
+- Create: `src/components/marketing/Hero.astro`, `TrustBar.astro`, `ServiceGrid.astro`, `ServiceCard.astro`, `PriceTable.astro`, `PriceRow.astro`, `HowItWorks.astro`, `InstagramBlock.astro`, `Faq.astro`, `ContactBlock.astro`, `CtaBand.astro`; `tests/e2e/home.spec.ts`.
 - Modify: `src/pages/index.astro`.
 
 **Interfaces:**
@@ -930,8 +925,6 @@ git commit -m "feat: add lead api with email and viber delivery"
 - `ServiceCard.astro` props `{ category: Category; priceFrom: number }`.
 - `PriceTable.astro` props `{ works: Work[]; pricing: PricingConfig }`.
 - `PriceRow.astro` props `{ work: Work; pricing: PricingConfig }`.
-- `Reviews.astro` props `{ reviews: Review[] }`.
-- `ReviewCard.astro` props `{ review: Review }`.
 - `Faq.astro` props `{ items: FaqItem[]; title?: string }`.
 - `CtaBand.astro` props `{ title: string; text?: string; primaryHref?: string; primaryLabel?: string }`.
 - `ContactBlock.astro` no props (uses `site`).
@@ -982,8 +975,6 @@ Expected: FAIL.
 - `ServiceGrid`/`ServiceCard`: 6 cards, icon, title, `от {formatPrice(getCategoryPriceFrom(...))}`, link `/uslugi/{slug}`; `data-service-card`.
 - `PriceTable`/`PriceRow`: popular works; each row title, price range, duration, link to category; responsive table/cards.
 - `HowItWorks`: 3 steps 01/02/03.
-- `Reviews`: if `reviews.length === 0`, show a card: «Здесь будут реальные отзывы. Пока — фото работ и отзывы в Instagram» + link; else grid of `ReviewCard`.
-- `ReviewCard`: name, date, rating stars, text, service.
 - `InstagramBlock`: dark/peach card, heading «Сфотографируй проблему — пришли в директ», text about personal estimate and subscriber priority, buttons `Подписаться` → `site.instagramUrl`, `Отправить фото` → `site.instagramDm`, `data-track` attributes. If 2–3 real work photos are provided, show them; otherwise use a clean graphic block — no fake photos.
 - `Faq`: `Accordion` with general FAQs.
 - `ContactBlock`: phone, Viber, Instagram, area, hours, link `/zayavka` (if exists later; use `/kalkulyator` for now or `tel:`).
@@ -992,10 +983,10 @@ Expected: FAIL.
 - [ ] **Step 4: Build the home page**
 
 `src/pages/index.astro`:
-- `const { categories, pricing, faqs, reviews } = loadContent();`
+- `const { categories, pricing, faqs } = loadContent();`
 - `const popular = getPopularWorks(6);`
 - `seo` from `site.defaultSeo`; `jsonLd = [localBusinessJsonLd(site, categories), faqJsonLd(faqs)]`.
-- Sections in order: Hero + TrustBar, ServiceGrid, calculator CTA (link + 3 steps), PriceTable, HowItWorks, Reviews, InstagramBlock, Faq, ContactBlock, CtaBand.
+- Sections in order: Hero + TrustBar, ServiceGrid, calculator CTA (link + 3 steps), PriceTable, HowItWorks, InstagramBlock, Faq, ContactBlock, CtaBand.
 - Each section has an `id` for anchors.
 
 - [ ] **Step 5: Run tests**
@@ -1183,6 +1174,63 @@ git commit -m "feat: add short lead form with photo compression and dialog"
 
 ---
 
+### Task 11b: Remove reviews (scope change 2026-11-26)
+
+**Why:** владелец отменил отзывы полностью. Это не «пустой блок» и не «позже»: отзывов нет нигде — ни страницы, ни формы, ни API, ни блока на главной, ни ссылок в навигации, ни схемы/JSON-LD.
+
+**Files:**
+- Delete: `src/data/reviews.ts`, `src/components/marketing/Reviews.astro`, `src/components/marketing/ReviewCard.astro`.
+- Modify: `src/lib/content/schemas.ts` (remove `ReviewSchema`, `Review` type), `src/lib/content/index.ts` (remove `reviews` from raw/schema/content, remove `getPublishedReviews`), `src/lib/jsonld.ts` (remove `reviewJsonLd`), `src/pages/index.astro` (remove the reviews section/import), `src/components/layout/Header.astro` and `Footer.astro` (remove «Отзывы» links), `tests/unit/content.test.ts` and `tests/unit/jsonld.test.ts` (remove review fixtures/assertions).
+- Do not create `src/pages/otzyvy.astro`, `ReviewForm.astro`, `Rating.astro`, `src/lib/reviews/*`, or `src/pages/api/review.ts` (they were planned but are cancelled).
+- Keep the old `docs/superpowers/specs/2026-09-07-reviews-design.md` for archive only; Task 16 moves it to `docs/archive/`.
+
+**Interfaces:** none new.
+
+- [ ] **Step 1: Find every review reference**
+
+Run:
+```bash
+grep -RIn "review\|Review\|отзыв\|Отзыв\|otzyvy" src tests package.json
+```
+Expected: content schema/types/data, home/nav, JSON-LD and tests only.
+
+- [ ] **Step 2: Remove content schema/data/getters**
+
+Remove `ReviewSchema`, `Review`, `reviewsData`, `reviews` from `ContentSchema`/`parseContent`/`content`, and `getPublishedReviews`. Update the content tests/raw fixtures so no `reviews` key is required.
+
+- [ ] **Step 3: Remove home/nav surface**
+
+Delete `Reviews.astro`/`ReviewCard.astro`; remove the home import and section; remove «Отзывы» from header desktop/mobile nav and footer. Do not leave empty headings or dead links.
+
+- [ ] **Step 4: Remove JSON-LD/tests**
+
+Remove `reviewJsonLd` and its tests. Do not emit `Review`/`AggregateRating` JSON-LD.
+
+- [ ] **Step 5: Verify no product review surface remains**
+
+Run:
+```bash
+grep -RIn "review\|Review\|отзыв\|Отзыв\|otzyvy" src tests
+```
+Expected: no matches (excluding the old archived spec, which is outside `src/tests`).
+
+- [ ] **Step 6: Run tests and build**
+
+Run:
+- `npm run test`
+- `npm run test:e2e`
+- `npm run check && npm run lint && npm run build`
+Expected: all pass; home/lead/catalog tests unaffected.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add -A
+git commit -m "chore: remove reviews from product scope"
+```
+
+---
+
 ### Task 12: Calculator page and lead prefill
 
 **Files:**
@@ -1270,55 +1318,9 @@ git commit -m "feat: add 3-step estimate calculator with lead prefill"
 
 ---
 
-### Task 13: Reviews page, review form, review API
+### Task 13: Removed — reviews cancelled (2026-11-26)
 
-**Files:**
-- Create: `src/pages/otzyvy.astro`, `src/components/forms/ReviewForm.astro`, `src/components/ui/Rating.astro`, `src/lib/reviews/validate.ts`, `src/lib/reviews/notify.ts`, `src/lib/reviews/handle.ts`, `src/pages/api/review.ts`, `tests/unit/reviews-validate.test.ts`, `tests/unit/reviews-notify.test.ts`, `tests/unit/reviews-handle.test.ts`, `tests/e2e/reviews.spec.ts`.
-- Modify: `src/components/marketing/Reviews.astro` if needed to use real data/empty state.
-
-**Interfaces:**
-- `ReviewInput { name?: string; rating: 1|2|3|4|5; text: string; anonymous: boolean; consent: boolean }`.
-- `ReviewSubmission extends ReviewInput { id: string; createdAt: string }`.
-- `ReviewNotifier { name: string; send(review: ReviewSubmission): Promise<void> }`.
-- `parseReviewFormData(formData: FormData): { ok: true; input: ReviewInput } | { ok: false; errors: Record<string,string> }`.
-- `notifyReview(review: ReviewSubmission, notifiers: ReviewNotifier[]): Promise<{ delivered: boolean; results: Array<{ name: string; ok: boolean; error?: string }> }>`.
-- `createReviewNotifiers(config: { testMode: boolean; email: EmailConfig | null; viber: ViberConfig | null }): ReviewNotifier[]`.
-- `handleReview(input: ReviewInput, deps: { notifiers: ReviewNotifier[]; rateLimiter: ReturnType<typeof createRateLimiter>; ip: string; now?: () => Date }): Promise<{ status: number; body: unknown }>`.
-- `POST /api/review` JSON `{ ok: true }` / `{ ok:false, error, fields? }`.
-- Reuse `createSmtpTransport(config)` from `email.ts` and `sendViberText(config, text, fetchImpl?)` from `viber.ts` (both exported in Tasks 6/7). No duplicated SMTP/Viber setup and no refactor of earlier tasks.
-
-- [ ] **Step 1: Write failing review tests**
-
-`reviews-validate.test.ts`: valid review; empty text → error; rating 0/6 → error; anonymous + name → name cleared; missing consent → error.
-`reviews-notify.test.ts`: email success; viber success; both fail → `delivered: false`; test mode returns success.
-`reviews-handle.test.ts`: success → 200; all notifiers fail → 502; rate limit → 429.
-E2E `reviews.spec.ts`: `/otzyvy` H1 «Отзывы»; if no reviews, empty message + Instagram link; fill rating/text/consent → submit → success «Спасибо»; empty text → error; anonymous checkbox hides name input. Run → FAIL.
-
-- [ ] **Step 2: Implement validation, notifiers, handler, API**
-
-Validation: no photos; text max 1000; rating integer 1–5; consent required; anonymous clears name. `handleReview` rate-limits by IP, creates `{ id: crypto.randomUUID(), createdAt }`, calls `notifyReview`, returns 200 if delivered else 502. `notifyReview` uses `Promise.allSettled`.
-`createReviewNotifiers`: if `LEAD_TEST_MODE=1`, return a memory notifier; else email (subject `[The Master Time] Новый отзыв`, text/html with name/rating/text/anonymous) and Viber text. Use the exported `createSmtpTransport`/`sendViberText` helpers.
-
-- [ ] **Step 3: Implement page/form**
-
-`/otzyvy`: H1, intro, list of published reviews (or empty state with Instagram CTA), `ReviewForm`, contact alternatives. `ReviewForm`: name, star rating radio, textarea, anonymous checkbox, consent, submit; script similar to lead form; POST `/api/review`; success/error inline; track `review_submit`; anonymous disables name.
-- `reviews.ts` data empty; real reviews added by owner.
-
-- [ ] **Step 4: Run tests**
-
-Run: `npm run test -- tests/unit/reviews-validate.test.ts tests/unit/reviews-notify.test.ts tests/unit/reviews-handle.test.ts`
-Expected: PASS.
-Run: `npm run test:e2e -- tests/e2e/reviews.spec.ts`
-Expected: PASS.
-Run: `npm run check && npm run lint && npm run build`
-Expected: pass.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add src/pages/otzyvy.astro src/components/forms/ReviewForm.astro src/lib/reviews src/pages/api/review.ts tests
-git commit -m "feat: add reviews page, form and api"
-```
+Отзывы исключены из объёма по решению владельца. Cleanup выполнен в Task 11b. Не создавать страницу `/otzyvy`, `ReviewForm`, `Rating`, `src/lib/reviews`, `src/pages/api/review.ts`, `Review`/`ReviewSchema`/`reviewJsonLd`/`review_submit`.
 
 ---
 
@@ -1407,7 +1409,7 @@ Add `data-track` to phone/Viber/Instagram links and CTA buttons:
 - Home: `[localBusinessJsonLd(site, categories), faqJsonLd(faqs)]` (already Task 8; verify).
 - Category: `[serviceJsonLd(category, site, pricing), breadcrumbJsonLd(...), faqJsonLd(category.faq)]` (Task 9).
 - Contacts: `localBusinessJsonLd`.
-- Reviews: `reviewJsonLd(getPublishedReviews())` only if non-empty.
+- Reviews: не добавлять; отзывы исключены из объёма (Task 11b).
 - `astro.config.mjs` sitemap filter excludes `/spasibo`, `/zayavka` и `/politika-konfidencialnosti`.
 - `robots.txt.ts` as above.
 
@@ -1440,7 +1442,7 @@ git commit -m "feat: add seo, consent and analytics integration"
 
 **Interfaces:**
 - Docs describe the exact commands, routes, data schemas, env, lead flow, analytics, Viber/SMTP setup, AI roadmap, cutover.
-- `AGENTS.md` guardrails: no `Pracue`, no Notion, no fixed stages, no hardcoded prices, no secrets, no fake reviews/prices, run tests, don't delete legacy data without confirmation.
+- `AGENTS.md` guardrails: no `Pracue`, no Notion, no fixed stages, no hardcoded prices, no secrets, no fake social proof/prices, no reviews (cancelled 2026-11-26), run tests, don't delete legacy data without confirmation.
 
 - [ ] **Step 1: Add accessibility tests**
 
@@ -1479,7 +1481,7 @@ Expected: no matches in the new app/docs (old `docs/archive` excluded; old spec 
 - `README.md`: overview, stack, quick start, scripts, env, structure, deploy, content editing, links to docs.
 - `AGENTS.md`: project rules, commands, file map, data schemas, design tokens, routes, lead flow, analytics, definition of done, guardrails, "how to add a service/price/page", "how to run tests", "do not".
 - `docs/architecture.md`: Mermaid diagram browser → Astro → API → notifiers; rendering strategy; data flow; env; security.
-- `docs/content-guide.md`: edit `src/data/categories.ts`, `calculator.ts`, `pricing.ts`, `faq.ts`, `reviews.ts`, `site.ts`; demo marker; validation command; content launch checklist.
+- `docs/content-guide.md`: edit `src/data/categories.ts`, `calculator.ts`, `pricing.ts`, `faq.ts`, `site.ts`; demo marker; validation command; content launch checklist.
 - `docs/design-system.md`: tokens, typography, spacing, components, responsive, a11y.
 - `docs/analytics.md`: event table, consent, UTM, goals, how to add an event.
 - `docs/seo.md`: routes, meta, JSON-LD, keyword map, content plan.
@@ -1492,7 +1494,7 @@ Expected: no matches in the new app/docs (old `docs/archive` excluded; old spec 
 
 Add a checklist to `docs/qa.md`:
 - [ ] Real prices replace demo values; `npm run validate:content` passes.
-- [ ] Real photos/reviews or sections hidden/empty state.
+- [ ] Real photos or sections hidden/empty state (no reviews — cancelled).
 - [ ] Working hours, warranty, payment, min order, urgent/out-of-town values confirmed.
 - [ ] Domain, `SITE_URL`, email, SMTP credentials, SPF/DKIM/DMARC.
 - [ ] Viber bot token/admin ID or email-only launch confirmed.
@@ -1528,7 +1530,7 @@ git commit -m "docs: add developer and ai documentation; chore: remove legacy si
 ## Plan Self-Review
 
 **Spec coverage:**
-- Routes `/`, `/uslugi`, `/uslugi/[slug]`, `/ceny`, `/kalkulyator`, `/usloviya`, `/o-mastere`, `/otzyvy`, `/kontakty`, `/spasibo`, `/politika-konfidencialnosti`, 404 — Tasks 8–14. `/zayavka` added as a no-JS/ads-friendly form page (Task 11).
+- Routes `/`, `/uslugi`, `/uslugi/[slug]`, `/ceny`, `/kalkulyator`, `/usloviya`, `/o-mastere`, `/kontakty`, `/spasibo`, `/politika-konfidencialnosti`, 404 — Tasks 8–14. `/zayavka` added as a no-JS/ads-friendly form page (Task 11). Reviews were cancelled and removed (Task 11b); no `/otzyvy`.
 - Six categories/slugs — Task 2.
 - Calculator formula and boundaries — Task 5 + Task 12.
 - Instagram A+B — Home (Task 8), category (Task 9), contacts (Task 14), calculator result (Task 12).
