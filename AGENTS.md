@@ -59,8 +59,10 @@ calculator tasks reference existing categories and works). Run
 ## Design tokens
 
 `src/styles/tokens.css` — brand palette, radii, elevation, typography, layout,
-motion. Colors meet WCAG AA: accent `#c7452c`, accent-strong `#a83a24`, ink
-`#161312`. Prefer tokens over raw values.
+motion. Brand accent `#ea6249` is for decorative fills, borders, focus rings,
+icons and large text; `--color-accent-strong` `#c94a34` is the contrast-safe
+variant (≈4.65:1 with white) used for small text and primary button
+backgrounds. Ink `#161312`. Prefer tokens over raw values.
 
 ## Lead flow
 

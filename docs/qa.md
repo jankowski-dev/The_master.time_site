@@ -33,6 +33,22 @@ Playwright runs against Chromium by default. Before launch, manually verify:
 - [ ] FAQ `<details>` opens; mobile menu toggles and closes on Escape.
 - [ ] No horizontal overflow at 375/768/1280px.
 
+## Legacy-reference guard
+
+The new app must not reference the legacy stack. Use word-boundary patterns for
+the fixed-stage sizes so SVG path coordinates do not produce false positives:
+
+```bash
+grep -RInE "Pracue|Notion|Express|Multer|\b1920px\b|\b402px\b" src package.json README.md docs --exclude-dir=archive
+grep -RIn "review|Review|отзыв|Отзыв|otzyvy" src tests
+```
+
+The word-boundary `\b…px\b` patterns avoid matching SVG path coordinates.
+Expected: the first guard returns nothing in the app code (`src`),
+`package.json`, and the product docs; it may still match the pre-existing
+`docs/superpowers/` planning docs and the `AGENTS.md` guardrails that
+intentionally forbid these terms — those are correct and out of scope.
+
 ## Uploads
 
 The new app **does not persist uploads** — lead photos are compressed in the

@@ -8,8 +8,8 @@ Defined in `src/styles/tokens.css` on `:root`. Prefer tokens over raw values.
 
 | Token                  | Value     | Use                                  |
 | ---------------------- | --------- | ------------------------------------ |
-| `--color-accent`       | `#c7452c` | Primary CTAs, links, highlights      |
-| `--color-accent-strong`| `#a83a24` | Hover/active, emphasized price text  |
+| `--color-accent`       | `#ea6249` | Borders, focus rings, icons, soft/large decorative fills |
+| `--color-accent-strong`| `#c94a34` | Small text, links, primary button backgrounds (≈4.65:1 with white) |
 | `--color-accent-soft`  | `#f9ece7` | Tinted backgrounds                   |
 | `--color-ink`          | `#161312` | Dark sections, header/footer         |
 | `--color-ink-soft`     | `rgba(...)` | Soft dark                           |
@@ -20,9 +20,10 @@ Defined in `src/styles/tokens.css` on `:root`. Prefer tokens over raw values.
 | `--color-surface-alt`  | `#f6f6f6` | Alternate surface                    |
 | `--color-success` / `--color-error` / `--color-warning` | | Status |
 
-The accent was darkened (from `#ea6249`) in Task 16 to meet WCAG AA: white text
-on `--color-accent` is now ≥ 4.5:1. Decorative radial gradients over dark
-sections use a fixed `rgba(199, 69, 44, …)` tint.
+The brand accent is `#ea6249`; small white-on-accent text and primary button
+backgrounds use the darker `--color-accent-strong` `#c94a34` (≈4.65:1 with
+white, WCAG AA) so the bright brand hue stays intact. Decorative radial
+gradients over dark sections use a fixed `rgba(234, 98, 73, …)` tint.
 
 ### Radii, elevation, motion
 

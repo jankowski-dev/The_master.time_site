@@ -42,7 +42,8 @@ function matchesQuery(text: string, query: string): boolean {
 }
 
 function filterWorks({ search, category, count, empty, groups }: FilterElements): void {
-  const query = search.value;  const slug = category.value;
+  const query = search.value;
+  const slug = category.value;
   let visibleWorks = 0;
 
   for (const group of groups) {
