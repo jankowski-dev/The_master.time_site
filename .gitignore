@@ -7,3 +7,6 @@ playwright-report/
 uploads/
 server.log
 server-err.log
+*.log
+.DS_Store
+Thumbs.db
