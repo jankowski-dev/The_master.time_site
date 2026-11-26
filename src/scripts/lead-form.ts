@@ -134,9 +134,6 @@ function bindSubmit(form: HTMLFormElement): void {
     formData.set('page', window.location.pathname);
     formData.set('attribution', JSON.stringify(getAttribution(window.localStorage, window.location.pathname, device())));
 
-    const startedAt = named(form, 'startedAt') as HTMLInputElement | null;
-    if (startedAt && !startedAt.value) startedAt.value = String(Date.now());
-
     const source = String(formData.get('source') ?? 'form');
     track('lead_submit', { source });
     setLoading(form, true);

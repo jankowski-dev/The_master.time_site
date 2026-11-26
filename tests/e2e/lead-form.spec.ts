@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { fileURLToPath } from 'node:url';
+import { statSync } from 'node:fs';
 
 const PHOTO_FIXTURE = fileURLToPath(new URL('./fixtures/photo.png', import.meta.url));
 
@@ -84,6 +85,10 @@ test('submits a valid lead and shows the success state', async ({ page }) => {
 });
 
 test('sends normalized phone, attribution and compressed photos', async ({ page }) => {
+  // The source fixture is larger than the 2 MB compression trigger, so the
+  // submitted file must be smaller (compression actually ran).
+  expect(statSync(PHOTO_FIXTURE).size).toBeGreaterThan(2 * 1024 * 1024);
+
   await page.addInitScript(captureInitScript);
   await page.route('**/api/lead', (route) =>
     route.fulfill({
@@ -100,6 +105,26 @@ test('sends normalized phone, attribution and compressed photos', async ({ page 
   await dialog.locator('input[name="phone"]').fill('+375 29 123-45-67');
   await dialog.locator('input[name="photos"]').setInputFiles(PHOTO_FIXTURE);
   await expect(dialog.locator('[data-photo-count]')).toContainText('1');
+
+  // The compressed photo is already stored on the file input before submit:
+  // assert it was resized to <= 1600 px and re-encoded as JPEG <= 2 MB.
+  const compressed = await page.evaluate(async () => {
+    const input = document.querySelector<HTMLInputElement>(
+      '#lead-form-dialog input[name="photos"]'
+    );
+    const file = input?.files?.[0];
+    if (!file) return null;
+    const bitmap = await createImageBitmap(file);
+    const dims = { width: bitmap.width, height: bitmap.height, type: file.type, size: file.size };
+    bitmap.close();
+    return dims;
+  });
+  expect(compressed).not.toBeNull();
+  expect(compressed!.type).toBe('image/jpeg');
+  expect(compressed!.width).toBeLessThanOrEqual(1600);
+  expect(compressed!.height).toBeLessThanOrEqual(1600);
+  expect(compressed!.size).toBeLessThanOrEqual(2 * 1024 * 1024);
+
   await dialog.locator('input[name="consent"]').check();
   await dialog.locator('button[type="submit"]').click();
 
