@@ -127,6 +127,15 @@ describe('parseLeadFormData', () => {
     expect(result.input.attribution).toEqual({ utmSource: 'instagram' });
   });
 
+  it('drops non-string attribution values', async () => {
+    const form = validForm();
+    form.set('attribution', JSON.stringify({ utmSource: 123, utmMedium: 'cpc', gclid: null }));
+    const result = await parseLeadFormData(form);
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error('expected ok');
+    expect(result.input.attribution).toEqual({ utmMedium: 'cpc' });
+  });
+
   it('rejects a 100-char name', async () => {
     const form = validForm();
     form.set('name', 'a'.repeat(100));

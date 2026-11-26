@@ -35,7 +35,13 @@ function parseAttribution(raw: string): Attribution {
   try {
     const parsed: unknown = JSON.parse(capped);
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as Attribution;
+      const result: Attribution = {};
+      for (const [key, value] of Object.entries(parsed)) {
+        if (typeof value === 'string') {
+          (result as Record<string, string>)[key] = value;
+        }
+      }
+      return result;
     }
   } catch {
     // fall through to empty attribution
