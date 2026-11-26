@@ -1,0 +1,37 @@
+---
+interface Props {
+  step: 1 | 2 | 3;
+  title: string;
+  active: boolean;
+}
+
+const { step, title, active } = Astro.props;
+---
+
+<section
+  class="calc-step"
+  data-calc-step={step}
+  aria-labelledby={`calc-step-${step}-title`}
+  hidden={!active}
+>
+  <h2 class="calc-step__title" id={`calc-step-${step}-title`} tabindex="-1">
+    {title}
+  </h2>
+  <slot />
+</section>
+
+<style>
+  .calc-step[hidden] {
+    display: none;
+  }
+
+  .calc-step__title {
+    font-size: clamp(20px, 3vw, 26px);
+    font-weight: 800;
+    margin-bottom: 20px;
+  }
+
+  .calc-step__title:focus {
+    outline: none;
+  }
+</style>

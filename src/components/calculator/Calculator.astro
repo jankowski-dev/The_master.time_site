@@ -1,0 +1,397 @@
+---
+import Icon from '@/components/ui/Icon.astro';
+import CalculatorStep from './CalculatorStep.astro';
+import { site } from '@/lib/content';
+import type { CalculatorTask, Category, PricingConfig, Work } from '@/lib/content/schemas';
+
+interface Props {
+  categories: Category[];
+  tasks: CalculatorTask[];
+  works: Work[];
+  pricing: PricingConfig;
+}
+
+const { categories, tasks, works, pricing } = Astro.props;
+
+const data = {
+  categories: categories.map(({ slug, title, icon }) => ({ slug, title, icon })),
+  tasks,
+  works,
+  pricing
+};
+
+// Escape `<` so the JSON can never close the script tag early.
+const serialized = JSON.stringify(data).replace(/</g, '\\u003c');
+
+const urgencyOptions = [
+  { value: 'asap', label: 'В течение 2 часов', default: false },
+  { value: 'this_week', label: 'В ближайшие дни', default: true },
+  { value: 'flexible', label: 'Когда удобно', default: false }
+];
+
+const locationOptions = [
+  { value: 'city', label: 'В Гродно', default: true },
+  { value: 'out_of_town', label: 'За городом до 20 км', default: false },
+  { value: 'beyond', label: 'Дальше 20 км', default: false }
+];
+---
+
+<div class="calculator" data-calculator>
+  <p class="calculator__progress" role="status" aria-live="polite">
+    Шаг <span data-calc-progress>1</span> из 3
+  </p>
+
+  <CalculatorStep step={1} title="Выберите категорию работ" active>
+    <fieldset class="calc-fieldset">
+      <legend class="sr-only">Категория работ</legend>
+      <div class="calc-options">
+        {
+          categories.map((category) => (
+            <label class="calc-option calc-option--category">
+              <input type="radio" name="category" value={category.slug} />
+              <span class="calc-option__icon"><Icon name={category.icon} size={26} /></span>
+              <span class="calc-option__label">{category.title}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+  </CalculatorStep>
+
+  <CalculatorStep step={2} title="Выберите работу" active={false}>
+    <fieldset class="calc-fieldset">
+      <legend class="sr-only">Работа</legend>
+      <div class="calc-options" data-calc-task-list>
+        {
+          tasks.map((task) => (
+            <label class="calc-option" data-task-option data-category={task.categorySlug} hidden>
+              <input type="radio" name="task" value={task.id} />
+              <span class="calc-option__label">{task.label}</span>
+            </label>
+          ))
+        }
+      </div>
+      <p class="calc-empty" data-calculator-empty hidden>
+        В этой категории пока нет задач. Выберите другую категорию.
+      </p>
+    </fieldset>
+  </CalculatorStep>
+
+  <CalculatorStep step={3} title="Срочность и место выезда" active={false}>
+    <fieldset class="calc-fieldset">
+      <legend class="calc-fieldset__legend">Насколько срочно?</legend>
+      <div class="calc-options">
+        {
+          urgencyOptions.map((option) => (
+            <label class="calc-option">
+              <input type="radio" name="urgency" value={option.value} checked={option.default} />
+              <span class="calc-option__label">{option.label}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <fieldset class="calc-fieldset">
+      <legend class="calc-fieldset__legend">Где находится объект?</legend>
+      <div class="calc-options">
+        {
+          locationOptions.map((option) => (
+            <label class="calc-option">
+              <input type="radio" name="location" value={option.value} checked={option.default} />
+              <span class="calc-option__label">{option.label}</span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <div class="calc-result" data-calculator-result aria-live="polite" hidden></div>
+
+    <div class="calc-step__cta">
+      <button type="button" class="calc-cta" data-calculator-cta hidden>Вызвать мастера</button>
+      <a class="calc-cta calc-cta--call" data-calculator-call href={`tel:${site.phoneLink}`} hidden>
+        <Icon name="phone" size={18} />
+        <span>Позвонить: {site.phoneDisplay}</span>
+      </a>
+    </div>
+  </CalculatorStep>
+
+  <div class="calc-nav">
+    <button type="button" class="calc-nav__back" data-calc-back hidden>Назад</button>
+    <button type="button" class="calc-nav__next" data-calc-next disabled>Далее</button>
+  </div>
+</div>
+
+<script type="application/json" id="calculator-data" set:html={serialized} />
+
+<script>
+  import '@/scripts/calculator.ts';
+</script>
+
+<style is:global>
+  .calculator {
+    max-width: 720px;
+    margin-inline: auto;
+  }
+
+  .calculator__progress {
+    color: var(--color-muted);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .calc-fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .calc-fieldset + .calc-fieldset {
+    margin-top: 24px;
+  }
+
+  .calc-fieldset__legend {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin-bottom: 12px;
+  }
+
+  .calc-options {
+    display: grid;
+    gap: 12px;
+  }
+
+  .calc-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: var(--color-surface);
+    border: 2px solid var(--color-line);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition:
+      border-color var(--transition),
+      background-color var(--transition);
+  }
+
+  .calc-option:hover {
+    border-color: var(--color-muted);
+  }
+
+  .calc-option:has(input:checked) {
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+
+  .calc-option:has(input:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .calc-option input {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-accent);
+  }
+
+  .calc-option__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: var(--radius-md);
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+  }
+
+  .calc-option__label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .calc-option[hidden] {
+    display: none;
+  }
+
+  .calc-empty {
+    margin-top: 16px;
+    padding: 16px 20px;
+    color: var(--color-text);
+    font-size: 15px;
+    line-height: 1.5;
+    background: var(--color-accent-soft);
+    border-radius: var(--radius-md);
+  }
+
+  .calc-empty[hidden] {
+    display: none;
+  }
+
+  .calc-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .calc-nav__back,
+  .calc-nav__next,
+  .calc-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 14px 32px;
+    border: 2px solid transparent;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--transition),
+      color var(--transition),
+      border-color var(--transition);
+  }
+
+  .calc-nav__back {
+    background: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-line);
+  }
+
+  .calc-nav__back:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .calc-nav__next,
+  .calc-cta {
+    background: var(--color-accent);
+    color: #ffffff;
+  }
+
+  .calc-nav__next:hover,
+  .calc-cta:hover {
+    background: var(--color-accent-strong);
+    color: #ffffff;
+  }
+
+  .calc-nav__next[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .calc-nav__back[hidden],
+  .calc-nav__next[hidden],
+  .calc-cta[hidden] {
+    display: none;
+  }
+
+  .calc-step__cta {
+    margin-top: 24px;
+  }
+
+  .calc-cta--call {
+    gap: 10px;
+  }
+
+  /* Dynamic result (rendered by src/scripts/calculator.ts) */
+  .calc-result[hidden] {
+    display: none;
+  }
+
+  .calc-result {
+    margin-top: 24px;
+  }
+
+  .calc-result__body {
+    padding: 24px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .calc-result__price {
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 900;
+    color: var(--color-accent-strong);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .calc-result__duration {
+    color: var(--color-muted);
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .calc-result__lines {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .calc-result__line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 14px;
+  }
+
+  .calc-result__line-label {
+    color: var(--color-muted);
+  }
+
+  .calc-result__line-amount {
+    color: var(--color-text);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .calc-result__note {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .calc-result__disclaimer {
+    color: var(--color-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .calc-result__phone-note {
+    font-size: clamp(24px, 4vw, 30px);
+    font-weight: 900;
+    color: var(--color-ink);
+    margin-bottom: 10px;
+  }
+
+  .calc-result__notice {
+    color: var(--color-text);
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+</style>

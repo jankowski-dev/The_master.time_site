@@ -1,0 +1,127 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Breadcrumbs from '@/components/layout/Breadcrumbs.astro';
+import Calculator from '@/components/calculator/Calculator.astro';
+import EstimateBreakdown from '@/components/calculator/EstimateBreakdown.astro';
+import Faq from '@/components/marketing/Faq.astro';
+import CtaBand from '@/components/marketing/CtaBand.astro';
+import LeadFormDialog from '@/components/forms/LeadFormDialog.astro';
+
+import { site, categories, calculatorTasks, pricing, faqs } from '@/lib/content';
+import { getCategoryBySlug, getWorkById } from '@/lib/content';
+import { calculateEstimate } from '@/lib/pricing/calculate';
+import { faqJsonLd, breadcrumbJsonLd } from '@/lib/jsonld';
+import type { Work } from '@/lib/content/schemas';
+
+// Flat list of works so the client can resolve a task's workId without
+// traversing the nested category tree.
+const works: Work[] = categories.flatMap((category) => category.works);
+
+const seo = {
+  ...site.defaultSeo,
+  title: 'Калькулятор стоимости работ в Гродно',
+  description:
+    'Рассчитайте ориентировочную стоимость работ мастера в Гродно за пару кликов: сантехника, электрика, ремонт, мебель, техника и мелкие работы. Прозрачный расчёт с учётом срочности и выезда.',
+  canonical: Astro.url.pathname
+};
+
+const breadcrumbItems = [{ label: 'Главная', href: '/' }, { label: 'Калькулятор' }];
+
+// Static "how the price works" example on the base 40–60 BYN work.
+const demoTask = calculatorTasks.find((task) => task.id === 'zamena-smesitelya');
+const demoCategory = getCategoryBySlug('santehnika');
+const demoWork = demoTask && demoCategory ? getWorkById(demoCategory, demoTask.workId) : undefined;
+const demoEstimate =
+  demoTask && demoWork
+    ? calculateEstimate({
+        task: demoTask,
+        work: demoWork,
+        pricing,
+        urgency: 'this_week',
+        location: 'city'
+      })
+    : null;
+
+const jsonLd = [
+  faqJsonLd(faqs),
+  breadcrumbJsonLd(breadcrumbItems, Astro.site?.toString() ?? '')
+];
+---
+
+<BaseLayout seo={seo} jsonLd={jsonLd}>
+  <section class="calc-hero">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbItems} />
+      <h1 class="calc-hero__title">Калькулятор стоимости работ</h1>
+      <p class="calc-hero__lead">
+        Выберите категорию, работу и уточните детали — калькулятор покажет ориентировочную цену
+        до звонка. Финальную стоимость подтверждаю после уточнения задачи.
+      </p>
+    </div>
+  </section>
+
+  <section class="calc-section">
+    <div class="container">
+      <Calculator categories={categories} tasks={calculatorTasks} works={works} pricing={pricing} />
+    </div>
+  </section>
+
+  {demoEstimate && <EstimateBreakdown estimate={demoEstimate} />}
+
+  <Faq items={faqs} title="Частые вопросы о расчёте цены" />
+
+  <CtaBand
+    title="Остались вопросы по цене?"
+    text="Посмотрите полный прайс или оставьте заявку — уточню детали и назову точную стоимость вашей работы."
+    primaryHref="/ceny"
+    primaryLabel="Все цены"
+  />
+
+  <LeadFormDialog />
+</BaseLayout>
+
+<style>
+  .calc-hero {
+    background:
+      radial-gradient(1200px 480px at 85% -10%, rgba(234, 98, 73, 0.28), transparent 60%),
+      var(--color-ink);
+    color: #ffffff;
+    padding-block: 40px 56px;
+  }
+
+  .calc-hero__title {
+    color: #ffffff;
+    font-size: clamp(30px, 5.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-block: 20px 16px;
+  }
+
+  .calc-hero__lead {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 680px;
+  }
+
+  .calc-hero :global(.breadcrumbs),
+  .calc-hero :global(.breadcrumbs a) {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .calc-hero :global(.breadcrumbs a:hover) {
+    color: var(--color-accent-soft);
+  }
+
+  .calc-hero :global(.breadcrumbs [aria-current='page']) {
+    color: #ffffff;
+  }
+
+  .calc-hero :global(.breadcrumbs__item + .breadcrumbs__item::before) {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .calc-section {
+    padding-block: var(--section-y);
+  }
+</style>
