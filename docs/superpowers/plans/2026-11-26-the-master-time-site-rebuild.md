@@ -405,7 +405,6 @@ Use relative imports inside `src/lib/content/index.ts` and `scripts/validate-con
 - `loadContent()` calls `parseContent` with the raw data.
 - Exports `content` constant and the getter functions.
 - `getPopularWorks(limit = 6)` returns `{ category, work }[]`, popular first, then others, limited.
-- `getCategoryPriceFrom(category, pricing)` returns `Math.max(pricing.minOrder, Math.min(...category.works.map(w => w.priceFrom)))`.
 
 - [ ] **Step 5: Implement validation script**
 
