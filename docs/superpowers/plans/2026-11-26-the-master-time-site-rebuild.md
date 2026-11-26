@@ -1466,13 +1466,23 @@ Expected: FAIL with violations; fix focus/labels/contrast/landmarks until PASS.
 
 Run `npm run build`; inspect `dist/client/_astro/*.js` total gzip; ensure initial JS < 100KB. Use `npx lighthouse http://localhost:4321 --only-categories=performance,seo,accessibility,best-practices --chrome-flags="--headless"` against `npm run start` (manual; no CI gate). Fix obvious issues (images/fonts/CLS).
 
+- [ ] **Step 2b: Complete the remaining analytics events**
+
+The event vocabulary includes three events not wired in Task 15:
+- `lead_form_open` — call `track('lead_form_open', { placement })` when a `data-open-lead-form` trigger or `tmt:open-lead-form` event opens the dialog (in the dialog script).
+- `price_filter` — call `track('price_filter', { query, category })` (debounced or on change) in `src/scripts/price-filter.ts`.
+- `faq_open` — call `track('faq_open', { question })` when a `<details>`/`summary` FAQ item opens (delegated `toggle` handler in `src/scripts/tracking.ts` or `Faq`/`Accordion`).
+
+Add the events to `docs/analytics.md`; no PII. Run the existing E2E suite after wiring; add focused assertions only if a test file already owns the surface.
+
 - [ ] **Step 3: Verify no legacy references**
 
 Run:
 ```bash
 grep -RIn "Pracue\|notion\|Notion\|express\|multer\|1920\|402" src package.json README.md AGENTS.md docs --exclude-dir=archive || true
+grep -RIn "review\|Review\|отзыв\|Отзыв\|otzyvy" src tests || true
 ```
-Expected: no matches in the new app/docs (old `docs/archive` excluded; old spec moved there). Remove `server.js`, `css/`, `js/`, `index.html`, `server.log`, `server-err.log`. Update `package.json` name/description, remove Express/Multer deps, run `npm install`. Tag `legacy-site` before deletion (on `main` commit).
+Expected: no matches in the new app/docs (old `docs/archive` excluded; old spec moved there), and no review surface in `src`/`tests` (scope cancellation). Remove `server.js`, `css/`, `js/`, `index.html`, legacy `assets/` after confirming `src/assets/icons` has every needed icon, `server.log`, `server-err.log`. Update `package.json` name/description, remove Express/Multer deps, run `npm install`. Tag `legacy-site` before deletion (on `main` commit).
 - `uploads/`: inspect with the owner; if test data, delete; if unsure, leave and add to `.gitignore` with a note. Do not delete real data.
 - Move old spec `docs/superpowers/specs/2026-09-07-reviews-design.md` to `docs/archive/2026-09-07-reviews-design.md`.
 
